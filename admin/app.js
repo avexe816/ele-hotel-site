@@ -1212,7 +1212,11 @@
       ];
 
       return h("div", { class: "obj-card" }, [
-        h("div", { class: "obj-card-head" }, [h("span", { class: "obj-card-title" }, `#${idx + 1}`), h("div", { class: "obj-card-controls" }, controls)]),
+        h("div", { class: "obj-card-head" }, [
+          h("span", { class: "obj-card-title" }, `#${idx + 1}`),
+          // 訳文タブでは並べ替え・削除を出さない（増減は日本語タブで行う）
+          readOnly ? null : h("div", { class: "obj-card-controls" }, controls),
+        ]),
         ...fieldEls,
       ]);
     });
@@ -1395,6 +1399,26 @@
     return h("div", { class: "field" }, [labelRow, control, helpText]);
   }
 
+  /** ギャラリーのキャプションは決まった種類から選ぶ（site.json の photo_labels が正） */
+  function photoLabelMap() {
+    const site = state.draft["data/site.json"] || {};
+    const ja = site.ja || {};
+    return ja.photo_labels && typeof ja.photo_labels === "object" ? ja.photo_labels : {};
+  }
+
+  function renderCaptionSelect(value, update, readOnly) {
+    const map = photoLabelMap();
+    const code = typeof value === "string" ? value : "";
+    const codes = Object.keys(map);
+    const opts = [h("option", { value: "" }, "（なし）")];
+    for (const c of codes) opts.push(h("option", { value: c }, `${map[c]}（${c}）`));
+    // 一覧に無い値が入っていても失わないように、その値も選択肢として残す
+    if (code && !codes.includes(code)) opts.push(h("option", { value: code }, `${code}（一覧にない値）`));
+    const sel = h("select", { disabled: readOnly, onChange: (e) => update(e.target.value) }, opts);
+    sel.value = code;
+    return sel;
+  }
+
   // hotels.json の list-obj（rtypes / ota / gallery）— サブフィールドが {ja} 形式のものと通常文字列のものが混在
   function renderHotelListObj(arr, onChange, readOnly, itemLabels) {
     const cards = arr.map((item, idx) => {
@@ -1404,6 +1428,7 @@
         const isI18nSub = raw && typeof raw === "object" && !Array.isArray(raw) && "ja" in raw;
         const jaVal = isI18nSub ? raw.ja : raw;
         const isImgField = /画像ID/.test(subLabel);
+        const isCaptionField = subKey === "label" && /キャプション/.test(subLabel);
 
         const update = (val) => {
           const copy = arr.map((x) => x);
@@ -1420,7 +1445,12 @@
         };
 
         let control;
-        if (Array.isArray(jaVal)) {
+        if (readOnly && isI18nSub && typeof jaVal === "string") {
+          // 日本語以外のタブ: 訳文をここで直せるようにする（客室タイプの名称・仕様など）
+          control = renderTranslationField(jaVal, jaVal.length > 40 ? "textarea" : "text");
+        } else if (isCaptionField) {
+          control = renderCaptionSelect(jaVal, update, readOnly);
+        } else if (Array.isArray(jaVal)) {
           // 配列値のサブフィールドを一行ごとの入力行で編集できるようにする（現在の hotels.json には例はないが安全対策）
           control = h("div", { class: "obj-subarray" }, [renderListText(jaVal, (newArr) => update(newArr), readOnly)]);
         } else if (isImgField) {
@@ -1491,7 +1521,11 @@
       ];
 
       return h("div", { class: "obj-card" }, [
-        h("div", { class: "obj-card-head" }, [h("span", { class: "obj-card-title" }, `#${idx + 1}`), h("div", { class: "obj-card-controls" }, controls)]),
+        h("div", { class: "obj-card-head" }, [
+          h("span", { class: "obj-card-title" }, `#${idx + 1}`),
+          // 訳文タブでは並べ替え・削除を出さない（増減は日本語タブで行う）
+          readOnly ? null : h("div", { class: "obj-card-controls" }, controls),
+        ]),
         ...fieldEls,
       ]);
     });
@@ -1514,7 +1548,10 @@
       "＋ 追加"
     );
 
-    return h("div", null, [h("div", { class: "obj-cards" }, cards), addBtn]);
+    return h("div", null, [
+      h("div", { class: "obj-cards" }, cards),
+      readOnly ? h("div", { class: "trans-note" }, "項目の追加・削除・並べ替えは日本語タブで行ってください。") : addBtn,
+    ]);
   }
 
   // ============================================================ 描画：下部バー
