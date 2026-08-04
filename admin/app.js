@@ -30,6 +30,8 @@
     saving: false,
     toasts: [],
     modal: null, // "diff" | "conflict" | null
+    picker: null, // 画像を選ぶダイアログ { value, filter, onPick }
+    upload: { queue: [], problems: {}, busy: false, dragging: false, filter: "", justUploaded: [], seq: 1 },
     unsavedWarned: false,
   };
 
@@ -639,6 +641,7 @@
     root.appendChild(renderToasts());
     if (state.modal === "diff") root.appendChild(renderDiffModal());
     if (state.modal === "conflict") root.appendChild(renderConflictModal());
+    if (state.picker) root.appendChild(renderImagePicker());
 
     // textarea 自動高さ調整
     root.querySelectorAll("textarea[data-autogrow]").forEach((t) => autoGrow(t));
@@ -812,6 +815,20 @@
       );
     }
     items.push(h("div", { class: "side-sep" }));
+    items.push(
+      h(
+        "button",
+        {
+          class: "side-item" + (state.currentPage && state.currentPage.kind === "images" ? " active" : ""),
+          onClick: () => {
+            state.currentPage = { kind: "images" };
+            render();
+          },
+        },
+        ["画像", state.upload.queue.length ? h("span", { class: "side-dot" }) : null]
+      )
+    );
+    items.push(h("div", { class: "side-sep" }));
     items.push(h("div", { class: "side-group-title" }, "ホテル"));
     const hotels = state.draft["data/hotels.json"] || [];
     for (const hotel of hotels) {
@@ -863,6 +880,9 @@
   function renderMain() {
     if (!state.currentPage) {
       return h("main", { class: "main" }, [h("div", { class: "main-inner" }, [h("div", { class: "empty-state" }, "編集する項目を左のメニューから選んでください。")])]);
+    }
+    if (state.currentPage.kind === "images") {
+      return renderImagesPage();
     }
     if (state.currentPage.kind === "hotel") {
       return renderHotelPage();
@@ -1230,19 +1250,7 @@
       // 配列値のサブフィールド（例: privacy.sections[].items の箇条書き本文）を一行ごとの入力行で編集できるようにする
       control = h("div", { class: "obj-subarray" }, [renderListText(value, (newArr) => update(newArr), readOnly)]);
     } else if (isImgField) {
-      const imgId = typeof value === "string" ? value : "";
-      const known = state.images.includes(imgId);
-      control = h("div", { class: "img-field-row" }, [
-        h("input", {
-          type: "text",
-          list: "imglist",
-          readOnly: readOnly,
-          disabled: readOnly,
-          value: imgId,
-          onInput: (e) => update(e.target.value),
-        }),
-        known ? h("img", { class: "img-thumb", src: `/assets/img/${imgId}-sm.webp`, alt: "" }) : null,
-      ]);
+      control = renderImageField(value, update, readOnly);
     } else if (typeof value === "string" && value.length > 40) {
       control = h("textarea", {
         "data-autogrow": "1",
@@ -1370,12 +1378,7 @@
       const displayVal = jaValue;
       const isImgField = /画像ID/.test(meta.label);
       if (isImgField) {
-        const imgId = typeof rawValue === "string" ? rawValue : "";
-        const known = state.images.includes(imgId);
-        control = h("div", { class: "img-field-row" }, [
-          h("input", { type: "text", list: "imglist", readOnly: readOnly, disabled: readOnly, value: imgId, onInput: (e) => update(e.target.value) }),
-          known ? h("img", { class: "img-thumb", src: `/assets/img/${imgId}-sm.webp`, alt: "" }) : null,
-        ]);
+        control = renderImageField(rawValue, update, readOnly);
       } else {
         control = h("input", {
           type: "text",
@@ -1421,12 +1424,7 @@
           // 配列値のサブフィールドを一行ごとの入力行で編集できるようにする（現在の hotels.json には例はないが安全対策）
           control = h("div", { class: "obj-subarray" }, [renderListText(jaVal, (newArr) => update(newArr), readOnly)]);
         } else if (isImgField) {
-          const imgId = typeof jaVal === "string" ? jaVal : "";
-          const known = state.images.includes(imgId);
-          control = h("div", { class: "img-field-row" }, [
-            h("input", { type: "text", list: "imglist", readOnly: readOnly, disabled: readOnly, value: imgId, onInput: (e) => update(e.target.value) }),
-            known ? h("img", { class: "img-thumb", src: `/assets/img/${imgId}-sm.webp`, alt: "" }) : null,
-          ]);
+          control = renderImageField(jaVal, update, readOnly);
         } else if (typeof raw === "number") {
           control = h("input", { type: "number", readOnly: readOnly, disabled: readOnly, value: jaVal, onInput: (e) => update(e.target.value) });
         } else if (typeof jaVal === "string" && jaVal.length > 40) {
@@ -1630,6 +1628,548 @@
       opt.value = id;
       dl.appendChild(opt);
     }
+  }
+
+
+  // ============================================================ 画像：変換とアップロード
+  //
+  //  ブラウザの中で webp に変換してから送る。サーバーに画像処理を置かないので速く、
+  //  tools/import_image.py と同じ規格（長辺 1800 / 900、品質 80 / 76）で作る。
+
+  const IMG_VARIANTS = [
+    { suffix: "", maxSide: 1800, quality: 0.8, key: "full" },
+    { suffix: "-sm", maxSide: 900, quality: 0.76, key: "sm" },
+  ];
+  const IMG_NAME_OK = /^[a-z0-9][a-z0-9-]{0,58}[a-z0-9]$/;
+
+  /** ファイル名から画像IDの候補を作る（例: "銀座 Room 01.JPG" → "ginza-room-01"） */
+  function suggestImageName(fileName) {
+    let base = String(fileName).replace(/\.[^.]+$/, "");
+    base = base
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-{2,}/g, "-")
+      .replace(/-sm$/, "-sm2")
+      .slice(0, 60);
+    return IMG_NAME_OK.test(base) ? base : "";
+  }
+
+  function uniqueImageName(base, taken) {
+    if (!base) return "";
+    if (!taken.has(base)) return base;
+    for (let i = 2; i < 100; i++) {
+      const candidate = `${base}-${i}`.slice(0, 60);
+      if (!taken.has(candidate)) return candidate;
+    }
+    return "";
+  }
+
+  const blobToB64 = (blob) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+      reader.onerror = () => reject(new Error("read failed"));
+      reader.readAsDataURL(blob);
+    });
+
+  function canvasToWebp(canvas, quality) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => (blob && blob.type === "image/webp" ? resolve(blob) : reject(new Error("webp_unsupported"))),
+        "image/webp",
+        quality
+      );
+    });
+  }
+
+  /** 1枚を 2 サイズの webp に変換して base64 で返す */
+  async function convertImage(file) {
+    // 写真の向き（EXIF）を反映させる
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const out = { width: bitmap.width, height: bitmap.height, originalBytes: file.size };
+    try {
+      for (const v of IMG_VARIANTS) {
+        const scale = Math.min(1, v.maxSide / Math.max(bitmap.width, bitmap.height));
+        const w = Math.max(1, Math.round(bitmap.width * scale));
+        const h2 = Math.max(1, Math.round(bitmap.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h2;
+        const ctx = canvas.getContext("2d");
+        // 透過画像が黒くならないように白で埋めてから描く（既存の写真は全て不透過）
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, w, h2);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(bitmap, 0, 0, w, h2);
+        const blob = await canvasToWebp(canvas, v.quality);
+        out[v.key] = await blobToB64(blob);
+        out[v.key + "Bytes"] = blob.size;
+        if (v.key === "sm") out.previewUrl = URL.createObjectURL(blob);
+      }
+    } finally {
+      if (bitmap.close) bitmap.close();
+    }
+    return out;
+  }
+
+  const fmtKB = (n) => (n >= 1024 * 1024 ? (n / 1024 / 1024).toFixed(1) + " MB" : Math.round(n / 1024) + " KB");
+
+  /** 選ばれたファイルを待ち行列に入れて順番に変換する */
+  async function addFilesToQueue(fileList) {
+    const files = [...fileList].filter((f) => /^image\//.test(f.type));
+    const skipped = [...fileList].length - files.length;
+    if (skipped > 0) pushToast(`画像でないファイル ${skipped} 件は除きました。`, "error");
+    if (!files.length) return;
+
+    const taken = new Set([...state.images, ...state.upload.queue.map((q) => q.name)]);
+    for (const file of files) {
+      const base = uniqueImageName(suggestImageName(file.name), taken);
+      const entry = {
+        id: `u${state.upload.seq++}`,
+        fileName: file.name,
+        name: base,
+        nameEdited: false,
+        status: "converting",
+        error: null,
+      };
+      if (base) taken.add(base);
+      state.upload.queue.push(entry);
+      render();
+
+      try {
+        const conv = await convertImage(file);
+        Object.assign(entry, conv, { status: "ready" });
+      } catch (e) {
+        entry.status = "error";
+        entry.error =
+          String(e).indexOf("webp_unsupported") >= 0
+            ? "このブラウザは webp 変換に対応していません。Chrome / Edge / Safari の最新版をお使いください。"
+            : "画像を読み込めませんでした。ファイルが壊れていないかご確認ください。";
+      }
+      render();
+    }
+  }
+
+  function removeFromQueue(id) {
+    const i = state.upload.queue.findIndex((q) => q.id === id);
+    if (i < 0) return;
+    const entry = state.upload.queue[i];
+    if (entry.previewUrl) URL.revokeObjectURL(entry.previewUrl);
+    state.upload.queue.splice(i, 1);
+    render();
+  }
+
+  function clearQueue() {
+    for (const q of state.upload.queue) if (q.previewUrl) URL.revokeObjectURL(q.previewUrl);
+    state.upload.queue = [];
+  }
+
+  /** 画像IDの重複・書式をまとめて検査する */
+  function validateQueue() {
+    const problems = [];
+    const seen = new Map();
+    for (const q of state.upload.queue) {
+      if (q.status === "error") continue;
+      if (!q.name) {
+        problems.push({ id: q.id, message: "画像IDを入力してください。" });
+        continue;
+      }
+      if (!IMG_NAME_OK.test(q.name)) {
+        problems.push({ id: q.id, message: "半角小文字・数字・ハイフンのみ、2〜60文字で入力してください。" });
+        continue;
+      }
+      if (q.name.endsWith("-sm")) {
+        problems.push({ id: q.id, message: "末尾の -sm は自動で作られるため使えません。" });
+        continue;
+      }
+      if (seen.has(q.name)) {
+        problems.push({ id: q.id, message: "同じ画像IDが重複しています。" });
+        continue;
+      }
+      seen.set(q.name, true);
+    }
+    return problems;
+  }
+
+  /** 入力中でもエラー表示だけを更新する（再描画せずカーソルを保つ） */
+  function refreshQueueProblems() {
+    const problems = validateQueue();
+    const next = {};
+    for (const p of problems) next[p.id] = p.message;
+    state.upload.problems = next;
+    const root = document.getElementById("upList");
+    if (!root) return;
+    for (const entry of state.upload.queue) {
+      const row = root.querySelector(`[data-up="${entry.id}"]`);
+      if (!row) continue;
+      const msg = next[entry.id] || "";
+      let box = row.querySelector(".up-err");
+      if (msg) {
+        if (!box) {
+          box = document.createElement("div");
+          box.className = "up-err";
+          const meta = row.querySelector(".up-meta");
+          const body = row.querySelector(".up-body");
+          if (meta) body.insertBefore(box, meta);
+          else if (body) body.appendChild(box);
+        }
+        box.textContent = msg;
+      } else if (box) {
+        box.remove();
+      }
+      row.classList.toggle("up-row-err", Boolean(msg) || entry.status === "error");
+      const warn = row.querySelector(".up-warn");
+      const dup = entry.name && state.images.includes(entry.name);
+      if (warn) warn.hidden = !dup;
+    }
+    const btn = document.getElementById("upSubmit");
+    if (btn) btn.disabled = state.upload.busy || problems.length > 0 || !state.upload.queue.some((q) => q.status === "ready");
+  }
+
+  function overwriteNames() {
+    return state.upload.queue.filter((q) => q.status !== "error" && q.name && state.images.includes(q.name)).map((q) => q.name);
+  }
+
+  async function submitUpload() {
+    if (state.upload.busy) return;
+    const problems = validateQueue();
+    state.upload.problems = {};
+    for (const p of problems) state.upload.problems[p.id] = p.message;
+    if (problems.length) {
+      render();
+      pushToast("画像IDをご確認ください。", "error");
+      return;
+    }
+    const ready = state.upload.queue.filter((q) => q.status === "ready");
+    if (!ready.length) {
+      pushToast("アップロードできる画像がありません。", "error");
+      return;
+    }
+    const dupes = overwriteNames();
+    if (dupes.length && !confirm(`次の画像を上書きします。よろしいですか？\n\n${dupes.join("\n")}`)) return;
+
+    state.upload.busy = true;
+    render();
+    try {
+      const res = await api("/upload", {
+        method: "POST",
+        body: JSON.stringify({ items: ready.map((q) => ({ name: q.name, full: q.full, sm: q.sm })) }),
+      });
+      if (!res.data || !res.data.ok) {
+        const d = res.data || {};
+        pushToast(d.hint || (d.error === "conflict" ? "ほかの方が先に保存しました。画面を再読み込みしてください。" : "アップロードできませんでした。"), "error");
+        state.upload.busy = false;
+        render();
+        return;
+      }
+      const names = res.data.names || [];
+      // 画像一覧に反映（再読み込みしなくても選べるようにする）
+      const merged = new Set([...state.images, ...names]);
+      state.images = [...merged].sort();
+      populateImageDatalist();
+      clearQueue();
+      state.upload.busy = false;
+      state.upload.justUploaded = names;
+      pushToast(`${names.length}枚をアップロードしました。約1分で公開されます。`, "ok");
+      render();
+      startStatusPolling();
+    } catch (e) {
+      state.upload.busy = false;
+      pushToast("サーバーに接続できませんでした。", "error");
+      render();
+    }
+  }
+
+  // ------------------------------------------------------------ 画像ページ
+
+  function renderImagesPage() {
+    const q = state.upload;
+    const fileInput = h("input", {
+      type: "file",
+      accept: "image/*",
+      multiple: true,
+      id: "imgFile",
+      style: "display:none",
+      onChange: (e) => {
+        addFilesToQueue(e.target.files);
+        e.target.value = "";
+      },
+    });
+
+    const dropZone = h(
+      "div",
+      {
+        class: "drop" + (q.dragging ? " drop-on" : ""),
+        onDragOver: (e) => {
+          e.preventDefault();
+          if (!q.dragging) {
+            q.dragging = true;
+            render();
+          }
+        },
+        onDragLeave: () => {
+          q.dragging = false;
+          render();
+        },
+        onDrop: (e) => {
+          e.preventDefault();
+          q.dragging = false;
+          addFilesToQueue(e.dataTransfer.files);
+        },
+        onClick: () => document.getElementById("imgFile").click(),
+      },
+      [
+        h("div", { class: "drop-icon" }, "＋"),
+        h("div", { class: "drop-title" }, "ここに写真をドラッグ、またはクリックして選択"),
+        h("div", { class: "drop-note" }, "JPEG / PNG / HEIC などをそのまま入れてください。webp への変換と縮小はこの画面で自動的に行います。"),
+      ]
+    );
+
+    const rows = q.queue.map((entry) =>
+      h("div", { class: "up-row" + (entry.status === "error" || q.problems[entry.id] ? " up-row-err" : ""), "data-up": entry.id }, [
+        entry.previewUrl
+          ? h("img", { class: "up-thumb", src: entry.previewUrl, alt: "" })
+          : h("div", { class: "up-thumb up-thumb-empty" }, entry.status === "converting" ? h("span", { class: "spin" }, "⟳") : "—"),
+        h("div", { class: "up-body" }, [
+          h("div", { class: "up-file" }, entry.fileName),
+          entry.status === "error"
+            ? h("div", { class: "up-err" }, entry.error)
+            : h("div", { class: "up-name" }, [
+                h("label", null, "画像ID"),
+                h("input", {
+                  type: "text",
+                  value: entry.name,
+                  placeholder: "ginza-room-01",
+                  spellcheck: false,
+                  onInput: (e) => {
+                    entry.name = e.target.value.trim().toLowerCase();
+                    entry.nameEdited = true;
+                    refreshQueueProblems();
+                  },
+                  onChange: () => {
+                    refreshQueueProblems();
+                    render();
+                  },
+                }),
+              ]),
+          q.problems[entry.id] ? h("div", { class: "up-err" }, q.problems[entry.id]) : null,
+          entry.status === "ready"
+            ? h("div", { class: "up-meta" }, [
+                `${entry.width}×${entry.height}px`,
+                h("span", { class: "up-sep" }, "・"),
+                `元 ${fmtKB(entry.originalBytes)} → ${fmtKB(entry.fullBytes)} + ${fmtKB(entry.smBytes)}`,
+                h("span", { class: "up-warn", hidden: !(entry.name && state.images.includes(entry.name)) }, "既存の画像を上書きします"),
+              ])
+            : null,
+        ]),
+        h("button", { class: "btn btn-ghost btn-sm", onClick: () => removeFromQueue(entry.id) }, "取り消す"),
+      ])
+    );
+
+    const readyCount = q.queue.filter((x) => x.status === "ready").length;
+
+    const panel = q.queue.length
+      ? h("div", { class: "card" }, [
+          h("div", { class: "card-head" }, [h("h3", null, `アップロードする画像（${readyCount}枚）`)]),
+          h("div", { class: "up-list", id: "upList" }, rows),
+          h("div", { class: "up-foot" }, [
+            h(
+              "button",
+              { class: "btn btn-primary", id: "upSubmit", disabled: q.busy || !readyCount || Object.keys(q.problems).length > 0, onClick: submitUpload },
+              q.busy ? "アップロード中…" : `${readyCount}枚をアップロードして公開`
+            ),
+            h(
+              "button",
+              {
+                class: "btn btn-ghost",
+                disabled: q.busy,
+                onClick: () => {
+                  clearQueue();
+                  render();
+                },
+              },
+              "すべて取り消す"
+            ),
+          ]),
+        ])
+      : null;
+
+    const gallery = h("div", { class: "card" }, [
+      h("div", { class: "card-head" }, [
+        h("h3", null, `登録済みの画像（${state.images.length}枚）`),
+        h("input", {
+          type: "search",
+          class: "img-search",
+          placeholder: "画像IDで絞り込む",
+          value: q.filter,
+          onInput: (e) => {
+            q.filter = e.target.value.trim().toLowerCase();
+            render();
+          },
+        }),
+      ]),
+      h(
+        "div",
+        { class: "img-grid" },
+        state.images
+          .filter((id) => !q.filter || id.includes(q.filter))
+          .map((id) =>
+            h("div", { class: "img-cell" + (q.justUploaded.includes(id) ? " img-cell-new" : "") }, [
+              h("img", { src: `/assets/img/${id}-sm.webp`, alt: id, loading: "lazy" }),
+              h("div", { class: "img-cell-id", title: id }, id),
+              h(
+                "button",
+                {
+                  class: "btn btn-ghost btn-sm",
+                  onClick: () => {
+                    copyText(id);
+                    pushToast(`画像ID「${id}」をコピーしました。`, "ok");
+                  },
+                },
+                "IDをコピー"
+              ),
+            ])
+          )
+      ),
+    ]);
+
+    return h("main", { class: "main" }, [
+      h("div", { class: "main-inner" }, [
+        h("div", { class: "group-head" }, [
+          h("h1", null, "画像"),
+          h("p", null, "写真を追加すると、パソコン用（長辺1800px）と スマートフォン用（長辺900px）の2種類が自動で作られます。追加した画像は各ページの「画像ID」欄で選べます。"),
+        ]),
+        fileInput,
+        dropZone,
+        panel,
+        gallery,
+      ]),
+    ]);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+      return;
+    }
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+    } catch (_) {}
+    document.body.removeChild(ta);
+  }
+
+  // ------------------------------------------------------------ 画像を選ぶダイアログ
+
+  function openImagePicker(currentValue, onPick) {
+    state.picker = { value: currentValue || "", filter: "", onPick };
+    render();
+  }
+
+  function renderImagePicker() {
+    const p = state.picker;
+    const list = state.images.filter((id) => !p.filter || id.includes(p.filter));
+    return h("div", { class: "modal-overlay", onClick: (e) => e.target === e.currentTarget && closePicker() }, [
+      h("div", { class: "modal modal-wide" }, [
+        h("div", { class: "modal-head" }, [
+          h("h2", null, "画像を選ぶ"),
+          h("input", {
+            type: "search",
+            class: "img-search",
+            placeholder: "画像IDで絞り込む",
+            value: p.filter,
+            onInput: (e) => {
+              p.filter = e.target.value.trim().toLowerCase();
+              render();
+            },
+          }),
+        ]),
+        h("div", { class: "modal-body" }, [
+          list.length
+            ? h(
+                "div",
+                { class: "img-grid img-grid-pick" },
+                list.map((id) =>
+                  h(
+                    "button",
+                    {
+                      class: "img-cell img-pick" + (p.value === id ? " img-pick-on" : ""),
+                      onClick: () => {
+                        p.onPick(id);
+                        closePicker();
+                      },
+                    },
+                    [h("img", { src: `/assets/img/${id}-sm.webp`, alt: id, loading: "lazy" }), h("div", { class: "img-cell-id", title: id }, id)]
+                  )
+                )
+              )
+            : h("div", { class: "empty-state" }, "該当する画像がありません。"),
+        ]),
+        h("div", { class: "modal-foot" }, [
+          h(
+            "button",
+            {
+              class: "btn btn-ghost",
+              onClick: () => {
+                p.onPick("");
+                closePicker();
+              },
+            },
+            "画像を外す"
+          ),
+          h(
+            "button",
+            {
+              class: "btn btn-ghost",
+              onClick: () => {
+                closePicker();
+                state.currentPage = { kind: "images" };
+                render();
+              },
+            },
+            "新しい写真を追加…"
+          ),
+          h("button", { class: "btn btn-primary", onClick: closePicker }, "閉じる"),
+        ]),
+      ]),
+    ]);
+  }
+
+  function closePicker() {
+    state.picker = null;
+    render();
+  }
+
+  /** 画像ID 欄の共通部品（入力＋サムネイル＋「画像を選ぶ」） */
+  function renderImageField(value, onChange, readOnly) {
+    const imgId = typeof value === "string" ? value : "";
+    const known = state.images.includes(imgId);
+    return h("div", { class: "img-field-row" }, [
+      h("input", {
+        type: "text",
+        list: "imglist",
+        readOnly: readOnly,
+        disabled: readOnly,
+        spellcheck: false,
+        value: imgId,
+        onInput: (e) => onChange(e.target.value.trim()),
+      }),
+      readOnly ? null : h("button", { class: "btn btn-ghost btn-sm", onClick: () => openImagePicker(imgId, onChange) }, "画像を選ぶ"),
+      known
+        ? h("img", { class: "img-thumb", src: `/assets/img/${imgId}-sm.webp`, alt: "" })
+        : imgId
+        ? h("span", { class: "img-missing", title: "まだアップロードされていません" }, "未登録")
+        : null,
+    ]);
   }
 
   // ============================================================ 起動

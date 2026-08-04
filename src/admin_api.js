@@ -147,6 +147,10 @@ async function ghJson(env, path, init) {
 
 const repo = (env) => env.GH_REPO || "avexe816/ele-hotel-site";
 
+// 画像名は URL とファイル名にそのまま使うので、半角小文字・数字・ハイフンだけに限る
+const IMG_NAME_RE = /^[a-z0-9][a-z0-9-]{0,58}[a-z0-9]$/;
+const MAX_IMG_BYTES = 4 * 1024 * 1024;
+
 // ログインを許可するメールアドレス。Cloudflare の ADMIN_EMAILS（カンマ区切り）で設定する。
 // 未設定のときは締め出されないように最低限の1件だけを既定値にする。
 const DEFAULT_ADMIN_EMAILS = ["ukh816@gmail.com"];
@@ -193,11 +197,13 @@ async function commitFiles(env, { files, message, author, expectHead }) {
   }
   const base = await ghJson(env, `/repos/${R}/git/commits/${head}`);
 
+  // content が {b64: "..."} の形なら画像などのバイナリとして、そのまま送る
   const blobs = await Promise.all(
     Object.entries(files).map(async ([path, content]) => {
+      const payload = content && typeof content === "object" && typeof content.b64 === "string" ? content.b64 : b64utf8(String(content));
       const blob = await ghJson(env, `/repos/${R}/git/blobs`, {
         method: "POST",
-        body: JSON.stringify({ content: b64utf8(content), encoding: "base64" }),
+        body: JSON.stringify({ content: payload, encoding: "base64" }),
       });
       return { path, mode: "100644", type: "blob", sha: blob.sha };
     })
@@ -365,6 +371,43 @@ async function handleAdmin(request, env, url) {
     if (path === "/bundle") {
       const b = await loadBundle(env);
       return J({ ok: true, head: b.head, files: b.files, images: b.images });
+    }
+
+    // --- 画像アップロード（ブラウザ側で webp に変換済みのものを受け取る）
+    if (path === "/upload" && request.method === "POST") {
+      const body = await request.json();
+      const items = Array.isArray(body.items) ? body.items : [];
+      if (!items.length) return J({ ok: false, error: "no_items" }, 400);
+      if (items.length > 20) return J({ ok: false, error: "too_many", hint: "一度に20枚までにしてください。" }, 400);
+
+      const files = {};
+      const names = [];
+      for (const it of items) {
+        const name = String(it.name || "").trim();
+        if (!IMG_NAME_RE.test(name) || name.endsWith("-sm")) {
+          return J({ ok: false, error: "bad_name", name, hint: "半角小文字・数字・ハイフンのみ、2〜60文字。末尾の -sm は使えません。" }, 400);
+        }
+        for (const [suffix, key] of [["", "full"], ["-sm", "sm"]]) {
+          const b64 = String(it[key] || "").replace(/^data:[^,]*,/, "").replace(/\s/g, "");
+          if (!b64) return J({ ok: false, error: "missing_data", name, which: key }, 400);
+          // base64 の 4 文字 = 3 バイト
+          if (b64.length * 0.75 > MAX_IMG_BYTES) {
+            return J({ ok: false, error: "too_large", name, which: key, hint: "1枚あたり 4MB までです。" }, 400);
+          }
+          files[`assets/img/${name}${suffix}.webp`] = { b64 };
+        }
+        names.push(name);
+      }
+
+      const message =
+        names.length === 1 ? `画像を追加: ${names[0]}` : `画像を追加: ${names.length}枚（${names.slice(0, 3).join(", ")}${names.length > 3 ? " ほか" : ""}）`;
+      try {
+        const sha = await commitFiles(env, { files, message, author: email });
+        return J({ ok: true, sha, names });
+      } catch (e) {
+        if (e.code === "conflict") return J({ ok: false, error: "conflict" }, 409);
+        throw e;
+      }
     }
 
     // --- 公開状況
