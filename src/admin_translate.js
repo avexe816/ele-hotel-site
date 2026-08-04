@@ -19,6 +19,16 @@ const AUTO_LANGS = ["zh", "en", "ko"];
 // 固有名詞の対訳表。地名・駅名はモデルが誤読しやすいので必ず渡す。
 // 「日本語 | 簡体字 | English | 한국어」の順。
 const GLOSSARY = [
+  // ホテル名（人が確認済みの表記。ここは絶対に変えない）
+  ["ELE Hotel 銀座イースト", "ELE Hotel 银座东", "ELE Hotel Ginza East", "ELE Hotel 긴자 이스트"],
+  ["ELE Hotel 東上野", "ELE Hotel 东上野", "ELE Hotel Higashiueno", "ELE Hotel 히가시우에노"],
+  ["ELE Hotel 東日本橋", "ELE Hotel 东日本桥", "ELE Hotel Higashi-Nihonbashi", "ELE Hotel 히가시니혼바시"],
+  ["ELE Hotel Cabin 新宿歌舞伎町", "ELE Hotel Cabin 新宿歌舞伎町", "ELE Cabin Shinjuku Kabukicho", "ELE Hotel Cabin 신주쿠 가부키초"],
+  ["ELE Hotel 名古屋栄駅前", "ELE Hotel 名古屋荣站前", "ELE Hotel Nagoya Sakae Station", "ELE Hotel 나고야 사카에역 앞"],
+  ["ELE Hotel 樟葉", "ELE Hotel 樟叶", "ELE Hotel Kuzuha", "ELE Hotel 구즈하"],
+  ["ELE Hotel 仙台東口", "ELE Hotel 仙台东口", "ELE Hotel Sendai Higashiguchi", "ELE Hotel 센다이 히가시구치"],
+  // 地名・駅名
+  ["銀座イースト", "银座东", "Ginza East", "긴자 이스트"],
   ["銀座", "银座", "Ginza", "긴자"],
   ["東上野", "东上野", "Higashi-Ueno", "히가시우에노"],
   ["上野", "上野", "Ueno", "우에노"],
@@ -28,7 +38,7 @@ const GLOSSARY = [
   ["新宿", "新宿", "Shinjuku", "신주쿠"],
   ["名古屋栄駅前", "名古屋荣站前", "Nagoya Sakae-ekimae", "나고야 사카에역 앞"],
   ["名古屋", "名古屋", "Nagoya", "나고야"],
-  ["樟葉", "楠叶", "Kuzuha", "쿠즈하"],
+  ["樟葉", "樟叶", "Kuzuha", "구즈하"],
   ["仙台東口", "仙台东口", "Sendai Higashiguchi", "센다이 히가시구치"],
   ["仙台", "仙台", "Sendai", "센다이"],
   ["東京駅", "东京站", "Tokyo Station", "도쿄역"],
@@ -49,8 +59,19 @@ const GLOSSARY_COL = { zh: 1, en: 2, ko: 3 };
 function glossaryFor(lang, texts) {
   const joined = texts.join("\n");
   const col = GLOSSARY_COL[lang];
-  const hits = GLOSSARY.filter((row) => joined.includes(row[0])).map((row) => `${row[0]} = ${row[col]}`);
-  return hits.length ? ["", "Use exactly these translations for proper nouns:", ...hits.map((x) => "- " + x)] : [];
+  const used = [];
+  for (const row of [...GLOSSARY].sort((a, b) => b[0].length - a[0].length)) {
+    if (!joined.includes(row[0])) continue;
+    // すでに採用した長い語に含まれている短い語は出さない（銀座イースト があれば 銀座 は不要）
+    if (used.some((u) => u[0].includes(row[0]))) continue;
+    used.push(row);
+  }
+  if (!used.length) return [];
+  return [
+    "MANDATORY GLOSSARY — these proper nouns must appear exactly as given, no other spelling is acceptable:",
+    ...used.map((row) => `- 「${row[0]}」 -> ${row[col]}`),
+    "",
+  ];
 }
 
 const LANG_INFO = {
@@ -129,9 +150,9 @@ const RULES = (label) => [
 
 function buildPrompt(lang, texts) {
   return [
+    ...glossaryFor(lang, texts),
     ...RULES(LANG_INFO[lang].label),
     `- Output exactly ${texts.length} line(s), each formatted as "<number>. <translation>".`,
-    ...glossaryFor(lang, texts),
     "",
     "Japanese:",
     texts.map((t, i) => `${i + 1}. ${t.replace(/\n/g, "\\n")}`).join("\n"),
@@ -139,7 +160,7 @@ function buildPrompt(lang, texts) {
 }
 
 function buildSinglePrompt(lang, text) {
-  return [...RULES(LANG_INFO[lang].label), ...glossaryFor(lang, [text]), "", "Japanese:", text.replace(/\n/g, "\\n")].join("\n");
+  return [...glossaryFor(lang, [text]), ...RULES(LANG_INFO[lang].label), "", "Japanese:", text.replace(/\n/g, "\\n")].join("\n");
 }
 
 function parseNumbered(raw, count) {
