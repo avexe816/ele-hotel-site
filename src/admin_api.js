@@ -276,10 +276,43 @@ async function handleAdmin(request, env, url) {
 
   // 翻訳の動作確認だけは ADMIN_SECRET を知っていればログインなしでも叩ける（設定確認用）
   const probe = url.searchParams.get("secret");
-  const isProbe = path === "/translate-test" && probe && env.ADMIN_SECRET && probe === env.ADMIN_SECRET;
+  const isProbe = (path === "/translate-test" || path === "/diag") && probe && env.ADMIN_SECRET && probe === env.ADMIN_SECRET;
 
   if (!email && !isProbe) return J({ ok: false, error: "unauthorized" }, 401);
   if (!env.GH_TOKEN && !isProbe) return J({ ok: false, error: "no_github_token" }, 503);
+
+  // 読み込みの不具合を切り分けるための診断（ADMIN_SECRET 必須）
+  if (path === "/diag") {
+    const steps = [];
+    try {
+      const t0 = Date.now();
+      const ref = await ghJson(env, `/repos/${repo(env)}/git/ref/heads/main`);
+      steps.push({ step: "ref", ok: true, sha: ref.object.sha.slice(0, 8), ms: Date.now() - t0 });
+      const t1 = Date.now();
+      const tree = await ghJson(env, `/repos/${repo(env)}/git/trees/${ref.object.sha}?recursive=1`);
+      steps.push({ step: "tree", ok: true, count: tree.tree.length, truncated: Boolean(tree.truncated), ms: Date.now() - t1 });
+      const byPath = Object.fromEntries(tree.tree.map((t) => [t.path, t]));
+      for (const p of DATA_FILES) {
+        const node = byPath[p];
+        if (!node) {
+          steps.push({ step: p, ok: false, error: "not in tree" });
+          continue;
+        }
+        const t2 = Date.now();
+        try {
+          const blob = await ghJson(env, `/repos/${repo(env)}/git/blobs/${node.sha}`);
+          const text = utf8b64(blob.content);
+          JSON.parse(text);
+          steps.push({ step: p, ok: true, bytes: text.length, ms: Date.now() - t2 });
+        } catch (e) {
+          steps.push({ step: p, ok: false, error: String(e).slice(0, 300), ms: Date.now() - t2 });
+        }
+      }
+    } catch (e) {
+      steps.push({ step: "fatal", ok: false, error: String(e).slice(0, 500) });
+    }
+    return J({ ok: steps.every((s) => s.ok), dataFiles: DATA_FILES, steps });
+  }
 
   try {
     // --- 全データ読み込み
