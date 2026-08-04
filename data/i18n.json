@@ -755,6 +755,16 @@
     "th": "",
     "locked": true
   },
+  "a52caf17d660e238": {
+    "ja": "※ お問い合わせの内容により、ご返信までにお時間をいただく場合があります。また、ご入力いただいたメールアドレスへの自動返信は行っておりません。",
+    "locked": true,
+    "zh": "※ 根据咨询内容的不同，回复可能需要一些时间。另外，我们不会向您填写的邮箱发送自动回复邮件。",
+    "zh-Hant": "※ 依諮詢內容而定，回覆可能需要一些時間。另外，我們不會向您填寫的郵箱傳送自動回覆郵件。",
+    "en": "* Depending on the nature of your enquiry, a reply may take some time. Please also note that we do not send an automatic confirmation to the address you entered.",
+    "ko": "※ 문의 내용에 따라 답변까지 시간이 걸릴 수 있습니다. 또한 입력하신 이메일 주소로 자동 회신은 발송되지 않습니다.",
+    "th": "",
+    "hant_manual": true
+  },
   "403d7d3c5c56b13f": {
     "ja": "「小田原一丁目」バス停より徒歩約1分",
     "zh": "「小田原一丁目」公交站步行约1分钟",
@@ -871,6 +881,16 @@
     "zh-Hant": "回應諮詢、要求及意見",
     "ko": "문의, 요청, 의견에 대한 대응",
     "th": ""
+  },
+  "e2ae85bdc5fd63cf": {
+    "ja": "お問い合わせいただき、誠にありがとうございます。内容を確認のうえ、担当者より改めてご連絡いたします。なお、お問い合わせの内容によっては、ご返信までにお時間をいただく場合がございます。あらかじめご了承ください。",
+    "locked": true,
+    "zh": "非常感谢您的咨询。我们确认内容后，将由负责人另行与您联系。另外，根据咨询内容的不同，回复可能需要一些时间，敬请谅解。",
+    "zh-Hant": "非常感謝您的諮詢。我們確認內容後，將由負責人另行與您聯繫。另外，依諮詢內容而定，回覆可能需要一些時間，敬請諒解。",
+    "en": "Thank you very much for contacting us. We will review your enquiry and a member of our team will be in touch. Depending on the nature of your enquiry, a reply may take some time. Thank you for your understanding.",
+    "ko": "문의해 주셔서 진심으로 감사합니다. 내용을 확인한 후 담당자가 다시 연락드립니다. 또한 문의 내용에 따라 답변까지 시간이 걸릴 수 있으니 미리 양해 부탁드립니다.",
+    "th": "",
+    "hant_manual": true
   },
   "a7d29636e84a31c9": {
     "ja": "お問い合わせフォームへ",
@@ -2090,6 +2110,16 @@
     "ko": "우에노 온시 공원・우에노 동물원",
     "th": "",
     "locked": true
+  },
+  "484eee940bf71210": {
+    "ja": "下記フォームよりお送りください。内容を確認のうえ、担当者より改めてご連絡いたします。",
+    "locked": true,
+    "zh": "请通过以下表单发送。我们确认内容后，将由负责人另行与您联系。",
+    "zh-Hant": "請透過以下表單傳送。我們確認內容後，將由負責人另行與您聯繫。",
+    "en": "Please send your enquiry using the form below. We will review it and a member of our team will be in touch.",
+    "ko": "아래 양식으로 보내 주십시오. 내용을 확인한 후 담당자가 다시 연락드립니다.",
+    "th": "",
+    "hant_manual": true
   },
   "8217671c3a9b1b18": {
     "ja": "中長期のご滞在に向いたアパートメント／ファミリールームのブランド。ご家族・カップル・親子でのご利用に、暮らすように過ごせる客室をご用意します。生活に必要な設備をひと通り備え、細部の心づかいで毎日を気持ちよく。",
@@ -4555,35 +4585,5 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
-  },
-  "484eee940bf71210": {
-    "ja": "下記フォームよりお送りください。内容を確認のうえ、担当者より改めてご連絡いたします。",
-    "locked": true,
-    "zh": "请通过以下表单发送。我们确认内容后，将由负责人另行与您联系。",
-    "zh-Hant": "請透過以下表單傳送。我們確認內容後，將由負責人另行與您聯繫。",
-    "en": "Please send your enquiry using the form below. We will review it and a member of our team will be in touch.",
-    "ko": "아래 양식으로 보내 주십시오. 내용을 확인한 후 담당자가 다시 연락드립니다.",
-    "th": "",
-    "hant_manual": true
-  },
-  "e2ae85bdc5fd63cf": {
-    "ja": "お問い合わせいただき、誠にありがとうございます。内容を確認のうえ、担当者より改めてご連絡いたします。なお、お問い合わせの内容によっては、ご返信までにお時間をいただく場合がございます。あらかじめご了承ください。",
-    "locked": true,
-    "zh": "非常感谢您的咨询。我们确认内容后，将由负责人另行与您联系。另外，根据咨询内容的不同，回复可能需要一些时间，敬请谅解。",
-    "zh-Hant": "非常感謝您的諮詢。我們確認內容後，將由負責人另行與您聯繫。另外，依諮詢內容而定，回覆可能需要一些時間，敬請諒解。",
-    "en": "Thank you very much for contacting us. We will review your enquiry and a member of our team will be in touch. Depending on the nature of your enquiry, a reply may take some time. Thank you for your understanding.",
-    "ko": "문의해 주셔서 진심으로 감사합니다. 내용을 확인한 후 담당자가 다시 연락드립니다. 또한 문의 내용에 따라 답변까지 시간이 걸릴 수 있으니 미리 양해 부탁드립니다.",
-    "th": "",
-    "hant_manual": true
-  },
-  "a52caf17d660e238": {
-    "ja": "※ お問い合わせの内容により、ご返信までにお時間をいただく場合があります。また、ご入力いただいたメールアドレスへの自動返信は行っておりません。",
-    "locked": true,
-    "zh": "※ 根据咨询内容的不同，回复可能需要一些时间。另外，我们不会向您填写的邮箱发送自动回复邮件。",
-    "zh-Hant": "※ 依諮詢內容而定，回覆可能需要一些時間。另外，我們不會向您填寫的郵箱傳送自動回覆郵件。",
-    "en": "* Depending on the nature of your enquiry, a reply may take some time. Please also note that we do not send an automatic confirmation to the address you entered.",
-    "ko": "※ 문의 내용에 따라 답변까지 시간이 걸릴 수 있습니다. 또한 입력하신 이메일 주소로 자동 회신은 발송되지 않습니다.",
-    "th": "",
-    "hant_manual": true
   }
 }
