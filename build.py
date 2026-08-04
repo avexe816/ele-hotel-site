@@ -368,7 +368,7 @@ def build_home(lang):
 <h3>{esc(h['name'][code])}</h3>
 <p class="hcard__tag">{esc(h['tagline'][code])}</p>
 <div class="hcard__meta">
-<span>{I_BED}{h['rooms']} {esc(t['unit_rooms'])}</span>
+<span>{I_BED}{(str(h['rooms']) + ' ' + esc(t['unit_rooms'])) if h.get('rooms') else esc(t['tbd'])}</span>
 <span>{I_PIN}{esc(h['address'][code].split(' ')[-1] if code != 'en' else h['address'][code])}</span>
 </div>
 <span class="hcard__more">{esc(t['cta_detail'])}{I_ARROW}</span>
@@ -517,13 +517,15 @@ def build_detail(lang, h):
     bname = next((x["name"] for x in t["brands"] if x["key"] == h["brand"]), "ELE Hotel")
 
     facts = [
-        (t["f_rooms"], f"{h['rooms']} {t['unit_rooms']}"),
+        (t["f_rooms"], f"{h['rooms']} {t['unit_rooms']}" if h.get("rooms") else t["tbd"]),
         (t["f_open"], h["opened"][code]),
         (t["f_in"], h["checkin"]),
         (t["f_out"], h["checkout"]),
         (t["f_addr"], h["address"][code]),
     ]
-    fact_rows = "".join(f'<div class="dl__row"><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in facts)
+    fact_rows = "".join(
+        f'<div class="dl__row"><dt>{esc(k)}</dt><dd>{esc(v if str(v).strip() else t["tbd"])}</dd></div>' for k, v in facts
+    )
 
     access = "".join(f"<li>{I_PIN}<span>{esc(a)}</span></li>" for a in h["access"][code])
     nearby = "".join(f'<span class="tag">{esc(x)}</span>' for x in h["nearby"][code])
@@ -652,8 +654,9 @@ def build_detail(lang, h):
         f'<span class="badge badge--soon">{esc(t["hotel_soon"])}</span>'
         if h.get("status") == "soon" else ""
     )
+    soon_text = h["opened"][code] or t["hotel_soon_note"]
     soon_note = (
-        f'<p class="searchbar__note">{I_INFO}<span>{esc(t["hotel_soon_note"])}</span></p>'
+        f'<p class="searchbar__note">{I_INFO}<span>{esc(soon_text)}</span></p>'
         if h.get("status") == "soon" else ""
     )
 

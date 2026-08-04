@@ -355,8 +355,28 @@
     // hotels.json
     const hBefore = state.original["data/hotels.json"] || [];
     const hAfter = state.draft["data/hotels.json"] || [];
-    hAfter.forEach((hotel, idx) => {
-      const before = hBefore[idx];
+    // 追加・削除・並べ替えがあってもズレないように、URL用の名前（slug）で突き合わせる
+    const nameOf = (x) => (x && x.name && x.name.ja ? x.name.ja : (x || {}).slug || "");
+    const beforeSlugs = hBefore.map((x) => x.slug);
+    const afterSlugs = hAfter.map((x) => x.slug);
+    for (const hotel of hAfter) {
+      if (!beforeSlugs.includes(hotel.slug)) {
+        out.push({ label: "ホテルを追加", before: "（なし）", after: `${nameOf(hotel)}（/hotels/${hotel.slug}）` });
+      }
+    }
+    for (const old of hBefore) {
+      if (!afterSlugs.includes(old.slug)) {
+        out.push({ label: "ホテルを削除", before: `${nameOf(old)}（/hotels/${old.slug}）`, after: "（なし）" });
+      }
+    }
+    const commonBefore = beforeSlugs.filter((x) => afterSlugs.includes(x));
+    const commonAfter = afterSlugs.filter((x) => beforeSlugs.includes(x));
+    if (JSON.stringify(commonBefore) !== JSON.stringify(commonAfter)) {
+      const label = (slugs) => slugs.map((sl) => nameOf(hAfter.find((x) => x.slug === sl) || hBefore.find((x) => x.slug === sl))).join(" → ");
+      out.push({ label: "ホテルの並び順", before: label(commonBefore), after: label(commonAfter) });
+    }
+    hAfter.forEach((hotel) => {
+      const before = hBefore.find((x) => x.slug === hotel.slug);
       if (!before) return;
       if (JSON.stringify(before) !== JSON.stringify(hotel)) {
         const keys = new Set();
@@ -642,6 +662,7 @@
     if (state.modal === "diff") root.appendChild(renderDiffModal());
     if (state.modal === "conflict") root.appendChild(renderConflictModal());
     if (state.picker) root.appendChild(renderImagePicker());
+    if (state.deleteHotel) root.appendChild(renderDeleteHotelModal());
 
     // textarea 自動高さ調整
     root.querySelectorAll("textarea[data-autogrow]").forEach((t) => autoGrow(t));
@@ -830,6 +851,19 @@
     );
     items.push(h("div", { class: "side-sep" }));
     items.push(h("div", { class: "side-group-title" }, "ホテル"));
+    items.push(
+      h(
+        "button",
+        {
+          class: "side-item side-item--sub" + (state.currentPage && state.currentPage.kind === "hotelsManage" ? " active" : ""),
+          onClick: () => {
+            state.currentPage = { kind: "hotelsManage" };
+            render();
+          },
+        },
+        ["追加・並び替え・削除"]
+      )
+    );
     const hotels = state.draft["data/hotels.json"] || [];
     for (const hotel of hotels) {
       items.push(
@@ -883,6 +917,9 @@
     }
     if (state.currentPage.kind === "images") {
       return renderImagesPage();
+    }
+    if (state.currentPage.kind === "hotelsManage") {
+      return renderHotelsManagePage();
     }
     if (state.currentPage.kind === "hotel") {
       return renderHotelPage();
@@ -1551,6 +1588,226 @@
     return h("div", null, [
       h("div", { class: "obj-cards" }, cards),
       readOnly ? h("div", { class: "trans-note" }, "項目の追加・削除・並べ替えは日本語タブで行ってください。") : addBtn,
+    ]);
+  }
+
+  // ============================================================ ホテルの追加・並び替え・削除
+
+  const SLUG_OK = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/;
+
+  /** 既存ホテルの形をそのまま借りて、文字と項目を空にした「白紙のホテル」を作る */
+  function blankHotelFrom(src) {
+    const emptyOut = (v) => {
+      if (Array.isArray(v)) return [];
+      if (v && typeof v === "object") {
+        const out = {};
+        for (const k of Object.keys(v)) out[k] = emptyOut(v[k]);
+        return out;
+      }
+      if (typeof v === "number") return 0;
+      return "";
+    };
+    const t = emptyOut(deepClone(src || {}));
+    // 言語別の項目は日本語だけ残す（他言語は保存時に自動翻訳される）
+    for (const k of Object.keys(t)) {
+      const orig = src ? src[k] : null;
+      if (orig && typeof orig === "object" && !Array.isArray(orig) && "ja" in orig) {
+        t[k] = Array.isArray(orig.ja) ? { ja: [] } : { ja: "" };
+      }
+    }
+    return t;
+  }
+
+  function newHotelSlugError(slug) {
+    const hotels = state.draft["data/hotels.json"] || [];
+    if (!slug) return "URL用の名前を入れてください。";
+    if (!SLUG_OK.test(slug)) return "半角小文字・数字・ハイフンのみ、3文字以上で入れてください（例: shibuya-east）。";
+    if (hotels.some((x) => x.slug === slug)) return "同じURL用の名前のホテルがすでにあります。";
+    return "";
+  }
+
+  function renderHotelsManagePage() {
+    const hotels = state.draft["data/hotels.json"] || [];
+    const before = state.original["data/hotels.json"] || [];
+    const orderChanged = JSON.stringify(before.map((x) => x.slug)) !== JSON.stringify(hotels.map((x) => x.slug));
+    const nh = state.newHotel || { slug: "", name: "", area: "tokyo", brand: (hotels[0] || {}).brand || "hotel" };
+    state.newHotel = nh;
+    const slugErr = nh.slug || nh.name ? newHotelSlugError(nh.slug) : "";
+
+    const move = (idx, delta) => {
+      const copy = hotels.slice();
+      [copy[idx + delta], copy[idx]] = [copy[idx], copy[idx + delta]];
+      state.draft["data/hotels.json"] = copy;
+      render();
+    };
+
+    const rows = hotels.map((hotel, idx) =>
+      h("div", { class: "hm-row" }, [
+        h("span", { class: "hm-no" }, String(idx + 1)),
+        h("div", { class: "hm-body" }, [
+          h("div", { class: "hm-name" }, (hotel.name && hotel.name.ja) || hotel.slug),
+          h("div", { class: "hm-meta" }, `${AREA_LABEL[hotel.area] || hotel.area} ・ ${STATUS_LABEL[hotel.status] || hotel.status} ・ /hotels/${hotel.slug}`),
+        ]),
+        h("div", { class: "hm-ctrl" }, [
+          h("button", { class: "btn btn-icon btn-ghost", title: "上へ", disabled: idx === 0, onClick: () => move(idx, -1) }, "↑"),
+          h("button", { class: "btn btn-icon btn-ghost", title: "下へ", disabled: idx === hotels.length - 1, onClick: () => move(idx, 1) }, "↓"),
+          h(
+            "button",
+            {
+              class: "btn btn-sm btn-danger-ghost",
+              title: "削除",
+              onClick: () => {
+                state.deleteHotel = { slug: hotel.slug, name: (hotel.name && hotel.name.ja) || hotel.slug, confirm: "" };
+                render();
+              },
+            },
+            "削除"
+          ),
+        ]),
+      ])
+    );
+
+    const addForm = h("div", { class: "hm-add" }, [
+      h("h2", null, "ホテルを追加"),
+      h("p", { class: "hm-add-note" }, "追加したあと、左のメニューからそのホテルを選んで内容を入力してください。保存して公開すると5言語のページが自動で作られます。"),
+      h("div", { class: "hm-add-grid" }, [
+        h("label", null, [
+          h("span", { class: "field-label" }, "ホテル名（日本語）"),
+          h("input", {
+            type: "text",
+            value: nh.name,
+            placeholder: "ELE Hotel 渋谷イースト",
+            onInput: (e) => {
+              nh.name = e.target.value;
+            },
+          }),
+        ]),
+        h("label", null, [
+          h("span", { class: "field-label" }, "URL用の名前（半角英数字）"),
+          h("input", {
+            type: "text",
+            value: nh.slug,
+            placeholder: "shibuya-east",
+            onInput: (e) => {
+              nh.slug = e.target.value.trim().toLowerCase();
+              const box = document.getElementById("hmSlugMsg");
+              const btn = document.getElementById("hmAddBtn");
+              const msg = newHotelSlugError(nh.slug);
+              if (box) {
+                box.textContent = msg;
+                box.hidden = !msg;
+              }
+              if (btn) btn.disabled = Boolean(msg);
+            },
+          }),
+          h("span", { class: "hm-url-preview" }, `公開URL: /hotels/${nh.slug || "○○○"}.html`),
+        ]),
+        h("label", null, [
+          h("span", { class: "field-label" }, "エリア"),
+          (() => {
+            const sel = h(
+              "select",
+              { onChange: (e) => (nh.area = e.target.value) },
+              Object.keys(AREA_LABEL).map((k) => h("option", { value: k }, AREA_LABEL[k]))
+            );
+            sel.value = nh.area;
+            return sel;
+          })(),
+        ]),
+      ]),
+      h("div", { class: "up-err", id: "hmSlugMsg", hidden: !slugErr }, slugErr),
+      h(
+        "button",
+        {
+          class: "btn btn-primary",
+          id: "hmAddBtn",
+          disabled: Boolean(newHotelSlugError(nh.slug)),
+          onClick: () => {
+            const msg = newHotelSlugError(nh.slug);
+            if (msg) return;
+            const copy = hotels.slice();
+            const fresh = blankHotelFrom(copy[0]);
+            fresh.slug = nh.slug;
+            fresh.area = nh.area;
+            fresh.status = "soon";
+            fresh.brand = nh.brand || "hotel";
+            if (fresh.name && typeof fresh.name === "object") fresh.name.ja = nh.name || "";
+            else fresh.name = { ja: nh.name || "" };
+            copy.push(fresh);
+            state.draft["data/hotels.json"] = copy;
+            state.newHotel = { slug: "", name: "", area: "tokyo", brand: nh.brand };
+            state.currentPage = { kind: "hotel", slug: fresh.slug };
+            state.currentLang = "ja";
+            pushToast(`「${nh.name || nh.slug}」を追加しました。内容を入力して保存してください。`, "ok");
+            render();
+          },
+        },
+        "このホテルを追加"
+      ),
+    ]);
+
+    return h("main", { class: "main" }, [
+      h("div", { class: "main-inner" }, [
+        h("div", { class: "group-head" }, [
+          h("h1", null, "ホテルの追加・並び替え・削除"),
+          h("p", null, `全 ${hotels.length} 件${orderChanged ? "（並び順が未保存です）" : ""}`),
+        ]),
+        h("p", { class: "hm-lead" }, "この並び順が、トップページのホテル一覧とメニューの順番になります。"),
+        h("div", { class: "hm-list" }, rows),
+        addForm,
+      ]),
+    ]);
+  }
+
+  /** 削除は取り返しがつかないので、名前を打ち込ませてから確定する */
+  function renderDeleteHotelModal() {
+    const d = state.deleteHotel;
+    if (!d) return null;
+    const hotels = state.draft["data/hotels.json"] || [];
+    const ok = d.confirm.trim() === d.slug;
+    return h("div", { class: "modal-overlay", onClick: (e) => e.target.classList.contains("modal-overlay") && (state.deleteHotel = null, render()) }, [
+      h("div", { class: "modal" }, [
+        h("div", { class: "modal-head" }, [
+          h("h2", null, "ホテルを削除"),
+          h("button", { class: "btn btn-icon btn-ghost", onClick: () => ((state.deleteHotel = null), render()) }, "×"),
+        ]),
+        h("div", { class: "modal-body" }, [
+          h("p", null, `「${d.name}」を削除します。保存して公開すると、5言語のページ（/hotels/${d.slug}.html など）が消え、トップページの一覧からも外れます。`),
+          h("p", { class: "up-warn" }, "写真そのものは残ります。あとで元に戻すことはできません。"),
+          h("p", null, ["確認のため ", h("code", null, d.slug), " と入力してください。"]),
+          h("input", {
+            type: "text",
+            value: d.confirm,
+            placeholder: d.slug,
+            onInput: (e) => {
+              d.confirm = e.target.value;
+              const btn = document.getElementById("hmDelBtn");
+              if (btn) btn.disabled = e.target.value.trim() !== d.slug;
+            },
+          }),
+        ]),
+        h("div", { class: "modal-foot" }, [
+          h("button", { class: "btn btn-ghost", onClick: () => ((state.deleteHotel = null), render()) }, "やめる"),
+          h(
+            "button",
+            {
+              class: "btn btn-danger",
+              id: "hmDelBtn",
+              disabled: !ok,
+              onClick: () => {
+                state.draft["data/hotels.json"] = hotels.filter((x) => x.slug !== d.slug);
+                if (state.currentPage && state.currentPage.kind === "hotel" && state.currentPage.slug === d.slug) {
+                  state.currentPage = { kind: "hotelsManage" };
+                }
+                state.deleteHotel = null;
+                pushToast(`「${d.name}」を削除しました。保存して公開すると反映されます。`, "ok");
+                render();
+              },
+            },
+            "削除する"
+          ),
+        ]),
+      ]),
     ]);
   }
 

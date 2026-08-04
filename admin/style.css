@@ -1049,3 +1049,42 @@ textarea {
   .card-head { flex-wrap: wrap; }
   .img-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
 }
+
+/* ---------- ホテルの追加・並び替え・削除 ---------- */
+.side-item--sub { font-size: 13px; color: var(--text-sub); }
+.hm-lead { color: var(--text-sub); font-size: 13px; margin: 0 0 16px; }
+.hm-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+.hm-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+}
+.hm-no {
+  flex: 0 0 26px; height: 26px; border-radius: 50%;
+  background: var(--accent-tint); color: var(--accent-dark);
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.hm-body { flex: 1 1 auto; min-width: 0; }
+.hm-name { font-weight: 600; font-size: 14px; }
+.hm-meta { color: var(--text-sub); font-size: 12px; margin-top: 2px; word-break: break-all; }
+.hm-ctrl { flex: 0 0 auto; display: flex; align-items: center; gap: 4px; }
+.btn-danger-ghost { background: transparent; border-color: var(--border); color: var(--danger); }
+.btn-danger-ghost:hover:not(:disabled) { background: var(--danger-tint); border-color: var(--danger); }
+.hm-add {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.hm-add h2 { font-size: 15px; margin: 0 0 6px; }
+.hm-add-note { color: var(--text-sub); font-size: 13px; margin: 0 0 16px; line-height: 1.7; }
+.hm-add-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 12px; }
+.hm-add-grid label { display: flex; flex-direction: column; gap: 6px; }
+.hm-url-preview { color: var(--text-sub); font-size: 12px; word-break: break-all; }
+.modal-body code {
+  background: var(--accent-tint); color: var(--accent-dark);
+  padding: 1px 6px; border-radius: 4px; font-size: 13px;
+}
+@media (max-width: 720px) {
+  .hm-row { flex-wrap: wrap; }
+  .hm-ctrl { width: 100%; justify-content: flex-end; }
+}

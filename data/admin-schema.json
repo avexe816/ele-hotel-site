@@ -494,7 +494,7 @@
     },
     "hotel_soon_note": {
       "group": "detail",
-      "label": "hotel_soon_note",
+      "label": "開業予定の案内文（各ホテルの「開業」欄が空のときに表示）",
       "kind": "text"
     },
     "f_fax": {
