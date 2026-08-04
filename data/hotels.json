@@ -709,7 +709,8 @@
         "detail": {
           "ja": "16㎡"
         },
-        "cap": 2
+        "cap": 2,
+        "img": "kusuha-semidouble"
       },
       {
         "name": {
@@ -738,7 +739,8 @@
         "detail": {
           "ja": "24.95〜33.53㎡"
         },
-        "cap": 3
+        "cap": 3,
+        "img": "kuzuha-03"
       },
       {
         "name": {
@@ -747,7 +749,8 @@
         "detail": {
           "ja": "5階・浴槽つき"
         },
-        "cap": 2
+        "cap": 2,
+        "img": "kuzha-05"
       }
     ],
     "booking": {
