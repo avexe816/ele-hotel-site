@@ -116,8 +116,12 @@ async function verifyAccess(env, request) {
 }
 
 // 認証済みのメールアドレスを返す。未認証なら null。
+// 許可リストから外れたメールは、有効なクッキーを持っていても通さない
+//（担当者が代わったら ADMIN_EMAILS から消すだけで即座に無効になる）。
 async function whoami(env, request) {
-  return (await verifyAccess(env, request)) || (await readSession(env, request));
+  const email = (await verifyAccess(env, request)) || (await readSession(env, request));
+  if (!email) return null;
+  return allowedEmails(env).includes(String(email).toLowerCase()) ? email : null;
 }
 
 // ------------------------------------------------------------------ GitHub
@@ -142,6 +146,16 @@ async function ghJson(env, path, init) {
 }
 
 const repo = (env) => env.GH_REPO || "avexe816/ele-hotel-site";
+
+// ログインを許可するメールアドレス。Cloudflare の ADMIN_EMAILS（カンマ区切り）で設定する。
+// 未設定のときは締め出されないように最低限の1件だけを既定値にする。
+const DEFAULT_ADMIN_EMAILS = ["ukh816@gmail.com"];
+
+function allowedEmails(env) {
+  const raw = String(env.ADMIN_EMAILS || "").trim();
+  const list = raw ? raw.split(/[,\s;]+/) : DEFAULT_ADMIN_EMAILS;
+  return list.map((x) => x.trim().toLowerCase()).filter(Boolean);
+}
 
 // 一度に必要なファイルをまとめて読む
 async function loadBundle(env) {
@@ -236,11 +250,16 @@ async function handleAdmin(request, env, url) {
       body = await request.json();
     } catch (_) {}
     const pw = String(body.password || "");
-    if (pw.length > 200 || !timingSafeEqual(pw.padEnd(200, "\0"), String(env.ADMIN_PASSWORD).padEnd(200, "\0"))) {
-      await new Promise((r) => setTimeout(r, 700));
-      return J({ ok: false, error: "bad_password" }, 401);
+    const email = String(body.email || "").trim().slice(0, 120).toLowerCase();
+    const allow = allowedEmails(env);
+
+    // メールとパスワードの両方を確認する。どちらが違うかは返さない（総当たりの手がかりを与えない）。
+    const emailOk = allow.includes(email);
+    const pwOk = pw.length <= 200 && timingSafeEqual(pw.padEnd(200, "\0"), String(env.ADMIN_PASSWORD).padEnd(200, "\0"));
+    if (!emailOk || !pwOk) {
+      await new Promise((r) => setTimeout(r, 1200));
+      return J({ ok: false, error: "bad_credentials" }, 401);
     }
-    const email = String(body.email || "").slice(0, 120) || "admin@ele-hotel.com";
     const token = await makeSession(env, email);
     return new Response(JSON.stringify({ ok: true, email }), {
       headers: {
@@ -270,6 +289,7 @@ async function handleAdmin(request, env, url) {
       translator: Boolean(env.AI),
       hasSecret: Boolean(env.ADMIN_SECRET),
       hasPassword: Boolean(env.ADMIN_PASSWORD),
+      emailsConfigured: Boolean(String(env.ADMIN_EMAILS || "").trim()),
       repo: repo(env),
     });
   }

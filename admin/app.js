@@ -695,6 +695,8 @@
       type: "email",
       id: "loginEmail",
       placeholder: "yamada@ele-hotel.com",
+      autocomplete: "username",
+      required: true,
       value: emailVal,
       onInput: (e) => (emailVal = e.target.value),
     });
@@ -702,6 +704,8 @@
       type: "password",
       id: "loginPw",
       placeholder: "パスワード",
+      autocomplete: "current-password",
+      required: true,
       value: pwVal,
       onInput: (e) => (pwVal = e.target.value),
     });
@@ -712,20 +716,21 @@
         onSubmit: (e) => {
           e.preventDefault();
           if (state.loggingIn) return;
+          if (!emailVal.trim() || !pwVal) {
+            state.loginError = "メールアドレスとパスワードを入力してください。";
+            render();
+            return;
+          }
           handleLoginSubmit(emailVal.trim(), pwVal);
         },
       },
       [
         h("div", { class: "login-field" }, [
-          h("label", { for: "loginEmail" }, ["お名前・メールアドレス ", h("span", { class: "login-opt" }, "（任意）")]),
+          h("label", { for: "loginEmail" }, "メールアドレス"),
           emailInput,
-          h("div", { class: "login-hint" }, "「誰が更新したか」の記録に使います。空欄でもログインできます。"),
+          h("div", { class: "login-hint" }, "登録済みのアドレスのみログインできます。"),
         ]),
-        h("div", { class: "login-field" }, [
-          h("label", { for: "loginPw" }, "パスワード"),
-          pwInput,
-          h("div", { class: "login-hint" }, "全員で共通のパスワードです。"),
-        ]),
+        h("div", { class: "login-field" }, [h("label", { for: "loginPw" }, "パスワード"), pwInput]),
         state.loginError ? h("div", { class: "login-error" }, state.loginError) : null,
         h(
           "button",
