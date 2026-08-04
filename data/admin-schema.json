@@ -1,0 +1,1129 @@
+{
+  "groups": [
+    {
+      "id": "top",
+      "name": "トップページ",
+      "desc": "サイトの入口。ヒーロー、空室検索、ホテル一覧の導入文など。"
+    },
+    {
+      "id": "rooms",
+      "name": "客室・設備セクション",
+      "desc": "トップページの「客室と設備」ブロック。"
+    },
+    {
+      "id": "news",
+      "name": "お知らせ",
+      "desc": "トップページの新着情報。"
+    },
+    {
+      "id": "faq",
+      "name": "よくあるご質問",
+      "desc": "トップページの FAQ。"
+    },
+    {
+      "id": "brand",
+      "name": "ブランドページ",
+      "desc": "ELE HOTEL ブランドシリーズの紹介ページ。"
+    },
+    {
+      "id": "contactp",
+      "name": "お問い合わせページ",
+      "desc": "フォームの項目名・エラー文言・完了メッセージ。"
+    },
+    {
+      "id": "privacy",
+      "name": "プライバシーポリシー",
+      "desc": "各条文の見出しと本文。"
+    },
+    {
+      "id": "detail",
+      "name": "ホテル詳細ページの見出し",
+      "desc": "全ホテル共通で使われる見出し・項目名。"
+    },
+    {
+      "id": "booking",
+      "name": "予約ブロック",
+      "desc": "空室検索フォームまわりの文言。"
+    },
+    {
+      "id": "common",
+      "name": "共通・ナビ・フッター",
+      "desc": "ヘッダーメニュー、ボタン、フッター。"
+    }
+  ],
+  "site": {
+    "meta_title": {
+      "group": "top",
+      "label": "ページタイトル（検索結果に出る文字）",
+      "kind": "text"
+    },
+    "meta_desc": {
+      "group": "top",
+      "label": "ページ説明文（検索結果に出る文字）",
+      "kind": "textarea"
+    },
+    "nav.hotels": {
+      "group": "common",
+      "label": "hotels",
+      "kind": "text"
+    },
+    "nav.brand": {
+      "group": "common",
+      "label": "brand",
+      "kind": "text"
+    },
+    "nav.rooms": {
+      "group": "common",
+      "label": "rooms",
+      "kind": "text"
+    },
+    "nav.news": {
+      "group": "common",
+      "label": "news",
+      "kind": "text"
+    },
+    "nav.faq": {
+      "group": "common",
+      "label": "faq",
+      "kind": "text"
+    },
+    "nav.contact": {
+      "group": "common",
+      "label": "contact",
+      "kind": "text"
+    },
+    "cta_book": {
+      "group": "common",
+      "label": "「予約する」ボタン",
+      "kind": "text"
+    },
+    "cta_detail": {
+      "group": "common",
+      "label": "「詳しく見る」ボタン",
+      "kind": "text"
+    },
+    "hero_eyebrow": {
+      "group": "top",
+      "label": "ヒーロー上の小見出し",
+      "kind": "text"
+    },
+    "hero_title": {
+      "group": "top",
+      "label": "ヒーロー大見出し",
+      "kind": "textarea"
+    },
+    "hero_lead": {
+      "group": "top",
+      "label": "ヒーロー本文",
+      "kind": "textarea"
+    },
+    "search_title": {
+      "group": "booking",
+      "label": "空室検索の見出し",
+      "kind": "text"
+    },
+    "search_area": {
+      "group": "booking",
+      "label": "search_area",
+      "kind": "text"
+    },
+    "search_area_any": {
+      "group": "booking",
+      "label": "search_area_any",
+      "kind": "text"
+    },
+    "search_in": {
+      "group": "booking",
+      "label": "search_in",
+      "kind": "text"
+    },
+    "search_out": {
+      "group": "booking",
+      "label": "search_out",
+      "kind": "text"
+    },
+    "search_guests": {
+      "group": "booking",
+      "label": "search_guests",
+      "kind": "text"
+    },
+    "search_guest_unit": {
+      "group": "booking",
+      "label": "search_guest_unit",
+      "kind": "text"
+    },
+    "search_submit": {
+      "group": "booking",
+      "label": "search_submit",
+      "kind": "text"
+    },
+    "search_note": {
+      "group": "booking",
+      "label": "空室検索の注記",
+      "kind": "textarea"
+    },
+    "hotels_eyebrow": {
+      "group": "top",
+      "label": "ホテル一覧の小見出し",
+      "kind": "text"
+    },
+    "hotels_title": {
+      "group": "top",
+      "label": "ホテル一覧の見出し",
+      "kind": "text"
+    },
+    "hotels_lead": {
+      "group": "top",
+      "label": "ホテル一覧の説明文",
+      "kind": "text"
+    },
+    "filter_all": {
+      "group": "top",
+      "label": "filter_all",
+      "kind": "text"
+    },
+    "filter_tokyo": {
+      "group": "top",
+      "label": "filter_tokyo",
+      "kind": "text"
+    },
+    "filter_osaka": {
+      "group": "top",
+      "label": "filter_osaka",
+      "kind": "text"
+    },
+    "rooms_eyebrow": {
+      "group": "rooms",
+      "label": "客室・設備の小見出し",
+      "kind": "text"
+    },
+    "rooms_title": {
+      "group": "rooms",
+      "label": "客室・設備の見出し",
+      "kind": "text"
+    },
+    "rooms_lead": {
+      "group": "rooms",
+      "label": "客室・設備の説明文",
+      "kind": "text"
+    },
+    "rooms_cards": {
+      "group": "rooms",
+      "label": "客室・設備カード",
+      "kind": "list-obj"
+    },
+    "news_eyebrow": {
+      "group": "news",
+      "label": "news_eyebrow",
+      "kind": "text"
+    },
+    "news_title": {
+      "group": "news",
+      "label": "news_title",
+      "kind": "text"
+    },
+    "news": {
+      "group": "news",
+      "label": "お知らせ一覧",
+      "kind": "list-obj"
+    },
+    "faq_eyebrow": {
+      "group": "faq",
+      "label": "faq_eyebrow",
+      "kind": "text"
+    },
+    "faq_title": {
+      "group": "faq",
+      "label": "faq_title",
+      "kind": "text"
+    },
+    "faq": {
+      "group": "faq",
+      "label": "質問と回答",
+      "kind": "list-obj"
+    },
+    "contact_title": {
+      "group": "top",
+      "label": "お問い合わせ見出し",
+      "kind": "text"
+    },
+    "contact_lead": {
+      "group": "top",
+      "label": "お問い合わせ説明文",
+      "kind": "textarea"
+    },
+    "contact_owner": {
+      "group": "top",
+      "label": "物件オーナー向け見出し",
+      "kind": "text"
+    },
+    "contact_owner_d": {
+      "group": "top",
+      "label": "物件オーナー向け本文",
+      "kind": "text"
+    },
+    "contact_career": {
+      "group": "top",
+      "label": "採用の見出し",
+      "kind": "text"
+    },
+    "contact_career_d": {
+      "group": "top",
+      "label": "採用の本文",
+      "kind": "text"
+    },
+    "footer_hotels": {
+      "group": "common",
+      "label": "フッター：ホテル一覧",
+      "kind": "text"
+    },
+    "footer_info": {
+      "group": "common",
+      "label": "フッター：インフォメーション",
+      "kind": "text"
+    },
+    "footer_note": {
+      "group": "common",
+      "label": "フッター注記",
+      "kind": "text"
+    },
+    "rights": {
+      "group": "common",
+      "label": "著作権表示",
+      "kind": "text"
+    },
+    "detail_facts": {
+      "group": "detail",
+      "label": "detail_facts",
+      "kind": "text"
+    },
+    "detail_access": {
+      "group": "detail",
+      "label": "detail_access",
+      "kind": "text"
+    },
+    "detail_rooms": {
+      "group": "detail",
+      "label": "detail_rooms",
+      "kind": "text"
+    },
+    "detail_facilities": {
+      "group": "detail",
+      "label": "設備セクション見出し",
+      "kind": "text"
+    },
+    "detail_nearby": {
+      "group": "detail",
+      "label": "detail_nearby",
+      "kind": "text"
+    },
+    "detail_book": {
+      "group": "detail",
+      "label": "detail_book",
+      "kind": "text"
+    },
+    "detail_book_note": {
+      "group": "detail",
+      "label": "detail_book_note",
+      "kind": "text"
+    },
+    "detail_map": {
+      "group": "detail",
+      "label": "detail_map",
+      "kind": "text"
+    },
+    "detail_others": {
+      "group": "detail",
+      "label": "detail_others",
+      "kind": "text"
+    },
+    "f_rooms": {
+      "group": "detail",
+      "label": "f_rooms",
+      "kind": "text"
+    },
+    "f_open": {
+      "group": "detail",
+      "label": "f_open",
+      "kind": "text"
+    },
+    "f_in": {
+      "group": "detail",
+      "label": "f_in",
+      "kind": "text"
+    },
+    "f_out": {
+      "group": "detail",
+      "label": "f_out",
+      "kind": "text"
+    },
+    "f_tel": {
+      "group": "detail",
+      "label": "f_tel",
+      "kind": "text"
+    },
+    "f_addr": {
+      "group": "detail",
+      "label": "f_addr",
+      "kind": "text"
+    },
+    "f_price": {
+      "group": "detail",
+      "label": "f_price",
+      "kind": "text"
+    },
+    "f_price_unit": {
+      "group": "detail",
+      "label": "f_price_unit",
+      "kind": "text"
+    },
+    "unit_rooms": {
+      "group": "detail",
+      "label": "unit_rooms",
+      "kind": "text"
+    },
+    "back_home": {
+      "group": "detail",
+      "label": "back_home",
+      "kind": "text"
+    },
+    "filter_sendai": {
+      "group": "top",
+      "label": "filter_sendai",
+      "kind": "text"
+    },
+    "brand_eyebrow": {
+      "group": "brand",
+      "label": "brand_eyebrow",
+      "kind": "text"
+    },
+    "brand_title": {
+      "group": "brand",
+      "label": "brand_title",
+      "kind": "text"
+    },
+    "brand_kicker": {
+      "group": "brand",
+      "label": "brand_kicker",
+      "kind": "text"
+    },
+    "brand_lead": {
+      "group": "brand",
+      "label": "brand_lead",
+      "kind": "textarea"
+    },
+    "values": {
+      "group": "brand",
+      "label": "ブランドの価値（3項目）",
+      "kind": "list-obj"
+    },
+    "brands": {
+      "group": "brand",
+      "label": "ブランドシリーズ（4種）",
+      "kind": "list-obj"
+    },
+    "brand_soon": {
+      "group": "brand",
+      "label": "「準備中」表示",
+      "kind": "text"
+    },
+    "contact_eyebrow": {
+      "group": "top",
+      "label": "お問い合わせの小見出し",
+      "kind": "text"
+    },
+    "operator_link": {
+      "group": "common",
+      "label": "運営会社サイトのリンク文言",
+      "kind": "text"
+    },
+    "detail_gallery": {
+      "group": "detail",
+      "label": "detail_gallery",
+      "kind": "text"
+    },
+    "photo_soon": {
+      "group": "detail",
+      "label": "photo_soon",
+      "kind": "text"
+    },
+    "gallery_note": {
+      "group": "detail",
+      "label": "gallery_note",
+      "kind": "text"
+    },
+    "rooms_note": {
+      "group": "rooms",
+      "label": "rooms_note",
+      "kind": "text"
+    },
+    "amenity_note": {
+      "group": "rooms",
+      "label": "設備・アメニティの注記",
+      "kind": "text"
+    },
+    "rt_size": {
+      "group": "rooms",
+      "label": "rt_size",
+      "kind": "text"
+    },
+    "rt_cap": {
+      "group": "rooms",
+      "label": "rt_cap",
+      "kind": "text"
+    },
+    "rt_cap_unit": {
+      "group": "rooms",
+      "label": "rt_cap_unit",
+      "kind": "text"
+    },
+    "filter_nagoya": {
+      "group": "top",
+      "label": "filter_nagoya",
+      "kind": "text"
+    },
+    "tbd": {
+      "group": "detail",
+      "label": "未入力時に表示する文字",
+      "kind": "text"
+    },
+    "hotel_soon": {
+      "group": "detail",
+      "label": "hotel_soon",
+      "kind": "text"
+    },
+    "hotel_soon_note": {
+      "group": "detail",
+      "label": "hotel_soon_note",
+      "kind": "text"
+    },
+    "f_fax": {
+      "group": "detail",
+      "label": "f_fax",
+      "kind": "text"
+    },
+    "lang_label": {
+      "group": "common",
+      "label": "言語切替のラベル",
+      "kind": "text"
+    },
+    "photo_labels.ext": {
+      "group": "rooms",
+      "label": "ext",
+      "kind": "text"
+    },
+    "photo_labels.lobby": {
+      "group": "rooms",
+      "label": "lobby",
+      "kind": "text"
+    },
+    "photo_labels.desk": {
+      "group": "rooms",
+      "label": "desk",
+      "kind": "text"
+    },
+    "photo_labels.room": {
+      "group": "rooms",
+      "label": "room",
+      "kind": "text"
+    },
+    "photo_labels.bath": {
+      "group": "rooms",
+      "label": "bath",
+      "kind": "text"
+    },
+    "photo_labels.shower": {
+      "group": "rooms",
+      "label": "shower",
+      "kind": "text"
+    },
+    "photo_labels.locker": {
+      "group": "rooms",
+      "label": "locker",
+      "kind": "text"
+    },
+    "photo_labels.wash": {
+      "group": "rooms",
+      "label": "wash",
+      "kind": "text"
+    },
+    "photo_labels.laundry": {
+      "group": "rooms",
+      "label": "laundry",
+      "kind": "text"
+    },
+    "photo_labels.dining": {
+      "group": "rooms",
+      "label": "dining",
+      "kind": "text"
+    },
+    "photo_labels.amenity": {
+      "group": "rooms",
+      "label": "amenity",
+      "kind": "text"
+    },
+    "photo_labels.cabin": {
+      "group": "rooms",
+      "label": "cabin",
+      "kind": "text"
+    },
+    "bk_title": {
+      "group": "booking",
+      "label": "bk_title",
+      "kind": "text"
+    },
+    "bk_note": {
+      "group": "booking",
+      "label": "bk_note",
+      "kind": "text"
+    },
+    "bk_date": {
+      "group": "booking",
+      "label": "bk_date",
+      "kind": "text"
+    },
+    "bk_guests": {
+      "group": "booking",
+      "label": "bk_guests",
+      "kind": "text"
+    },
+    "bk_nights": {
+      "group": "booking",
+      "label": "bk_nights",
+      "kind": "text"
+    },
+    "bk_rooms": {
+      "group": "booking",
+      "label": "bk_rooms",
+      "kind": "text"
+    },
+    "bk_search": {
+      "group": "booking",
+      "label": "bk_search",
+      "kind": "text"
+    },
+    "bk_direct": {
+      "group": "booking",
+      "label": "bk_direct",
+      "kind": "text"
+    },
+    "bk_unit_guest": {
+      "group": "booking",
+      "label": "bk_unit_guest",
+      "kind": "text"
+    },
+    "bk_unit_night": {
+      "group": "booking",
+      "label": "bk_unit_night",
+      "kind": "text"
+    },
+    "bk_unit_room": {
+      "group": "booking",
+      "label": "bk_unit_room",
+      "kind": "text"
+    },
+    "bk_ota_head": {
+      "group": "booking",
+      "label": "bk_ota_head",
+      "kind": "text"
+    },
+    "bk_tel_head": {
+      "group": "booking",
+      "label": "bk_tel_head",
+      "kind": "text"
+    },
+    "privacy.nav": {
+      "group": "privacy",
+      "label": "nav",
+      "kind": "text"
+    },
+    "privacy.meta_title": {
+      "group": "privacy",
+      "label": "meta_title",
+      "kind": "text"
+    },
+    "privacy.meta_desc": {
+      "group": "privacy",
+      "label": "meta_desc",
+      "kind": "textarea"
+    },
+    "privacy.eyebrow": {
+      "group": "privacy",
+      "label": "eyebrow",
+      "kind": "text"
+    },
+    "privacy.title": {
+      "group": "privacy",
+      "label": "title",
+      "kind": "text"
+    },
+    "privacy.lead": {
+      "group": "privacy",
+      "label": "lead",
+      "kind": "textarea"
+    },
+    "privacy.sections": {
+      "group": "privacy",
+      "label": "sections",
+      "kind": "list-obj"
+    },
+    "privacy.contact_h": {
+      "group": "privacy",
+      "label": "contact_h",
+      "kind": "text"
+    },
+    "privacy.contact_rows": {
+      "group": "privacy",
+      "label": "contact_rows",
+      "kind": "list-obj"
+    },
+    "privacy.contact_note": {
+      "group": "privacy",
+      "label": "contact_note",
+      "kind": "text"
+    },
+    "privacy.back": {
+      "group": "privacy",
+      "label": "back",
+      "kind": "text"
+    },
+    "rooms_note_partial": {
+      "group": "rooms",
+      "label": "rooms_note_partial",
+      "kind": "text"
+    },
+    "rooms_note_spec": {
+      "group": "rooms",
+      "label": "rooms_note_spec",
+      "kind": "text"
+    },
+    "search_note_link": {
+      "group": "booking",
+      "label": "search_note_link",
+      "kind": "text"
+    },
+    "contact_cta": {
+      "group": "top",
+      "label": "お問い合わせボタン",
+      "kind": "text"
+    },
+    "contact_page.meta_title": {
+      "group": "contactp",
+      "label": "meta_title",
+      "kind": "text"
+    },
+    "contact_page.meta_desc": {
+      "group": "contactp",
+      "label": "meta_desc",
+      "kind": "textarea"
+    },
+    "contact_page.eyebrow": {
+      "group": "contactp",
+      "label": "eyebrow",
+      "kind": "text"
+    },
+    "contact_page.title": {
+      "group": "contactp",
+      "label": "title",
+      "kind": "text"
+    },
+    "contact_page.lead": {
+      "group": "contactp",
+      "label": "lead",
+      "kind": "textarea"
+    },
+    "contact_page.f_kind": {
+      "group": "contactp",
+      "label": "f_kind",
+      "kind": "text"
+    },
+    "contact_page.f_kind_ph": {
+      "group": "contactp",
+      "label": "f_kind_ph",
+      "kind": "text"
+    },
+    "contact_page.kinds": {
+      "group": "contactp",
+      "label": "kinds",
+      "kind": "list-text"
+    },
+    "contact_page.f_name": {
+      "group": "contactp",
+      "label": "f_name",
+      "kind": "text"
+    },
+    "contact_page.f_name_ph": {
+      "group": "contactp",
+      "label": "f_name_ph",
+      "kind": "text"
+    },
+    "contact_page.f_company": {
+      "group": "contactp",
+      "label": "f_company",
+      "kind": "text"
+    },
+    "contact_page.f_company_ph": {
+      "group": "contactp",
+      "label": "f_company_ph",
+      "kind": "text"
+    },
+    "contact_page.f_email": {
+      "group": "contactp",
+      "label": "f_email",
+      "kind": "text"
+    },
+    "contact_page.f_email_ph": {
+      "group": "contactp",
+      "label": "f_email_ph",
+      "kind": "text"
+    },
+    "contact_page.f_tel": {
+      "group": "contactp",
+      "label": "f_tel",
+      "kind": "text"
+    },
+    "contact_page.f_tel_ph": {
+      "group": "contactp",
+      "label": "f_tel_ph",
+      "kind": "text"
+    },
+    "contact_page.f_reply": {
+      "group": "contactp",
+      "label": "f_reply",
+      "kind": "text"
+    },
+    "contact_page.reply_opts": {
+      "group": "contactp",
+      "label": "reply_opts",
+      "kind": "list-text"
+    },
+    "contact_page.f_msg": {
+      "group": "contactp",
+      "label": "f_msg",
+      "kind": "text"
+    },
+    "contact_page.f_msg_ph": {
+      "group": "contactp",
+      "label": "f_msg_ph",
+      "kind": "text"
+    },
+    "contact_page.req": {
+      "group": "contactp",
+      "label": "req",
+      "kind": "text"
+    },
+    "contact_page.opt": {
+      "group": "contactp",
+      "label": "opt",
+      "kind": "text"
+    },
+    "contact_page.consent_pre": {
+      "group": "contactp",
+      "label": "consent_pre",
+      "kind": "text"
+    },
+    "contact_page.consent_link": {
+      "group": "contactp",
+      "label": "consent_link",
+      "kind": "text"
+    },
+    "contact_page.consent_post": {
+      "group": "contactp",
+      "label": "consent_post",
+      "kind": "text"
+    },
+    "contact_page.submit": {
+      "group": "contactp",
+      "label": "submit",
+      "kind": "text"
+    },
+    "contact_page.sending": {
+      "group": "contactp",
+      "label": "sending",
+      "kind": "text"
+    },
+    "contact_page.ok_title": {
+      "group": "contactp",
+      "label": "ok_title",
+      "kind": "text"
+    },
+    "contact_page.ok_text": {
+      "group": "contactp",
+      "label": "ok_text",
+      "kind": "textarea"
+    },
+    "contact_page.ok_again": {
+      "group": "contactp",
+      "label": "ok_again",
+      "kind": "text"
+    },
+    "contact_page.err_required": {
+      "group": "contactp",
+      "label": "err_required",
+      "kind": "text"
+    },
+    "contact_page.err_email": {
+      "group": "contactp",
+      "label": "err_email",
+      "kind": "text"
+    },
+    "contact_page.err_consent": {
+      "group": "contactp",
+      "label": "err_consent",
+      "kind": "text"
+    },
+    "contact_page.err_send": {
+      "group": "contactp",
+      "label": "err_send",
+      "kind": "text"
+    },
+    "contact_page.aside_tel_h": {
+      "group": "contactp",
+      "label": "aside_tel_h",
+      "kind": "text"
+    },
+    "contact_page.aside_tel_note": {
+      "group": "contactp",
+      "label": "aside_tel_note",
+      "kind": "text"
+    },
+    "contact_page.aside_hotel_h": {
+      "group": "contactp",
+      "label": "aside_hotel_h",
+      "kind": "text"
+    },
+    "contact_page.aside_hotel_note": {
+      "group": "contactp",
+      "label": "aside_hotel_note",
+      "kind": "text"
+    },
+    "contact_page.aside_hotel_link": {
+      "group": "contactp",
+      "label": "aside_hotel_link",
+      "kind": "text"
+    },
+    "contact_page.aside_privacy_h": {
+      "group": "contactp",
+      "label": "aside_privacy_h",
+      "kind": "text"
+    },
+    "contact_page.aside_privacy_note": {
+      "group": "contactp",
+      "label": "aside_privacy_note",
+      "kind": "text"
+    },
+    "contact_page.note": {
+      "group": "contactp",
+      "label": "note",
+      "kind": "text"
+    },
+    "contact_page.back": {
+      "group": "contactp",
+      "label": "back",
+      "kind": "text"
+    },
+    "nav_contact_page": {
+      "group": "contactp",
+      "label": "nav_contact_page",
+      "kind": "text"
+    },
+    "detail_equipment": {
+      "group": "detail",
+      "label": "客室設備の小見出し",
+      "kind": "text"
+    },
+    "detail_amenities": {
+      "group": "detail",
+      "label": "アメニティの小見出し",
+      "kind": "text"
+    }
+  },
+  "itemLabels": {
+    "rooms_cards": {
+      "img": "画像ID",
+      "t": "タイトル",
+      "d": "説明文"
+    },
+    "news": {
+      "date": "日付",
+      "tag": "タグ",
+      "t": "タイトル",
+      "d": "本文"
+    },
+    "faq": {
+      "q": "質問",
+      "a": "回答"
+    },
+    "values": {
+      "k": "キーワード",
+      "d": "説明"
+    },
+    "brands": {
+      "key": "識別子",
+      "name": "ブランド名",
+      "label": "ラベル",
+      "img": "画像ID",
+      "d": "説明"
+    },
+    "privacy.sections": {
+      "h": "見出し",
+      "items": "本文（箇条書き）"
+    },
+    "privacy.contact_rows": {
+      "k": "項目名",
+      "v": "内容"
+    },
+    "contact_page.kinds": {},
+    "contact_page.reply_opts": {}
+  },
+  "hotel": {
+    "name": {
+      "label": "ホテル名",
+      "kind": "text",
+      "i18n": true
+    },
+    "tagline": {
+      "label": "キャッチコピー",
+      "kind": "textarea",
+      "i18n": true
+    },
+    "area": {
+      "label": "エリア",
+      "kind": "select",
+      "options": [
+        "tokyo",
+        "osaka",
+        "nagoya",
+        "sendai"
+      ]
+    },
+    "status": {
+      "label": "公開状態",
+      "kind": "select",
+      "options": [
+        "open",
+        "soon"
+      ]
+    },
+    "rooms": {
+      "label": "客室数",
+      "kind": "number"
+    },
+    "opened": {
+      "label": "開業",
+      "kind": "text",
+      "i18n": true
+    },
+    "address": {
+      "label": "住所",
+      "kind": "textarea",
+      "i18n": true
+    },
+    "tel": {
+      "label": "電話番号",
+      "kind": "text"
+    },
+    "checkin": {
+      "label": "チェックイン",
+      "kind": "text"
+    },
+    "checkout": {
+      "label": "チェックアウト",
+      "kind": "text"
+    },
+    "price_from": {
+      "label": "料金目安",
+      "kind": "text"
+    },
+    "map_q": {
+      "label": "地図の検索語（英語住所）",
+      "kind": "text"
+    },
+    "access": {
+      "label": "アクセス",
+      "kind": "list-text",
+      "i18n": true
+    },
+    "facilities": {
+      "label": "客室設備・館内設備",
+      "kind": "facilities",
+      "i18n": true
+    },
+    "amenities": {
+      "label": "備品・アメニティ",
+      "kind": "facilities",
+      "i18n": true
+    },
+    "nearby": {
+      "label": "周辺スポット",
+      "kind": "list-text",
+      "i18n": true
+    },
+    "roomtypes": {
+      "label": "客室タイプ（テキスト）",
+      "kind": "list-text",
+      "i18n": true
+    },
+    "rtypes": {
+      "label": "客室タイプ（カード）",
+      "kind": "list-obj",
+      "item": {
+        "name": "名称",
+        "detail": "仕様",
+        "cap": "定員",
+        "img": "画像ID"
+      }
+    },
+    "gallery": {
+      "label": "ギャラリー写真",
+      "kind": "gallery",
+      "item": {
+        "img": "画像ID",
+        "label": "キャプション"
+      }
+    },
+    "ota": {
+      "label": "予約サイトリンク",
+      "kind": "list-obj",
+      "item": {
+        "label": "サイト名",
+        "url": "URL"
+      }
+    },
+    "img": {
+      "label": "メイン写真の画像ID",
+      "kind": "text"
+    },
+    "brand": {
+      "label": "ブランド区分",
+      "kind": "text"
+    },
+    "slug": {
+      "label": "URL（変更不可）",
+      "kind": "readonly"
+    }
+  },
+  "langs": [
+    {
+      "code": "ja",
+      "name": "日本語",
+      "source": true
+    },
+    {
+      "code": "zh",
+      "name": "简体中文"
+    },
+    {
+      "code": "zh-Hant",
+      "name": "繁體中文"
+    },
+    {
+      "code": "en",
+      "name": "English"
+    },
+    {
+      "code": "ko",
+      "name": "한국어"
+    }
+  ]
+}

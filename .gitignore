@@ -13,3 +13,6 @@ __pycache__/
 /en/
 /ko/
 /data/i18n-todo.json
+
+# build.py が src/ から自動生成する
+/_worker.js

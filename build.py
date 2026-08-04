@@ -1094,6 +1094,11 @@ def main():
             write(prefix + "hotels/" + h["slug"] + ".html", build_detail(lang, h))
             n += 1
     print(f"built {n} pages  ({', '.join(LANG_CODES)})")
+
+    # src/ のワーカーモジュールを _worker.js にまとめ直す
+    from tools import build_worker
+
+    print(f"built _worker.js ({build_worker.build()} bytes)")
     gaps = R.report()
     if gaps:
         with open(os.path.join(DATA, "i18n-todo.json"), "w", encoding="utf-8") as f:

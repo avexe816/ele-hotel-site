@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p dist
           cp -r index.html grand.html privacy.html contact.html \
-                _worker.js hotels zh zh-hant en ko assets dist/
+                _worker.js hotels zh zh-hant en ko assets admin dist/
           echo "--- dist ---"
           ls -1 dist
           echo "HTML pages: $(find dist -name '*.html' | wc -l)"
