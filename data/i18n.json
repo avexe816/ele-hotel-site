@@ -755,15 +755,6 @@
     "th": "",
     "locked": true
   },
-  "bb5637957cd2c1e8": {
-    "ja": "※ お問い合わせの内容により、ご返信までにお時間をいただく場合があります。",
-    "locked": false,
-    "zh": "※ 根据咨询内容，回复可能需要一些时间。",
-    "zh-Hant": "※ 根據諮詢內容，回覆可能需要一些時間。",
-    "en": "* Depending on the nature of your enquiry, our reply may take a little longer.",
-    "ko": "※ 문의 내용에 따라 답변까지 시간이 걸릴 수 있습니다.",
-    "th": ""
-  },
   "403d7d3c5c56b13f": {
     "ja": "「小田原一丁目」バス停より徒歩約1分",
     "zh": "「小田原一丁目」公交站步行约1分钟",
@@ -879,15 +870,6 @@
     "en": "Responding to enquiries, requests and feedback",
     "zh-Hant": "回應諮詢、要求及意見",
     "ko": "문의, 요청, 의견에 대한 대응",
-    "th": ""
-  },
-  "e8fca9543195d1f5": {
-    "ja": "お問い合わせいただきありがとうございます。確認のうえ、通常2営業日以内にご返信いたします。ご入力いただいたメールアドレスに自動返信は行っておりませんので、あらかじめご了承ください。",
-    "locked": false,
-    "zh": "感谢您的咨询。我们确认后通常会在 2 个工作日内回复。请注意，我们不会向您填写的邮箱发送自动回复邮件。",
-    "zh-Hant": "感謝您的諮詢。我們確認後通常會在 2 個工作日內回覆。請注意，我們不會向您填寫的郵箱傳送自動回覆郵件。",
-    "en": "Thank you for contacting us. We will review your message and reply within two business days. Please note that we do not send an automatic confirmation to the address you entered.",
-    "ko": "문의해 주셔서 감사합니다. 내용을 확인한 후 통상 2영업일 이내에 답변드립니다. 입력하신 이메일 주소로 자동 회신은 발송되지 않으니 양해 부탁드립니다.",
     "th": ""
   },
   "a7d29636e84a31c9": {
@@ -2108,15 +2090,6 @@
     "ko": "우에노 온시 공원・우에노 동물원",
     "th": "",
     "locked": true
-  },
-  "99bb1a4da35c29ac": {
-    "ja": "下記フォームよりお送りください。内容を確認のうえ、通常2営業日以内（土日祝・年末年始を除く）に担当者よりご返信いたします。",
-    "locked": false,
-    "zh": "请通过以下表单发送。我们确认内容后，通常会在 2 个工作日内（周六日、法定假日及年末年初除外）由负责人回复您。",
-    "zh-Hant": "請透過以下表單傳送。我們確認內容後，通常會在 2 個工作日內（週六日、法定假日及年末年初除外）由負責人回覆您。",
-    "en": "Please send your enquiry using the form below. We will review it and reply within two business days (excluding weekends, public holidays and the New Year period).",
-    "ko": "아래 양식으로 보내 주십시오. 내용을 확인한 후 통상 2영업일 이내(주말·공휴일·연말연시 제외)에 담당자가 답변드립니다.",
-    "th": ""
   },
   "8217671c3a9b1b18": {
     "ja": "中長期のご滞在に向いたアパートメント／ファミリールームのブランド。ご家族・カップル・親子でのご利用に、暮らすように過ごせる客室をご用意します。生活に必要な設備をひと通り備え、細部の心づかいで毎日を気持ちよく。",
@@ -4582,5 +4555,35 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "484eee940bf71210": {
+    "ja": "下記フォームよりお送りください。内容を確認のうえ、担当者より改めてご連絡いたします。",
+    "locked": true,
+    "zh": "请通过以下表单发送。我们确认内容后，将由负责人另行与您联系。",
+    "zh-Hant": "請透過以下表單傳送。我們確認內容後，將由負責人另行與您聯繫。",
+    "en": "Please send your enquiry using the form below. We will review it and a member of our team will be in touch.",
+    "ko": "아래 양식으로 보내 주십시오. 내용을 확인한 후 담당자가 다시 연락드립니다.",
+    "th": "",
+    "hant_manual": true
+  },
+  "e2ae85bdc5fd63cf": {
+    "ja": "お問い合わせいただき、誠にありがとうございます。内容を確認のうえ、担当者より改めてご連絡いたします。なお、お問い合わせの内容によっては、ご返信までにお時間をいただく場合がございます。あらかじめご了承ください。",
+    "locked": true,
+    "zh": "非常感谢您的咨询。我们确认内容后，将由负责人另行与您联系。另外，根据咨询内容的不同，回复可能需要一些时间，敬请谅解。",
+    "zh-Hant": "非常感謝您的諮詢。我們確認內容後，將由負責人另行與您聯繫。另外，依諮詢內容而定，回覆可能需要一些時間，敬請諒解。",
+    "en": "Thank you very much for contacting us. We will review your enquiry and a member of our team will be in touch. Depending on the nature of your enquiry, a reply may take some time. Thank you for your understanding.",
+    "ko": "문의해 주셔서 진심으로 감사합니다. 내용을 확인한 후 담당자가 다시 연락드립니다. 또한 문의 내용에 따라 답변까지 시간이 걸릴 수 있으니 미리 양해 부탁드립니다.",
+    "th": "",
+    "hant_manual": true
+  },
+  "a52caf17d660e238": {
+    "ja": "※ お問い合わせの内容により、ご返信までにお時間をいただく場合があります。また、ご入力いただいたメールアドレスへの自動返信は行っておりません。",
+    "locked": true,
+    "zh": "※ 根据咨询内容的不同，回复可能需要一些时间。另外，我们不会向您填写的邮箱发送自动回复邮件。",
+    "zh-Hant": "※ 依諮詢內容而定，回覆可能需要一些時間。另外，我們不會向您填寫的郵箱傳送自動回覆郵件。",
+    "en": "* Depending on the nature of your enquiry, a reply may take some time. Please also note that we do not send an automatic confirmation to the address you entered.",
+    "ko": "※ 문의 내용에 따라 답변까지 시간이 걸릴 수 있습니다. 또한 입력하신 이메일 주소로 자동 회신은 발송되지 않습니다.",
+    "th": "",
+    "hant_manual": true
   }
 }
