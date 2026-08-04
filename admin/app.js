@@ -694,7 +694,7 @@
     const emailInput = h("input", {
       type: "email",
       id: "loginEmail",
-      placeholder: "you@example.com",
+      placeholder: "yamada@ele-hotel.com",
       value: emailVal,
       onInput: (e) => (emailVal = e.target.value),
     });
@@ -716,8 +716,16 @@
         },
       },
       [
-        h("div", { class: "login-field" }, [h("label", { for: "loginEmail" }, "メールアドレス"), emailInput]),
-        h("div", { class: "login-field" }, [h("label", { for: "loginPw" }, "パスワード"), pwInput]),
+        h("div", { class: "login-field" }, [
+          h("label", { for: "loginEmail" }, ["お名前・メールアドレス ", h("span", { class: "login-opt" }, "（任意）")]),
+          emailInput,
+          h("div", { class: "login-hint" }, "「誰が更新したか」の記録に使います。空欄でもログインできます。"),
+        ]),
+        h("div", { class: "login-field" }, [
+          h("label", { for: "loginPw" }, "パスワード"),
+          pwInput,
+          h("div", { class: "login-hint" }, "全員で共通のパスワードです。"),
+        ]),
         state.loginError ? h("div", { class: "login-error" }, state.loginError) : null,
         h(
           "button",

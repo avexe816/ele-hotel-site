@@ -922,3 +922,6 @@ textarea {
 @media (max-width: 640px) {
   .trans-retrans { margin-left: 0; }
 }
+
+.login-opt { color: #a09789; font-weight: 400; font-size: 11px; }
+.login-hint { margin-top: 5px; color: #a09789; font-size: 11px; line-height: 1.6; }
