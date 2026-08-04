@@ -17,9 +17,9 @@ const AI_MODEL_FALLBACK = "@cf/meta/m2m100-1.2b";
 const AUTO_LANGS = ["zh", "en", "ko"];
 
 const LANG_INFO = {
-  zh: { name: "簡体字中国語（中国大陸向け）", m2m: "chinese" },
-  en: { name: "英語", m2m: "english" },
-  ko: { name: "韓国語", m2m: "korean" },
+  zh: { label: "Simplified Chinese (as used in mainland China)", m2m: "chinese" },
+  en: { label: "English", m2m: "english" },
+  ko: { label: "Korean", m2m: "korean" },
 };
 
 // build.py / tools/i18n.py の JP_RE と同じ範囲
@@ -50,26 +50,58 @@ export function collectStrings(node, out = new Set()) {
   return out;
 }
 
+// ------------------------------------------------------------ 訳文の検品
+//
+//  モデルが日本語をそのまま返してくることがあるため、必ず機械的に検品する。
+//  ・かな（ー と ・ は中国語でも使うので除外）が残っていたら中国語として失敗
+//  ・ハングルが無ければ韓国語として失敗
+//  ・英語に漢字・かな・ハングルが混ざっていたら失敗
+//  ・原文と同一なら失敗
+
+const HAS_KANA = /[\u3040-\u309f\u30a1-\u30fa\u30fd\u30fe]/;
+const HAS_HANGUL = /[\uac00-\ud7af]/;
+const HAS_CJK = /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/;
+
+function looksValid(lang, src, out) {
+  if (!out || !out.trim()) return false;
+  if (out.trim() === src.trim()) return false;
+  if (lang === "zh") return !HAS_KANA.test(out);
+  if (lang === "ko") return HAS_HANGUL.test(out);
+  if (lang === "en") return !HAS_CJK.test(out);
+  return true;
+}
+
 // -------------------------------------------------------------- モデル呼び出し
 
 const stripThink = (s) => String(s).replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 
+// 指示は英語で書く。日本語で書くと、モデルが原文をそのまま返す事故が起きやすい。
+const RULES = (label) => [
+  `Translate the Japanese lines below into ${label}.`,
+  "",
+  "Rules:",
+  `- The output MUST be written entirely in ${label}. Never copy or leave the Japanese text.`,
+  "- These lines are from a hotel's official website. Keep the wording concise and natural for a hotel website.",
+  "- Do NOT add, remove, guess or invent any information. Translate only what is written.",
+  "- Vague quantities stay vague: 「数分」 means \"a few minutes\", not a specific number.",
+  "- Keep Latin brand names exactly as written: ELE HOTEL, ELE Hotel, GRAND ELE HOTEL, Apart, Onsen, Cabin.",
+  "- Keep all numbers, times, prices and symbols exactly as in the source.",
+  "- Keep \\n where it appears, at the same position.",
+  "- Output the translation only. No preamble, no notes, no explanation, no romanisation.",
+];
+
 function buildPrompt(lang, texts) {
-  const list = texts.map((t, i) => `${i + 1}. ${t.replace(/\n/g, "\\n")}`).join("\n");
   return [
-    `あなたはホテル公式サイトの翻訳者です。次の日本語を${LANG_INFO[lang].name}に訳してください。`,
+    ...RULES(LANG_INFO[lang].label),
+    `- Output exactly ${texts.length} line(s), each formatted as "<number>. <translation>".`,
     "",
-    "守ること:",
-    "・宿泊施設の公式サイトの文言として自然で簡潔に訳す。説明・注釈・言い換えを足さない。",
-    "・「ELE HOTEL」「ELE Hotel」「GRAND ELE HOTEL」などのブランド名、駅名のローマ字、数字、記号はそのまま残す。",
-    "・原文の \\n は訳文でも \\n のまま同じ位置に残す。",
-    "・訳文だけを出力する。前置き・解説・番号以外の記号を付けない。",
-    "",
-    `出力形式: 各行を「番号. 訳文」の形で ${texts.length} 行だけ返す。行を増やしたり減らしたりしない。`,
-    "",
-    "原文:",
-    list,
+    "Japanese:",
+    texts.map((t, i) => `${i + 1}. ${t.replace(/\n/g, "\\n")}`).join("\n"),
   ].join("\n");
+}
+
+function buildSinglePrompt(lang, text) {
+  return [...RULES(LANG_INFO[lang].label), "", "Japanese:", text.replace(/\n/g, "\\n")].join("\n");
 }
 
 function parseNumbered(raw, count) {
@@ -84,60 +116,78 @@ function parseNumbered(raw, count) {
   return out;
 }
 
-/** 指示モデルでまとめて訳す。1件でも取れなければ null を返す。 */
-async function runInstruct(env, lang, texts) {
-  const model = env.AI_MODEL || AI_MODEL_DEFAULT;
-  const res = await env.AI.run(model, {
+async function ask(env, prompt, maxTokens) {
+  const res = await env.AI.run(env.AI_MODEL || AI_MODEL_DEFAULT, {
     messages: [
-      { role: "system", content: "You are a professional Japanese-to-multilingual translator for hotel websites. Answer with translations only. /no_think" },
-      { role: "user", content: buildPrompt(lang, texts) },
+      { role: "system", content: "You are a professional translator for hotel websites. Reply with the translation only. /no_think" },
+      { role: "user", content: prompt },
     ],
-    max_tokens: Math.min(4000, 300 + texts.join("").length * 3),
+    max_tokens: maxTokens,
     temperature: 0.2,
   });
-  const raw = res.response || res.result?.response || "";
-  const parsed = parseNumbered(raw, texts.length);
-  return parsed.some((v) => v === null) ? null : parsed;
+  return res.response || (res.result && res.result.response) || "";
 }
 
-/** 旧来の翻訳専用モデル。指示モデルが失敗したときの保険。1 文ずつ処理する。 */
-async function runM2M(env, lang, texts) {
-  const out = [];
-  for (const text of texts) {
-    try {
-      const res = await env.AI.run(AI_MODEL_FALLBACK, {
-        text,
-        source_lang: "japanese",
-        target_lang: LANG_INFO[lang].m2m,
-      });
-      out.push((res.translated_text || "").trim() || null);
-    } catch (_) {
-      out.push(null);
-    }
+/** まとめ訳し。検品を通らなかったところは null で返す。 */
+async function runBatch(env, lang, texts) {
+  try {
+    const raw = await ask(env, buildPrompt(lang, texts), Math.min(4000, 300 + texts.join("").length * 3));
+    const parsed = parseNumbered(raw, texts.length);
+    return parsed.map((v, i) => (looksValid(lang, texts[i], v) ? v : null));
+  } catch (err) {
+    console.log(`translate ${lang} batch failed:`, String(err).slice(0, 200));
+    return texts.map(() => null);
   }
-  return out;
+}
+
+/** 1文ずつ訳す。まとめ訳しで失敗したものだけに使う。 */
+async function runSingle(env, lang, text) {
+  try {
+    const raw = stripThink(await ask(env, buildSinglePrompt(lang, text), Math.min(1500, 200 + text.length * 4)));
+    // 番号付きで返ってくることもあるので落とす
+    const cleaned = raw.replace(/^\s*\d+\s*[.．、:：]\s*/, "").trim().replace(/\\n/g, "\n");
+    if (looksValid(lang, text, cleaned)) return cleaned;
+  } catch (err) {
+    console.log(`translate ${lang} single failed:`, String(err).slice(0, 160));
+  }
+  return null;
+}
+
+/** 旧来の翻訳専用モデル。指示モデルが何度やっても駄目なときの最後の保険。 */
+async function runM2M(env, lang, text) {
+  try {
+    const res = await env.AI.run(AI_MODEL_FALLBACK, {
+      text,
+      source_lang: "japanese",
+      target_lang: LANG_INFO[lang].m2m,
+    });
+    const out = (res.translated_text || "").trim();
+    return looksValid(lang, text, out) ? out : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 /**
  * 日本語の配列を 1 言語ぶん訳す。
- * まとめ訳しが崩れたら 8 件ずつに分け、それでも駄目なら翻訳専用モデルに落とす。
+ * まとめ訳し → 残りを1文ずつ → それでも駄目なら翻訳専用モデル、の3段構え。
+ * 最後まで検品を通らなかったものは null のまま返し、書き込まない（誤訳を残さない）。
  */
 async function translateInto(env, lang, texts) {
-  try {
-    const whole = await runInstruct(env, lang, texts);
-    if (whole) return whole;
-  } catch (err) {
-    console.log(`translate ${lang} instruct failed:`, String(err).slice(0, 200));
+  const out = new Array(texts.length).fill(null);
+
+  for (let i = 0; i < texts.length; i += 12) {
+    const idx = [];
+    for (let j = i; j < Math.min(i + 12, texts.length); j++) idx.push(j);
+    const got = await runBatch(env, lang, idx.map((j) => texts[j]));
+    idx.forEach((j, k) => (out[j] = got[k]));
   }
-  const out = [];
-  for (let i = 0; i < texts.length; i += 8) {
-    const chunk = texts.slice(i, i + 8);
-    let got = null;
-    try {
-      got = await runInstruct(env, lang, chunk);
-    } catch (_) {}
-    out.push(...(got || (await runM2M(env, lang, chunk))));
+
+  for (let j = 0; j < texts.length; j++) {
+    if (out[j] === null) out[j] = await runSingle(env, lang, texts[j]);
+    if (out[j] === null) out[j] = await runM2M(env, lang, texts[j]);
   }
+
   return out;
 }
 
@@ -192,11 +242,16 @@ export async function fillTranslations(env, mem, trees, limit = 80) {
 
   // 記憶に書き戻す
   const counts = {};
+  const failed = {};
   for (const [lang, { items, results }] of Object.entries(perLang)) {
     counts[lang] = 0;
+    failed[lang] = 0;
     items.forEach((job, i) => {
       const text = results[i];
-      if (!text) return;
+      if (!text) {
+        failed[lang]++;
+        return;
+      }
       const entry = (mem[job.key] = mem[job.key] || { ja: job.ja, locked: false });
       entry.ja = job.ja;
       for (const l of ALL_LANGS) if (!(l in entry)) entry[l] = "";
@@ -206,7 +261,8 @@ export async function fillTranslations(env, mem, trees, limit = 80) {
     });
   }
 
-  return { added: batch.length, langs: counts, pending, skippedLocked };
+  const failTotal = Object.values(failed).reduce((a, b) => a + b, 0);
+  return { added: batch.length, langs: counts, failed: failTotal, pending, skippedLocked };
 }
 
 /** tools/i18n.py の save_memory と同じ並び順（ja の辞書順）で書き出す。 */
