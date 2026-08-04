@@ -268,6 +268,8 @@ async function handleAdmin(request, env, url) {
       mode: usingAccess ? "access" : "password",
       configured: Boolean(env.GH_TOKEN),
       translator: Boolean(env.AI),
+      hasSecret: Boolean(env.ADMIN_SECRET),
+      hasPassword: Boolean(env.ADMIN_PASSWORD),
       repo: repo(env),
     });
   }
