@@ -2,7 +2,7 @@
   {
     "slug": "ginza-east",
     "area": "tokyo",
-    "img": "p-ginza-east-hero",
+    "img": "p-ginza-east-ext",
     "status": "open",
     "rooms": 36,
     "opened": {
@@ -101,7 +101,7 @@
     ],
     "gallery": [
       {
-        "img": "p-ginza-east-ext",
+        "img": "p-ginza-east-hero",
         "label": "ext"
       },
       {
