@@ -842,3 +842,83 @@ textarea {
     max-height: 90vh;
   }
 }
+
+/* ---------------------------------------------------- 訳文の編集（日本語以外のタブ） */
+
+.trans-wrap { display: flex; flex-direction: column; gap: 6px; flex: 1 1 auto; min-width: 0; }
+
+.trans-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trans-marks { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.trans-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.6;
+  background: #ece9e3;
+  color: #6b6459;
+  white-space: nowrap;
+}
+.trans-badge--ok { background: #e4efe4; color: #3f6b42; }
+.trans-badge--edit { background: #f4e6d6; color: #8a5a25; }
+
+.trans-retrans {
+  margin-left: auto;
+  padding: 3px 10px;
+  border: 1px solid #d9d4cb;
+  border-radius: 6px;
+  background: #fff;
+  color: #6b6459;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.trans-retrans:hover { border-color: #8a6a4b; color: #8a6a4b; }
+
+.trans-source {
+  padding: 6px 10px;
+  border-left: 2px solid #ddd7cd;
+  background: #faf9f6;
+  color: #8b8478;
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.trans-note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px dashed #d9d4cb;
+  border-radius: 6px;
+  background: #faf9f6;
+  color: #8b8478;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.trans-note-sub { font-size: 12px; color: #a09789; }
+
+.trans-list { display: flex; flex-direction: column; gap: 14px; }
+.trans-list-row { display: flex; gap: 10px; align-items: flex-start; }
+.trans-list-no {
+  flex: 0 0 22px;
+  margin-top: 9px;
+  color: #a09789;
+  font-size: 12px;
+  text-align: right;
+}
+
+.lang-banner b { display: block; margin-bottom: 2px; }
+
+@media (max-width: 640px) {
+  .trans-retrans { margin-left: 0; }
+}

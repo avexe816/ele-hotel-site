@@ -9,7 +9,7 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "src")
-PARTS = ["admin_api.js", "worker_contact.js", "worker_main.js"]
+PARTS = ["admin_translate.js", "admin_api.js", "worker_contact.js", "worker_main.js"]
 
 HEADER = """/* ============================================================================
  * ELE HOTEL — Cloudflare Pages worker（自動生成ファイル）
@@ -17,6 +17,7 @@ HEADER = """/* =================================================================
  *   このファイルは直接編集しないでください。
  *   編集するのは src/ の中の各ファイルで、build.py が自動でまとめ直します。
  *
+ *     src/admin_translate.js 自動翻訳（Workers AI）
  *     src/admin_api.js       管理画面 API（/api/admin/*）
  *     src/worker_contact.js  お問い合わせメール送信
  *     src/worker_main.js     ルーティング

@@ -6,8 +6,9 @@ hand-maintained vocabulary table for hotel wording.  Entries carrying
 "hant_manual": true are left untouched.
 
     pip install opencc-python-reimplemented
-    python3 tools/zh_hant.py            # rewrite data/i18n.json
-    python3 tools/zh_hant.py --dry-run  # show what would change
+    python3 tools/zh_hant.py                  # rewrite data/i18n.json
+    python3 tools/zh_hant.py --dry-run        # show what would change
+    python3 tools/zh_hant.py --fill-missing   # fill only empty zh-Hant (used in CI)
 """
 
 import collections
@@ -98,6 +99,8 @@ def convert(text, cc):
 
 def main():
     dry = "--dry-run" in sys.argv
+    # --fill-missing: 空欄だけを埋める。既存の訳には触らない（CI から呼ぶときはこれ）
+    fill_only = "--fill-missing" in sys.argv
     try:
         import opencc
     except ImportError:
@@ -114,6 +117,9 @@ def main():
             continue
         zh = entry.get("zh", "")
         if not zh:
+            continue
+        if fill_only and entry.get("zh-Hant"):
+            skipped += 1
             continue
         new = convert(zh, cc)
         if new != entry.get("zh-Hant"):

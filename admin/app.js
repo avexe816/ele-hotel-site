@@ -17,7 +17,8 @@
     draft: null, // 編集用の深いコピー
     images: [],
     head: null,
-    i18nByJa: null, // Map ja文字列 -> i18n entry
+    i18nByJa: null, // Map ja文字列 -> i18n entry（entry.__key にキーを持たせる）
+    i18nEdits: {}, // 訳文の手直し { キー: { 言語: 文字列 or null(再翻訳) } }
     currentLang: "ja", // 選択中の言語タブ (schema.langsのcode)
     currentPage: null, // { kind:"group", id } | { kind:"hotel", slug }
     status: { state: "idle", url: "", at: "", message: "" },
@@ -120,9 +121,9 @@
   function buildI18nIndex() {
     const map = new Map();
     const dict = (state.draft && state.draft["data/i18n.json"]) || {};
-    for (const entry of Object.values(dict)) {
+    for (const [key, entry] of Object.entries(dict)) {
       if (entry && typeof entry.ja === "string" && !map.has(entry.ja)) {
-        map.set(entry.ja, entry);
+        map.set(entry.ja, Object.assign({ __key: key }, entry));
       }
     }
     state.i18nByJa = map;
@@ -133,6 +134,127 @@
     const entry = state.i18nByJa.get(jaText);
     if (!entry) return "";
     return entry[langCode] || "";
+  }
+
+  // ============================================================ 訳文の編集
+
+  // 訳文に手直しがあるか
+  function hasI18nEdits() {
+    return Object.keys(state.i18nEdits).length > 0;
+  }
+
+  function i18nEditValue(key, lang) {
+    const row = state.i18nEdits[key];
+    return row && lang in row ? row[lang] : undefined;
+  }
+
+  function setI18nEdit(key, lang, value) {
+    const entry = (state.draft["data/i18n.json"] || {})[key];
+    const base = entry ? entry[lang] || "" : "";
+    if (value !== null && value === base) {
+      // 元に戻したので手直し扱いをやめる
+      if (state.i18nEdits[key]) {
+        delete state.i18nEdits[key][lang];
+        if (!Object.keys(state.i18nEdits[key]).length) delete state.i18nEdits[key];
+      }
+      return;
+    }
+    state.i18nEdits[key] = state.i18nEdits[key] || {};
+    state.i18nEdits[key][lang] = value;
+  }
+
+  // 人の手が入っているか（= 自動翻訳で上書きしない）
+  function isConfirmed(entry, lang) {
+    if (!entry) return false;
+    if (lang === "zh-Hant") return Boolean(entry.hant_manual);
+    return Boolean(entry.locked);
+  }
+
+  /**
+   * 日本語以外のタブで表示する訳文の入力欄。
+   * 日本語がまだ無いとき／まだ翻訳されていないときは案内文を出す。
+   */
+  function renderTranslationField(jaText, kind) {
+    const lang = state.currentLang;
+    const ja = String(jaText == null ? "" : jaText).trim();
+    if (!ja) return h("div", { class: "trans-note" }, "日本語がまだ入力されていません。");
+
+    const entry = state.i18nByJa ? state.i18nByJa.get(ja) : null;
+    if (!entry) {
+      const hasJa = /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff]/.test(ja);
+      return h("div", { class: "trans-note" }, [
+        h("span", null, hasJa ? "この文はまだ翻訳ライブラリにありません。" : "英字・数字だけの文なので、翻訳せずそのまま表示されます。"),
+        hasJa ? h("span", { class: "trans-note-sub" }, "「保存して公開」を押すと自動翻訳されます。") : null,
+        h("div", { class: "trans-source" }, ja),
+      ]);
+    }
+
+    const key = entry.__key;
+    const edited = i18nEditValue(key, lang);
+    const isReset = edited === null;
+    const value = isReset ? "" : edited !== undefined ? edited : entry[lang] || "";
+    const confirmed = isConfirmed(entry, lang) && !isReset;
+    const changed = edited !== undefined;
+
+    const onInput = (e) => {
+      setI18nEdit(key, lang, e.target.value);
+      if (e.target.tagName === "TEXTAREA") autoGrow(e.target);
+      // 全画面を作り直すとカーソルが飛ぶので、印と保存バーだけその場で直す
+      const wrap = e.target.closest(".trans-wrap");
+      const marks = wrap && wrap.querySelector(".trans-marks");
+      if (marks) {
+        const already = marks.querySelector(".trans-badge--edit");
+        const nowEdited = i18nEditValue(key, lang) !== undefined;
+        if (nowEdited && !already) marks.appendChild(h("span", { class: "trans-badge trans-badge--edit" }, "手直しあり"));
+        if (!nowEdited && already) already.remove();
+      }
+      updateSaveBar();
+    };
+
+    const control =
+      kind === "textarea"
+        ? h("textarea", { "data-autogrow": "1", value: value, onInput: onInput })
+        : h("input", { type: "text", value: value, onInput: onInput });
+
+    const marks = [];
+    if (confirmed) marks.push(h("span", { class: "trans-badge trans-badge--ok" }, "人工確認済み"));
+    else if (value) marks.push(h("span", { class: "trans-badge" }, "自動翻訳"));
+    if (changed) marks.push(h("span", { class: "trans-badge trans-badge--edit" }, isReset ? "再翻訳します" : "手直しあり"));
+
+    return h("div", { class: "trans-wrap" }, [
+      control,
+      h("div", { class: "trans-meta" }, [
+        h("div", { class: "trans-marks" }, marks),
+        h(
+          "button",
+          {
+            class: "trans-retrans",
+            type: "button",
+            onClick: () => {
+              setI18nEdit(key, lang, null);
+              render();
+            },
+          },
+          "日本語から再翻訳"
+        ),
+      ]),
+      h("div", { class: "trans-source" }, ja),
+    ]);
+  }
+
+  /** 箇条書きの各行を訳文入力欄にして並べる（行の増減は日本語タブで行う） */
+  function renderTranslationList(arr) {
+    if (!arr || !arr.length) return h("div", { class: "trans-note" }, "項目がありません。");
+    return h(
+      "div",
+      { class: "trans-list" },
+      arr.map((val, idx) =>
+        h("div", { class: "trans-list-row" }, [
+          h("span", { class: "trans-list-no" }, String(idx + 1)),
+          renderTranslationField(typeof val === "string" ? val : "", "text"),
+        ])
+      )
+    );
   }
 
   // ============================================================ 差分検出
@@ -146,7 +268,15 @@
   }
 
   function countDirtyTotal() {
-    return computeDiffList().length;
+    let n = computeDiffList().length;
+    for (const row of Object.values(state.i18nEdits)) n += Object.keys(row).length;
+    return n;
+  }
+
+  // 入力のたびに全画面を作り直すとカーソルが飛ぶので、下の保存バーだけ差し替える
+  function updateSaveBar() {
+    const old = document.querySelector(".savebar");
+    if (old && old.parentNode) old.parentNode.replaceChild(renderSaveBar(), old);
   }
 
   // ラベル解決
@@ -414,21 +544,31 @@
 
   async function doSave() {
     const files = buildSavePayload();
-    if (Object.keys(files).length === 0) return;
+    const i18nEdits = state.i18nEdits;
+    if (Object.keys(files).length === 0 && !hasI18nEdits()) return;
     state.saving = true;
     render();
     const pageLabel = currentGroupLabelForMessage();
     try {
       const res = await api("/save", {
         method: "POST",
-        body: JSON.stringify({ head: state.head, message: `管理画面から更新（${pageLabel}）`, files }),
+        body: JSON.stringify({ head: state.head, message: `管理画面から更新（${pageLabel}）`, files, i18n: i18nEdits }),
       });
       if (res.status === 200 && res.data && res.data.ok) {
         state.head = res.data.sha;
         state.original = deepClone(state.draft);
+        state.i18nEdits = {};
         state.saving = false;
         state.modal = null;
-        pushToast("保存しました。公開まで少しお待ちください。", "ok");
+        const tr = res.data.translated;
+        if (tr && tr.error) {
+          pushToast("保存しました。ただし自動翻訳に失敗しました（" + tr.error + "）。", "error");
+        } else if (tr && tr.added) {
+          const n = Object.values(tr.langs || {}).reduce((a, b) => a + b, 0);
+          pushToast("保存しました。" + n + "件を自動翻訳しました。公開まで少しお待ちください。", "ok");
+        } else {
+          pushToast("保存しました。公開まで少しお待ちください。", "ok");
+        }
         render();
         // バンンチの公開状態をすぐに反映する（最初のポーリング tick の10秒待ちで未公開ガッチを見せないようにする）
         try {
@@ -471,7 +611,7 @@
   // ============================================================ beforeunload
 
   window.addEventListener("beforeunload", (e) => {
-    if (state.draft && dirtyFiles().length > 0) {
+    if (state.draft && (dirtyFiles().length > 0 || hasI18nEdits())) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -731,10 +871,19 @@
         lang.name
       )
     );
-    const banner =
-      state.currentLang !== "ja"
-        ? h("div", { class: "lang-banner" }, "他の言語は日本語から自動生成されます。編集は日本語タブで行ってください。")
-        : null;
+    const lang = state.currentLang;
+    let banner = null;
+    if (lang === "zh-Hant") {
+      banner = h("div", { class: "lang-banner" }, [
+        h("b", null, "繁体字は簡体字から自動変換されます。"),
+        h("span", null, "文言そのものの追加・削除は日本語タブで行ってください。ここで直した文は「人工確認済み」になり、以後は自動で上書きされません。"),
+      ]);
+    } else if (lang !== "ja") {
+      banner = h("div", { class: "lang-banner" }, [
+        h("b", null, "訳文はここで直せます。"),
+        h("span", null, "日本語を保存すると足りない訳は自動で作られます。ここで直した文は「人工確認済み」になり、以後は自動で上書きされません。文言そのものの追加・削除は日本語タブで行ってください。"),
+      ]);
+    }
     return h("div", null, [h("div", { class: "lang-tabs" }, tabs), banner]);
   }
 
@@ -838,7 +987,6 @@
     const after = getPath(grandJa, key);
     const dirty = JSON.stringify(before) !== JSON.stringify(after);
     const readOnly = state.currentLang !== "ja";
-    const displayValue = readOnly ? lookupTranslation(String(getPath((state.draft["data/grand.json"] || {}).ja || {}, key) || ""), state.currentLang) : after;
 
     const onChange = (val) => {
       setPath(state.draft["data/grand.json"].ja, key, val);
@@ -846,25 +994,20 @@
     };
 
     let control;
-    if (kind === "textarea") {
+    if (readOnly) {
+      // 日本語以外のタブ … 訳文をそのまま直せる
+      control = renderTranslationField(getPath((state.draft["data/grand.json"] || {}).ja || {}, key), kind);
+    } else if (kind === "textarea") {
       control = h("textarea", {
         "data-autogrow": "1",
-        readOnly: readOnly,
-        disabled: readOnly,
-        value: displayValue || "",
+        value: after || "",
         onInput: (e) => {
           onChange(e.target.value);
           autoGrow(e.target);
         },
       });
     } else {
-      control = h("input", {
-        type: "text",
-        readOnly: readOnly,
-        disabled: readOnly,
-        value: displayValue || "",
-        onInput: (e) => onChange(e.target.value),
-      });
+      control = h("input", { type: "text", value: after || "", onInput: (e) => onChange(e.target.value) });
     }
 
     return h("div", { class: "field" }, [
@@ -891,31 +1034,23 @@
 
     let control;
     if (meta.kind === "list-text") {
-      control = renderListText(after || [], onChange, readOnly, key);
+      control = readOnly ? renderTranslationList(after || []) : renderListText(after || [], onChange, readOnly, key);
     } else if (meta.kind === "list-obj") {
       const itemLabels = (state.schema.itemLabels && state.schema.itemLabels[key]) || {};
       control = renderListObj(after || [], onChange, readOnly, itemLabels);
+    } else if (readOnly) {
+      control = renderTranslationField(getPath(siteJa, key), meta.kind === "textarea" ? "textarea" : "text");
     } else if (meta.kind === "textarea") {
-      const val = readOnly ? lookupTranslation(getPath(siteJa, key) || "", state.currentLang) : after;
       control = h("textarea", {
         "data-autogrow": "1",
-        readOnly: readOnly,
-        disabled: readOnly,
-        value: val || "",
+        value: after || "",
         onInput: (e) => {
           onChange(e.target.value);
           autoGrow(e.target);
         },
       });
     } else {
-      const val = readOnly ? lookupTranslation(getPath(siteJa, key) || "", state.currentLang) : after;
-      control = h("input", {
-        type: "text",
-        readOnly: readOnly,
-        disabled: readOnly,
-        value: val || "",
-        onInput: (e) => onChange(e.target.value),
-      });
+      control = h("input", { type: "text", value: after || "", onInput: (e) => onChange(e.target.value) });
     }
 
     return h("div", { class: "field" }, [labelRow, control]);
@@ -1192,13 +1327,14 @@
         value: rawValue,
         onInput: (e) => update(e.target.value === "" ? "" : Number(e.target.value)),
       });
+    } else if (isI18n && state.currentLang !== "ja" && (meta.kind === "textarea" || meta.kind === "text" || !meta.kind)) {
+      control = renderTranslationField(jaValue, meta.kind === "textarea" ? "textarea" : "text");
     } else if (meta.kind === "textarea") {
-      const displayVal = state.currentLang !== "ja" && isI18n ? lookupTranslation(jaValue || "", state.currentLang) : jaValue;
       control = h("textarea", {
         "data-autogrow": "1",
         readOnly: readOnly,
         disabled: readOnly,
-        value: displayVal || "",
+        value: jaValue || "",
         onInput: (e) => {
           update(e.target.value);
           autoGrow(e.target);
@@ -1206,12 +1342,10 @@
       });
     } else if (meta.kind === "list-text" || meta.kind === "facilities") {
       const arr = jaValue || [];
-      control = renderListText(
-        arr,
-        (newArr) => update(newArr),
-        readOnly,
-        key
-      );
+      control =
+        isI18n && state.currentLang !== "ja"
+          ? renderTranslationList(arr)
+          : renderListText(arr, (newArr) => update(newArr), readOnly, key);
     } else if (meta.kind === "list-obj" || meta.kind === "gallery") {
       const arr = rawValue || [];
       const itemLabels = meta.item || {};
@@ -1220,7 +1354,7 @@
         render();
       }, readOnly, itemLabels);
     } else {
-      const displayVal = state.currentLang !== "ja" && isI18n ? lookupTranslation(jaValue || "", state.currentLang) : jaValue;
+      const displayVal = jaValue;
       const isImgField = /画像ID/.test(meta.label);
       if (isImgField) {
         const imgId = typeof rawValue === "string" ? rawValue : "";
@@ -1240,7 +1374,7 @@
       }
     }
 
-    const helpText = state.currentLang !== "ja" && isI18n ? h("div", { class: "field-help" }, "自動翻訳は次の段階で有効になります。") : null;
+    const helpText = null;
 
     return h("div", { class: "field" }, [labelRow, control, helpText]);
   }

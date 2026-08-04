@@ -8,10 +8,11 @@
 //     GH_TOKEN            GitHub の細粒度 PAT（Contents: 読み書き / Actions: 読み取り）
 //     ADMIN_PASSWORD      パスワード方式のときのログインパスワード
 //     ADMIN_SECRET        セッション署名用のランダム文字列
+//     AI                  Workers AI バインディング（自動翻訳に使う。名前は必ず AI）
 //   任意:
 //     ACCESS_TEAM_DOMAIN  例: tej.cloudflareaccess.com（Cloudflare Access 方式）
 //     ACCESS_AUD          Access アプリケーションの Audience タグ
-//     DEEPL_KEY           DeepL API キー（自動翻訳）
+//     AI_MODEL            翻訳に使うモデルの差し替え
 // ============================================================================
 
 const J = (obj, status = 200) =>
@@ -23,6 +24,7 @@ const J = (obj, status = 200) =>
 const COOKIE = "__Host-elesid";
 const SESSION_HOURS = 12;
 const DATA_FILES = ["data/site.json", "data/hotels.json", "data/grand.json", "data/i18n.json", "data/admin-schema.json"];
+const TRANSLATABLE = ["zh", "zh-Hant", "en", "ko"];
 
 // ---------------------------------------------------------------- utilities
 
@@ -219,27 +221,6 @@ async function buildStatus(env) {
   return { state, url: r.html_url, at: r.updated_at, message: (r.display_title || "").slice(0, 120) };
 }
 
-// ---------------------------------------------------------------- 自動翻訳
-
-const DEEPL_TARGET = { zh: "ZH-HANS", "zh-Hant": "ZH-HANT", en: "EN-US", ko: "KO" };
-
-async function translate(env, texts, langs) {
-  if (!env.DEEPL_KEY) throw new Error("no_translator");
-  const host = env.DEEPL_KEY.endsWith(":fx") ? "api-free.deepl.com" : "api.deepl.com";
-  const out = {};
-  for (const lang of langs) {
-    const res = await fetch(`https://${host}/v2/translate`, {
-      method: "POST",
-      headers: { authorization: `DeepL-Auth-Key ${env.DEEPL_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ text: texts, source_lang: "JA", target_lang: DEEPL_TARGET[lang], preserve_formatting: true }),
-    });
-    if (!res.ok) throw new Error(`DeepL ${res.status}: ${(await res.text()).slice(0, 200)}`);
-    const data = await res.json();
-    out[lang] = data.translations.map((t) => t.text);
-  }
-  return out;
-}
-
 // -------------------------------------------------------------------- ルート
 
 async function handleAdmin(request, env, url) {
@@ -286,7 +267,7 @@ async function handleAdmin(request, env, url) {
       email,
       mode: usingAccess ? "access" : "password",
       configured: Boolean(env.GH_TOKEN),
-      translator: Boolean(env.DEEPL_KEY),
+      translator: Boolean(env.AI),
       repo: repo(env),
     });
   }
@@ -304,31 +285,78 @@ async function handleAdmin(request, env, url) {
     // --- 公開状況
     if (path === "/status") return J({ ok: true, ...(await buildStatus(env)) });
 
-    // --- 保存
+    // --- 保存（日本語を保存 → 足りない訳を自動生成 → まとめて 1 コミット）
     if (path === "/save" && request.method === "POST") {
       const body = await request.json();
-      const files = {};
-      for (const [p, val] of Object.entries(body.files || {})) {
+      const edited = body.files || {};
+      for (const p of Object.keys(edited)) {
         if (!DATA_FILES.includes(p)) return J({ ok: false, error: "bad_path", path: p }, 400);
-        files[p] = JSON.stringify(val, null, 2) + "\n";
       }
-      if (!Object.keys(files).length) return J({ ok: false, error: "no_files" }, 400);
+      if (!Object.keys(edited).length && !body.i18n) return J({ ok: false, error: "no_files" }, 400);
+
+      // 翻訳記憶と、翻訳対象の全データを揃える
+      const current = await loadBundle(env);
+      if (body.head && body.head !== current.head)
+        return J({ ok: false, error: "conflict", hint: "ほかの方が先に保存しました。画面を再読み込みしてください。" }, 409);
+
+      const mem = current.files["data/i18n.json"] || {};
+      let report = null;
+
+      // 画面で人が直接直した訳文を反映し、人工確認済みにする
+      let manual = 0;
+      for (const [key, langs] of Object.entries(body.i18n || {})) {
+        const entry = mem[key];
+        if (!entry) continue;
+        for (const [lang, text] of Object.entries(langs)) {
+          if (!TRANSLATABLE.includes(lang)) continue;
+          if (text === null) {
+            // 「日本語から再翻訳」… 一度空にし、この後の自動翻訳で作り直してもらう
+            entry[lang] = "";
+            entry.locked = false;
+            if (lang === "zh-Hant") entry.hant_manual = false;
+          } else {
+            entry[lang] = String(text).slice(0, 4000);
+            entry.locked = true;
+            if (lang === "zh-Hant") entry.hant_manual = true;
+          }
+          manual++;
+        }
+      }
+
+      // 自動翻訳（zh / en / ko。zh-Hant は公開時に簡体字から変換される）
+      if (body.autoTranslate !== false && env.AI) {
+        const trees = ["data/site.json", "data/hotels.json", "data/grand.json"].map(
+          (p) => (p in edited ? edited[p] : current.files[p])
+        );
+        try {
+          report = await fillTranslations(env, mem, trees);
+        } catch (err) {
+          console.log("auto translate failed:", String(err).slice(0, 200));
+          report = { error: String(err).slice(0, 120), added: 0, langs: {}, pending: 0 };
+        }
+      }
+
+      const files = {};
+      for (const [p, val] of Object.entries(edited)) files[p] = JSON.stringify(val, null, 2) + "\n";
+      if ((report && report.added) || manual)
+        files["data/i18n.json"] = JSON.stringify(sortMemory(mem), null, 2) + "\n";
+
       const sha = await commitFiles(env, {
         files,
         message: String(body.message || "管理画面から更新").slice(0, 200),
         author: email,
-        expectHead: body.head,
+        expectHead: current.head,
       });
-      return J({ ok: true, sha });
+      return J({ ok: true, sha, translated: report, manual });
     }
 
-    // --- 自動翻訳
-    if (path === "/translate" && request.method === "POST") {
-      const body = await request.json();
-      const texts = (body.texts || []).slice(0, 50).map((t) => String(t).slice(0, 4000));
-      const langs = (body.langs || ["zh", "zh-Hant", "en", "ko"]).filter((l) => DEEPL_TARGET[l]);
-      if (!texts.length) return J({ ok: false, error: "no_texts" }, 400);
-      return J({ ok: true, results: await translate(env, texts, langs) });
+    // --- 翻訳の動作確認（設定が正しいか見るための小さなテスト）
+    if (path === "/translate-test") {
+      if (!env.AI) return J({ ok: false, error: "no_ai_binding" }, 503);
+      const sample = "駅から数分、街にいちばん近い宿。";
+      const mem = {};
+      const out = await fillTranslations(env, mem, [{ t: sample }]);
+      return J({ ok: true, model: env.AI_MODEL || "既定", sample, result: Object.values(mem)[0] || null, out });
     }
   } catch (err) {
     if (err.code === "conflict")
