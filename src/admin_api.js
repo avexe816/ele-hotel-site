@@ -284,6 +284,32 @@ async function handleAdmin(request, env, url) {
   // 読み込みの不具合を切り分けるための診断（ADMIN_SECRET 必須）
   if (path === "/diag") {
     const steps = [];
+    // トークン自体の状態（値は出さない。長さと種別だけ）
+    const tok = String(env.GH_TOKEN || "");
+    steps.push({
+      step: "token",
+      ok: Boolean(tok),
+      length: tok.length,
+      kind: tok.startsWith("github_pat_") ? "fine-grained" : tok.startsWith("ghp_") ? "classic" : tok ? "unknown" : "missing",
+      trimmedDiffers: tok !== tok.trim(),
+    });
+    for (const probePath of ["/user", `/repos/${repo(env)}`]) {
+      const t = Date.now();
+      try {
+        const res = await gh(env, probePath);
+        const body = await res.text();
+        let note = "";
+        try {
+          const j = JSON.parse(body);
+          note = j.login || j.full_name || j.message || "";
+        } catch (_) {
+          note = body.slice(0, 120);
+        }
+        steps.push({ step: probePath, ok: res.ok, status: res.status, note: String(note).slice(0, 160), ms: Date.now() - t });
+      } catch (e) {
+        steps.push({ step: probePath, ok: false, error: String(e).slice(0, 200) });
+      }
+    }
     try {
       const t0 = Date.now();
       const ref = await ghJson(env, `/repos/${repo(env)}/git/ref/heads/main`);
