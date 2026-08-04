@@ -1076,6 +1076,36 @@ def write(path, content):
         f.write(content)
 
 
+def stamp_admin_assets():
+    """管理画面の app.js / style.css に内容ハッシュを付ける。
+    ブラウザのキャッシュが原因で古い管理画面が表示されるのを防ぐ。"""
+    import hashlib
+    import re as _re
+
+    admin = os.path.join(ROOT, "admin")
+    index = os.path.join(admin, "index.html")
+    if not os.path.exists(index):
+        return
+    with open(index, encoding="utf-8") as f:
+        html = f.read()
+    original = html
+    for name in ("app.js", "style.css"):
+        path = os.path.join(admin, name)
+        if not os.path.exists(path):
+            continue
+        with open(path, "rb") as f:
+            ver = hashlib.sha1(f.read()).hexdigest()[:8]
+        html = _re.sub(
+            r'(?<=["\'/])' + _re.escape(name) + r'(\?v=[0-9a-f]+)?(?=["\'])',
+            name + "?v=" + ver,
+            html,
+        )
+    if html != original:
+        with open(index, "w", encoding="utf-8") as f:
+            f.write(html)
+        print("stamped admin/index.html (cache busting)")
+
+
 def main():
     write("assets/favicon.svg", FAVICON)
     n = 0
@@ -1099,6 +1129,7 @@ def main():
     from tools import build_worker
 
     print(f"built _worker.js ({build_worker.build()} bytes)")
+    stamp_admin_assets()
     gaps = R.report()
     if gaps:
         with open(os.path.join(DATA, "i18n-todo.json"), "w", encoding="utf-8") as f:

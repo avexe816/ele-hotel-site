@@ -1,0 +1,4 @@
+# 管理画面はキャッシュしない（更新が即反映されるように）
+/admin/*
+  Cache-Control: no-store, must-revalidate
+  X-Robots-Tag: noindex, nofollow
