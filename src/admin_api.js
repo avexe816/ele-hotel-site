@@ -272,8 +272,12 @@ async function handleAdmin(request, env, url) {
     });
   }
 
-  if (!email) return J({ ok: false, error: "unauthorized" }, 401);
-  if (!env.GH_TOKEN) return J({ ok: false, error: "no_github_token" }, 503);
+  // 翻訳の動作確認だけは ADMIN_SECRET を知っていればログインなしでも叩ける（設定確認用）
+  const probe = url.searchParams.get("secret");
+  const isProbe = path === "/translate-test" && probe && env.ADMIN_SECRET && probe === env.ADMIN_SECRET;
+
+  if (!email && !isProbe) return J({ ok: false, error: "unauthorized" }, 401);
+  if (!env.GH_TOKEN && !isProbe) return J({ ok: false, error: "no_github_token" }, 503);
 
   try {
     // --- 全データ読み込み
@@ -353,10 +357,15 @@ async function handleAdmin(request, env, url) {
     // --- 翻訳の動作確認（設定が正しいか見るための小さなテスト）
     if (path === "/translate-test") {
       if (!env.AI) return J({ ok: false, error: "no_ai_binding" }, 503);
-      const sample = "駅から数分、街にいちばん近い宿。";
+      const samples = [
+        "駅から数分、街にいちばん近い宿。",
+        "ELE Hotel 銀座イーストは、全36室のアパートメントホテルです。",
+        "チェックインは15:00から、チェックアウトは11:00までです。",
+      ];
       const mem = {};
-      const out = await fillTranslations(env, mem, [{ t: sample }]);
-      return J({ ok: true, model: env.AI_MODEL || "既定", sample, result: Object.values(mem)[0] || null, out });
+      const t0 = Date.now();
+      const out = await fillTranslations(env, mem, [samples]);
+      return J({ ok: true, model: env.AI_MODEL || AI_MODEL_DEFAULT, ms: Date.now() - t0, out, results: Object.values(mem) });
     }
   } catch (err) {
     if (err.code === "conflict")
