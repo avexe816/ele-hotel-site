@@ -1070,6 +1070,15 @@
     "ko": "질문이나 상담 내용을 기재해 주십시오.",
     "th": ""
   },
+  "80421a4347bf8fa1": {
+    "ja": "じゃらん net",
+    "locked": false,
+    "zh": "携程网",
+    "zh-Hant": "",
+    "en": "Jalan net",
+    "ko": "자라난 넷",
+    "th": ""
+  },
   "c15ccc4dc7402834": {
     "ja": "すべて",
     "zh": "全部",
@@ -2534,6 +2543,15 @@
     "th": "",
     "locked": true
   },
+  "0ae1f801ac132d07": {
+    "ja": "公式サイト",
+    "locked": false,
+    "zh": "官方网站",
+    "zh-Hant": "",
+    "en": "Official Site",
+    "ko": "공식 사이트",
+    "th": ""
+  },
   "bb71cbe687de0aff": {
     "ja": "公式サイトから予約する",
     "locked": false,
@@ -2560,6 +2578,16 @@
     "zh-Hant": "您可以在官方預訂系統中查詢最新的空房情況和價格。搜尋結果將在新視窗中開啟。",
     "ko": "공식 예약 엔진에서 최신 빈 객실 현황과 요금을 확인하실 수 있습니다. 검색 결과는 새 창에서 열립니다.",
     "th": ""
+  },
+  "5e5bb85a6690c245": {
+    "ja": "公式予約エンジンは ELE Hotel 樟葉（大阪・樟葉）で稼働中です。その他のホテルは各ホテルページの予約サイトリンクをご利用ください。",
+    "locked": false,
+    "zh": "官方预订引擎已在 ELE Hotel Kuzuha（大阪·樟叶）启用。其他酒店请使用各酒店页面上的预订网站链接。",
+    "en": "The official booking engine is live at ELE Hotel Kuzuha (Kuzuha, Osaka). For other hotels, please use the booking-site links on each hotel page.",
+    "ko": "공식 예약 엔진은 ELE Hotel Kuzuha(오사카·구즈하)에서 운영 중입니다. 다른 호텔은 각 호텔 페이지의 예약 사이트 링크를 이용해 주십시오.",
+    "zh-Hant": "官方預訂引擎已在 ELE Hotel Kuzuha（大阪·樟葉）啟用。其他飯店請使用各飯店頁面上的預訂網站連結。",
+    "th": "",
+    "path": "site.search_note"
   },
   "c2eb5ca931600b97": {
     "ja": "公式予約エンジンは準備中です。以下の予約サイトから最新の空室・料金をご確認いただけます。",
@@ -3390,6 +3418,15 @@
     "ko": "여관업법 및 기타 법령에 근거한 숙박자 명부의 작성 및 보관",
     "th": ""
   },
+  "c12140a0ffb4e564": {
+    "ja": "日本語",
+    "locked": false,
+    "zh": "日语",
+    "zh-Hant": "",
+    "en": "Japanese",
+    "ko": "일본어",
+    "th": ""
+  },
   "aefa32b76cc60e3e": {
     "ja": "日本語・中国語・英語での対応が可能なスタッフを配置します。",
     "zh": "配置可提供日语、中文、英语服务的员工。",
@@ -3641,6 +3678,15 @@
     "ko": "검토 중",
     "th": "",
     "locked": true
+  },
+  "5625562447deae30": {
+    "ja": "楽天トラベル",
+    "locked": false,
+    "zh": "樂天旅行",
+    "zh-Hant": "",
+    "en": "Rakuten Travel",
+    "ko": "라쿠텐 트라벨",
+    "th": ""
   },
   "0c1e7381af8a710c": {
     "ja": "楽天モバイルパーク宮城",
@@ -4006,6 +4052,24 @@
     "th": "",
     "locked": true
   },
+  "5489ec50393691c2": {
+    "ja": "简中",
+    "locked": false,
+    "zh": "规则：\n- 输出必须全部使用简体中文（中国大陆使用）。绝不能复制或保留日文文本。\n- 这些句子来自酒店的官方网站。请保持用词简洁自然，符合酒店网站的风格。\n- 不要添加、删除、猜测或编造任何信息。仅翻译所写内容。\n- 模糊的数量保持模糊：「数分」意为“几分钟”，不是具体数字。\n- 保留拉丁品牌名称原样：ELE HOTEL、ELE Hotel、GRAND ELE HOTEL、Apart、Onsen、Cabin。\n- 保留所有数字、时间、价格和符号，与原文完全一致。\n- 保留换行符，位置与原文相同。\n- 仅输出翻译结果。不要有前言、注释、解释或罗马字标注。",
+    "zh-Hant": "",
+    "en": "Simplified Chinese",
+    "ko": "간자",
+    "th": ""
+  },
+  "93659150d0e56377": {
+    "ja": "简体中文",
+    "locked": false,
+    "zh": "",
+    "zh-Hant": "",
+    "en": "Simplified Chinese",
+    "ko": "간체자",
+    "th": ""
+  },
   "21946598f6478d46": {
     "ja": "築地場外市場",
     "zh": "筑地场外市场",
@@ -4050,6 +4114,24 @@
     "ko": "종일 대응 외에도 저녁 턴다운 서비스를 준비하고 있습니다.",
     "th": "",
     "locked": true
+  },
+  "7e84c4dcbf39c06a": {
+    "ja": "繁中",
+    "locked": false,
+    "zh": "",
+    "zh-Hant": "",
+    "en": "Traditional Chinese",
+    "ko": "번자",
+    "th": ""
+  },
+  "1f7e4a4c370c9833": {
+    "ja": "繁體中文",
+    "locked": false,
+    "zh": "繁体中文",
+    "zh-Hant": "",
+    "en": "Traditional Chinese",
+    "ko": "번체자",
+    "th": ""
   },
   "8bcf6984afa0012c": {
     "ja": "自然とくつろぎに向き合う温泉旅館のブランド。温泉と食を軸にしたリゾート型の宿として、日本の旅館文化に息づく「和」のしつらえと、現代的なサービス品質を重ね合わせた滞在をお届けします。",
@@ -4491,15 +4573,5 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
-  },
-  "5e5bb85a6690c245": {
-    "ja": "公式予約エンジンは ELE Hotel 樟葉（大阪・樟葉）で稼働中です。その他のホテルは各ホテルページの予約サイトリンクをご利用ください。",
-    "locked": false,
-    "zh": "官方预订引擎已在 ELE Hotel Kuzuha（大阪·樟叶）启用。其他酒店请使用各酒店页面上的预订网站链接。",
-    "en": "The official booking engine is live at ELE Hotel Kuzuha (Kuzuha, Osaka). For other hotels, please use the booking-site links on each hotel page.",
-    "ko": "공식 예약 엔진은 ELE Hotel Kuzuha(오사카·구즈하)에서 운영 중입니다. 다른 호텔은 각 호텔 페이지의 예약 사이트 링크를 이용해 주십시오.",
-    "zh-Hant": "官方預訂引擎已在 ELE Hotel Kuzuha（大阪·樟葉）啟用。其他飯店請使用各飯店頁面上的預訂網站連結。",
-    "th": "",
-    "path": "site.search_note"
   }
 }

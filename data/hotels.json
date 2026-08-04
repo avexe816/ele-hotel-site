@@ -615,7 +615,7 @@
   {
     "slug": "kuzuha",
     "area": "osaka",
-    "img": "p-kuzuha-hero",
+    "img": "kuzuha-overall-appearance-drawing",
     "status": "open",
     "rooms": 72,
     "opened": {
@@ -759,7 +759,7 @@
     },
     "gallery": [
       {
-        "img": "p-kuzuha-desk",
+        "img": "p-kuzuha-hero",
         "label": "desk"
       },
       {
