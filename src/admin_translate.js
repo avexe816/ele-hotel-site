@@ -16,6 +16,43 @@ const AI_MODEL_FALLBACK = "@cf/meta/m2m100-1.2b";
 // 自動翻訳する言語。zh-Hant はビルド時に簡体字から変換するのでここには入れない。
 const AUTO_LANGS = ["zh", "en", "ko"];
 
+// 固有名詞の対訳表。地名・駅名はモデルが誤読しやすいので必ず渡す。
+// 「日本語 | 簡体字 | English | 한국어」の順。
+const GLOSSARY = [
+  ["銀座", "银座", "Ginza", "긴자"],
+  ["東上野", "东上野", "Higashi-Ueno", "히가시우에노"],
+  ["上野", "上野", "Ueno", "우에노"],
+  ["東日本橋", "东日本桥", "Higashi-Nihombashi", "히가시니혼바시"],
+  ["日本橋", "日本桥", "Nihombashi", "니혼바시"],
+  ["新宿歌舞伎町", "新宿歌舞伎町", "Shinjuku Kabukicho", "신주쿠 가부키초"],
+  ["新宿", "新宿", "Shinjuku", "신주쿠"],
+  ["名古屋栄駅前", "名古屋荣站前", "Nagoya Sakae-ekimae", "나고야 사카에역 앞"],
+  ["名古屋", "名古屋", "Nagoya", "나고야"],
+  ["樟葉", "楠叶", "Kuzuha", "쿠즈하"],
+  ["仙台東口", "仙台东口", "Sendai Higashiguchi", "센다이 히가시구치"],
+  ["仙台", "仙台", "Sendai", "센다이"],
+  ["東京駅", "东京站", "Tokyo Station", "도쿄역"],
+  ["東京", "东京", "Tokyo", "도쿄"],
+  ["大阪", "大阪", "Osaka", "오사카"],
+  ["築地", "筑地", "Tsukiji", "쓰키지"],
+  ["新富", "新富", "Shintomi", "신토미"],
+  ["浅草", "浅草", "Asakusa", "아사쿠사"],
+  ["秋葉原", "秋叶原", "Akihabara", "아키하바라"],
+  ["京橋", "京桥", "Kyobashi", "교바시"],
+  ["八丁堀", "八丁堀", "Hatchobori", "핫초보리"],
+  ["株式会社TEJ", "TEJ株式会社", "TEJ Co., Ltd.", "TEJ 주식회사"],
+];
+
+const GLOSSARY_COL = { zh: 1, en: 2, ko: 3 };
+
+/** 原文に出てくる固有名詞だけを対訳表として抜き出す（プロンプトを短く保つため） */
+function glossaryFor(lang, texts) {
+  const joined = texts.join("\n");
+  const col = GLOSSARY_COL[lang];
+  const hits = GLOSSARY.filter((row) => joined.includes(row[0])).map((row) => `${row[0]} = ${row[col]}`);
+  return hits.length ? ["", "Use exactly these translations for proper nouns:", ...hits.map((x) => "- " + x)] : [];
+}
+
 const LANG_INFO = {
   zh: { label: "Simplified Chinese (as used in mainland China)", m2m: "chinese" },
   en: { label: "English", m2m: "english" },
@@ -94,6 +131,7 @@ function buildPrompt(lang, texts) {
   return [
     ...RULES(LANG_INFO[lang].label),
     `- Output exactly ${texts.length} line(s), each formatted as "<number>. <translation>".`,
+    ...glossaryFor(lang, texts),
     "",
     "Japanese:",
     texts.map((t, i) => `${i + 1}. ${t.replace(/\n/g, "\\n")}`).join("\n"),
@@ -101,7 +139,7 @@ function buildPrompt(lang, texts) {
 }
 
 function buildSinglePrompt(lang, text) {
-  return [...RULES(LANG_INFO[lang].label), "", "Japanese:", text.replace(/\n/g, "\\n")].join("\n");
+  return [...RULES(LANG_INFO[lang].label), ...glossaryFor(lang, [text]), "", "Japanese:", text.replace(/\n/g, "\\n")].join("\n");
 }
 
 function parseNumbered(raw, count) {
