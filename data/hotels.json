@@ -1,0 +1,930 @@
+[
+  {
+    "slug": "ginza-east",
+    "area": "tokyo",
+    "img": "p-ginza-east-hero",
+    "status": "open",
+    "rooms": 36,
+    "opened": {
+      "ja": "運営中"
+    },
+    "name": {
+      "ja": "ELE Hotel 銀座イースト"
+    },
+    "tagline": {
+      "ja": "銀座・築地・東京駅を歩いて回れる、静かな新富の一棟。"
+    },
+    "address": {
+      "ja": "〒104-0041 東京都中央区新富1丁目15-10"
+    },
+    "map_q": "1-15-10+Shintomi,+Chuo-ku,+Tokyo,+Japan",
+    "tel": "03-6869-6078",
+    "access": {
+      "ja": [
+        "東京メトロ日比谷線・JR京葉線「八丁堀」駅より徒歩約5分",
+        "東京メトロ有楽町線「新富町」駅より徒歩約5分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "ダブル 18室／約10〜14㎡",
+        "ツイン 9室／約11㎡",
+        "シングル"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "冷蔵庫",
+        "電気ケトル",
+        "洗浄機能つきトイレ",
+        "各室バス・トイレ"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "銀座",
+        "築地場外市場",
+        "歌舞伎座",
+        "東京国際フォーラム",
+        "皇居"
+      ]
+    },
+    "checkin": "15:00 – 23:30",
+    "checkout": "11:00",
+    "price_from": "¥6,150",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/183800/183800.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad333465/"
+      }
+    ],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "ダブル"
+        },
+        "detail": {
+          "ja": "18室・約10〜14㎡"
+        },
+        "cap": 2,
+        "img": "p-ginza-east-double"
+      },
+      {
+        "name": {
+          "ja": "ツイン"
+        },
+        "detail": {
+          "ja": "9室・約11㎡"
+        },
+        "cap": 2,
+        "img": "p-ginza-east-twin"
+      },
+      {
+        "name": {
+          "ja": "シングル"
+        },
+        "detail": {
+          "ja": ""
+        },
+        "cap": 1,
+        "img": "p-ginza-east-single"
+      }
+    ],
+    "gallery": [
+      {
+        "img": "p-ginza-east-ext",
+        "label": "ext"
+      },
+      {
+        "img": "p-ginza-east-shower",
+        "label": "shower"
+      },
+      {
+        "img": "p-ginza-east-bath",
+        "label": "bath"
+      },
+      {
+        "img": "p-ginza-east-twin",
+        "label": "room"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "higashi-ueno",
+    "area": "tokyo",
+    "img": "p-higashi-ueno-hero",
+    "status": "open",
+    "rooms": 36,
+    "opened": {
+      "ja": "2021年12月開業"
+    },
+    "name": {
+      "ja": "ELE Hotel 東上野"
+    },
+    "tagline": {
+      "ja": "上野と浅草のあいだ。2021年新築、10階建ての一棟ホテル。"
+    },
+    "address": {
+      "ja": "〒110-0015 東京都台東区東上野6-7-10"
+    },
+    "map_q": "6-7-10+Higashiueno,+Taito-ku,+Tokyo,+Japan",
+    "tel": "03-5830-6587",
+    "access": {
+      "ja": [
+        "東京メトロ銀座線「稲荷町」駅より徒歩約4分",
+        "JR・新幹線「上野」駅より徒歩約9分",
+        "都営大江戸線「新御徒町」駅より徒歩約8分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "シングル／約11㎡〜",
+        "セミダブル／約11㎡〜",
+        "ダブル／約12㎡〜"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "電気ケトル",
+        "洗浄機能つきトイレ",
+        "コインランドリー（有料）",
+        "ユニットバス（浴槽つき）"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "上野恩賜公園・上野動物園",
+        "アメ横",
+        "浅草・浅草寺（電車で約3分）",
+        "かっぱ橋道具街",
+        "東京国立博物館"
+      ]
+    },
+    "checkin": "15:00 – 23:30",
+    "checkout": "11:00",
+    "price_from": "¥5,400",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/188071/188071.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad314574/"
+      }
+    ],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "シングル"
+        },
+        "detail": {
+          "ja": "約11㎡〜"
+        },
+        "cap": 1,
+        "img": "p-higashi-ueno-single"
+      },
+      {
+        "name": {
+          "ja": "セミダブル"
+        },
+        "detail": {
+          "ja": "約11㎡〜"
+        },
+        "cap": 2,
+        "img": "p-higashi-ueno-semi"
+      },
+      {
+        "name": {
+          "ja": "ダブル"
+        },
+        "detail": {
+          "ja": "約12㎡〜"
+        },
+        "cap": 2,
+        "img": "p-higashi-ueno-double"
+      }
+    ],
+    "gallery": [
+      {
+        "img": "p-higashi-ueno-ext",
+        "label": "ext"
+      },
+      {
+        "img": "p-higashi-ueno-bath",
+        "label": "bath"
+      },
+      {
+        "img": "p-higashi-ueno-double",
+        "label": "room"
+      },
+      {
+        "img": "p-higashi-ueno-single",
+        "label": "room"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "higashi-nihonbashi",
+    "area": "tokyo",
+    "img": "p-higashi-nihonbashi-hero",
+    "status": "open",
+    "rooms": 30,
+    "opened": {
+      "ja": "2024年4月開業"
+    },
+    "name": {
+      "ja": "ELE Hotel 東日本橋"
+    },
+    "tagline": {
+      "ja": "人形町の路地と甘酒横丁が生活圏。4路線が徒歩圏の小さな一棟。"
+    },
+    "address": {
+      "ja": "〒103-0005 東京都中央区日本橋久松町10-4"
+    },
+    "map_q": "10-4+Nihonbashi+Hisamatsucho,+Chuo-ku,+Tokyo,+Japan",
+    "tel": "03-6667-0262",
+    "access": {
+      "ja": [
+        "都営新宿線「浜町」駅より徒歩約4分",
+        "都営浅草線「東日本橋」駅・都営新宿線「馬喰横山」駅より徒歩約4分",
+        "東京メトロ日比谷線「人形町」駅より徒歩約7分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "エコノミーダブル",
+        "ダブル",
+        "ツイン"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "電気ケトル",
+        "洗浄機能つきトイレ"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "人形町",
+        "甘酒横丁商店街",
+        "杉森神社",
+        "宝田恵比寿神社",
+        "東京シティエアターミナル（車で約3分）"
+      ]
+    },
+    "checkin": "15:00 – 23:30",
+    "checkout": "11:00",
+    "price_from": "¥5,950",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/191615/191615.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad347192/"
+      }
+    ],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "エコノミーダブル"
+        },
+        "detail": {
+          "ja": ""
+        },
+        "cap": 2,
+        "img": "p-higashi-nihonbashi-econ"
+      },
+      {
+        "name": {
+          "ja": "ダブル"
+        },
+        "detail": {
+          "ja": ""
+        },
+        "cap": 2,
+        "img": "p-higashi-nihonbashi-double"
+      },
+      {
+        "name": {
+          "ja": "ツイン"
+        },
+        "detail": {
+          "ja": ""
+        },
+        "cap": 2,
+        "img": "p-higashi-nihonbashi-twin"
+      }
+    ],
+    "gallery": [
+      {
+        "img": "p-higashi-nihonbashi-ext",
+        "label": "ext"
+      },
+      {
+        "img": "p-higashi-nihonbashi-lobby",
+        "label": "lobby"
+      },
+      {
+        "img": "p-higashi-nihonbashi-bath",
+        "label": "bath"
+      },
+      {
+        "img": "p-higashi-nihonbashi-twin2",
+        "label": "room"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "shinjuku-cabin",
+    "area": "tokyo",
+    "img": "p-shinjuku-cabin-hero",
+    "status": "open",
+    "rooms": 70,
+    "opened": {
+      "ja": "2023年6月開業"
+    },
+    "name": {
+      "ja": "ELE Hotel Cabin 新宿歌舞伎町"
+    },
+    "tagline": {
+      "ja": "新宿の夜のすぐ隣に。清潔でコンパクトなキャビン泊。"
+    },
+    "address": {
+      "ja": "〒160-0021 東京都新宿区歌舞伎町2-19-3"
+    },
+    "map_q": "2-19-3+Kabukicho,+Shinjuku-ku,+Tokyo,+Japan",
+    "tel": "03-6233-9191",
+    "access": {
+      "ja": [
+        "都営大江戸線「東新宿」駅A1出口より徒歩5分",
+        "西武新宿線「西武新宿」駅北口より徒歩8分",
+        "JR「新宿」駅東口より徒歩約15分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "キャビン（男性フロア／女性フロア）",
+        "窓つきシングルキャビン"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全館無料Wi-Fi",
+        "24時間フロント",
+        "全館禁煙",
+        "大型ロッカー",
+        "共用シャワー・バスルーム"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "歌舞伎町",
+        "新宿御苑",
+        "明治神宮",
+        "国立競技場",
+        "渋谷スクランブル交差点"
+      ]
+    },
+    "checkin": "15:00 – 23:30",
+    "checkout": "11:00",
+    "price_from": "¥2,574",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/187660/187660.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad362626/"
+      }
+    ],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "キャビン"
+        },
+        "detail": {
+          "ja": "男性フロア／女性フロア"
+        },
+        "cap": 1,
+        "img": "p-shinjuku-cabin-cabin"
+      },
+      {
+        "name": {
+          "ja": "窓つきシングルキャビン"
+        },
+        "detail": {
+          "ja": ""
+        },
+        "cap": 1
+      }
+    ],
+    "gallery": [
+      {
+        "img": "p-shinjuku-cabin-ext",
+        "label": "ext"
+      },
+      {
+        "img": "p-shinjuku-cabin-ext2",
+        "label": "ext"
+      },
+      {
+        "img": "p-shinjuku-cabin-locker",
+        "label": "locker"
+      },
+      {
+        "img": "p-shinjuku-cabin-wash",
+        "label": "wash"
+      },
+      {
+        "img": "p-shinjuku-cabin-bath",
+        "label": "bath"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "nagoya-sakae",
+    "area": "nagoya",
+    "img": "h-nagoya-sakae",
+    "status": "soon",
+    "rooms": 140,
+    "opened": {
+      "ja": "2026年9月開業予定"
+    },
+    "name": {
+      "ja": "ELE Hotel 名古屋栄駅前"
+    },
+    "tagline": {
+      "ja": "錦三丁目、栄の中心に開業予定の140室のシティホテル。"
+    },
+    "address": {
+      "ja": "〒460-0003 愛知県名古屋市中区錦三丁目6番15号"
+    },
+    "map_q": "3-6-15+Nishiki,+Naka-ku,+Nagoya,+Aichi,+Japan",
+    "tel": "052-265-6216",
+    "access": {
+      "ja": [
+        "名古屋市営地下鉄 東山線・名城線「栄」駅より徒歩約3分",
+        "名鉄瀬戸線「栄町」駅より徒歩約3分",
+        "名古屋市営地下鉄 桜通線・名城線「久屋大通」駅より徒歩約3分",
+        "JR「名古屋」駅より地下鉄東山線で約5分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "ダブル",
+        "ツイン",
+        "シングル"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "冷蔵庫",
+        "電気ケトル",
+        "洗浄機能つきトイレ",
+        "各室バス・トイレ"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "栄",
+        "オアシス21",
+        "久屋大通公園",
+        "名古屋城",
+        "大須商店街"
+      ]
+    },
+    "checkin": "15:00 – 23:30",
+    "checkout": "11:00",
+    "price_from": "",
+    "ota": [],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "ダブル"
+        },
+        "detail": {
+          "ja": "準備中"
+        },
+        "cap": 2
+      },
+      {
+        "name": {
+          "ja": "ツイン"
+        },
+        "detail": {
+          "ja": "準備中"
+        },
+        "cap": 2
+      },
+      {
+        "name": {
+          "ja": "シングル"
+        },
+        "detail": {
+          "ja": "準備中"
+        },
+        "cap": 1
+      }
+    ],
+    "fax": "052-265-6217",
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "kuzuha",
+    "area": "osaka",
+    "img": "p-kuzuha-hero",
+    "status": "open",
+    "rooms": 72,
+    "opened": {
+      "ja": "2023年12月 ELE HOTEL としてリブランド"
+    },
+    "name": {
+      "ja": "ELE Hotel 樟葉"
+    },
+    "tagline": {
+      "ja": "京都と大阪のちょうど中間。朝食無料、1階に北欧風カフェ。"
+    },
+    "address": {
+      "ja": "〒573-1106 大阪府枚方市町楠葉1-5-5"
+    },
+    "map_q": "1-5-5+Machikuzuha,+Hirakata,+Osaka,+Japan",
+    "tel": "072-856-7808",
+    "access": {
+      "ja": [
+        "京阪本線「樟葉」駅より徒歩4分",
+        "京都・大阪の両中心部へ電車で約25分",
+        "宿泊者専用駐車場6台（1泊1,000円・要予約）"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "シングル／16.0〜19.2㎡",
+        "セミダブル／16㎡",
+        "ダブル／16〜23.36㎡",
+        "ツイン／24.95〜26.56㎡",
+        "トリプル／24.95〜33.53㎡",
+        "ユニバーサルルーム（5階・浴槽つき）"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "電気ケトル",
+        "洗浄機能つきトイレ",
+        "コインランドリー（有料）",
+        "朝食無料（7:00〜9:30／和食・パン・コーヒー）",
+        "1階カフェ Café la Route 121（11:00〜21:00）",
+        "高級マットレス（シモンズ／サータ等）",
+        "5階に電子レンジ・ズボンプレッサー"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "KUZUHA MALL（樟葉モール）",
+        "京都市内へ約25分",
+        "大阪・淀屋橋へ約25分",
+        "石清水八幡宮"
+      ]
+    },
+    "checkin": "15:00 – 24:00",
+    "checkout": "10:00",
+    "price_from": "¥8,800",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/187468/187468.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad314256/"
+      },
+      {
+        "label": "公式サイト",
+        "url": "https://www.ele-hotel.com/"
+      }
+    ],
+    "brand": "hotel",
+    "rtypes": [
+      {
+        "name": {
+          "ja": "シングル"
+        },
+        "detail": {
+          "ja": "16.0〜19.2㎡"
+        },
+        "cap": 1,
+        "img": "p-kuzuha-single"
+      },
+      {
+        "name": {
+          "ja": "セミダブル"
+        },
+        "detail": {
+          "ja": "16㎡"
+        },
+        "cap": 2
+      },
+      {
+        "name": {
+          "ja": "ダブル"
+        },
+        "detail": {
+          "ja": "16〜23.36㎡"
+        },
+        "cap": 2,
+        "img": "p-kuzuha-double"
+      },
+      {
+        "name": {
+          "ja": "ツイン"
+        },
+        "detail": {
+          "ja": "24.95〜26.56㎡"
+        },
+        "cap": 2,
+        "img": "p-kuzuha-twin"
+      },
+      {
+        "name": {
+          "ja": "トリプル"
+        },
+        "detail": {
+          "ja": "24.95〜33.53㎡"
+        },
+        "cap": 3
+      },
+      {
+        "name": {
+          "ja": "ユニバーサルルーム"
+        },
+        "detail": {
+          "ja": "5階・浴槽つき"
+        },
+        "cap": 2
+      }
+    ],
+    "booking": {
+      "engine": "yoyakupro",
+      "action": "https://www7.489pro.com/asp/489/menu.asp?id=27000054&ty=ser",
+      "top": "https://www7.489pro.com/asp/489/menu.asp?id=27000054",
+      "max_guests": 5,
+      "max_nights": 5,
+      "max_rooms": 5
+    },
+    "gallery": [
+      {
+        "img": "p-kuzuha-desk",
+        "label": "desk"
+      },
+      {
+        "img": "p-kuzuha-lounge",
+        "label": "room"
+      },
+      {
+        "img": "p-kuzuha-bath",
+        "label": "bath"
+      },
+      {
+        "img": "p-kuzuha-twin",
+        "label": "room"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  },
+  {
+    "slug": "sendai-higashiguchi",
+    "area": "sendai",
+    "brand": "hotel",
+    "img": "p-sendai-higashiguchi-hero",
+    "status": "open",
+    "rooms": 65,
+    "opened": {
+      "ja": "2026年6月 全館リニューアルオープン"
+    },
+    "name": {
+      "ja": "ELE Hotel 仙台東口"
+    },
+    "tagline": {
+      "ja": "仙台駅東口から徒歩約8分、2026年に全館を改装した65室。"
+    },
+    "address": {
+      "ja": "宮城県仙台市宮城野区小田原1-1-5"
+    },
+    "map_q": "1-1-5+Odawara,+Miyagino-ku,+Sendai,+Miyagi,+Japan",
+    "tel": "022-299-7521",
+    "access": {
+      "ja": [
+        "JR「仙台」駅 東口より徒歩約8分（国道45号線沿い）",
+        "「小田原一丁目」バス停より徒歩約1分",
+        "仙台宮城ICより車で約15分"
+      ]
+    },
+    "roomtypes": {
+      "ja": [
+        "シングル（140cm幅ベッド）／2026年改装",
+        "セミダブル 約11㎡（140cm幅ベッド1台）",
+        "ツイン（97cm幅ベッド2台）／2026年改装"
+      ]
+    },
+    "facilities": {
+      "ja": [
+        "全室無料Wi-Fi",
+        "24時間フロント",
+        "全室禁煙",
+        "液晶テレビ",
+        "冷蔵庫",
+        "電気ケトル",
+        "洗浄機能つきトイレ",
+        "各室バス・トイレ・シャワー",
+        "ズボンプレッサー（貸出含む）",
+        "近隣提携駐車場（1泊1,000円・要事前確認）"
+      ]
+    },
+    "nearby": {
+      "ja": [
+        "仙台駅",
+        "楽天モバイルパーク宮城",
+        "仙台朝市",
+        "定禅寺通",
+        "仙台城跡"
+      ]
+    },
+    "checkin": "15:00 – 24:00",
+    "checkout": "10:00",
+    "price_from": "¥5,400",
+    "ota": [
+      {
+        "label": "楽天トラベル",
+        "url": "https://travel.rakuten.co.jp/HOTEL/199418/199418.html"
+      },
+      {
+        "label": "じゃらん net",
+        "url": "https://www.jalan.net/yad333965/"
+      }
+    ],
+    "rtypes": [
+      {
+        "name": {
+          "ja": "シングル"
+        },
+        "detail": {
+          "ja": "140cm幅ベッド・2026年改装"
+        },
+        "cap": 1,
+        "img": "p-sendai-higashiguchi-single"
+      },
+      {
+        "name": {
+          "ja": "セミダブル"
+        },
+        "detail": {
+          "ja": "約11㎡・140cm幅ベッド1台"
+        },
+        "cap": 2
+      },
+      {
+        "name": {
+          "ja": "ツイン"
+        },
+        "detail": {
+          "ja": "97cm幅ベッド2台・2026年改装"
+        },
+        "cap": 2,
+        "img": "p-sendai-higashiguchi-twin"
+      }
+    ],
+    "gallery": [
+      {
+        "img": "p-sendai-higashiguchi-desk",
+        "label": "desk"
+      },
+      {
+        "img": "p-sendai-higashiguchi-lobby",
+        "label": "lobby"
+      },
+      {
+        "img": "p-sendai-higashiguchi-dining",
+        "label": "dining"
+      },
+      {
+        "img": "p-sendai-higashiguchi-laundry",
+        "label": "laundry"
+      },
+      {
+        "img": "p-sendai-higashiguchi-amenity",
+        "label": "amenity"
+      },
+      {
+        "img": "p-sendai-higashiguchi-bath",
+        "label": "bath"
+      }
+    ],
+    "amenities": {
+      "ja": [
+        "スリッパ",
+        "ドライヤー",
+        "タオル",
+        "シャンプー",
+        "コンディショナー",
+        "ボディシャンプー",
+        "館内着"
+      ]
+    }
+  }
+]
