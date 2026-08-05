@@ -367,9 +367,21 @@ JS = """<script>
  var all=[].slice.call(hotel.options);
  var ph=all.filter(function(o){return o.value==='';})[0];
  var items=all.filter(function(o){return o.value!=='';});
+ var gopts=guests?[].slice.call(guests.options):[];
+ function syncGuests(){
+  if(!guests)return;
+  var d=DATA[hotel.value],mx=(d&&d.a&&d.mg)?d.mg:gopts.length;
+  var keep=parseInt(guests.value,10)||1,last=null;
+  gopts.forEach(function(o){
+   var ok=(parseInt(o.value,10)||1)<=mx;
+   o.hidden=!ok;o.disabled=!ok;if(ok)last=o;
+  });
+  if(keep>mx&&last)guests.value=last.value;
+ }
  function updateGo(){
   var on=!!hotel.value;
   go.disabled=!on;go.setAttribute('aria-disabled',String(!on));
+  syncGuests();
  }
  function syncHotels(){
   var a=area.value,keep=hotel.value,shown=[];
@@ -524,7 +536,7 @@ def build_home(lang):
         f'<option value="{a}">{esc(area_label(t, a))}</option>' for a in areas
     )
     guests = "".join(
-        f'<option value="{n}">{n} {esc(t["search_guest_unit"])}</option>' for n in (1, 2, 3, 4)
+        f'<option value="{n}">{n} {esc(t["search_guest_unit"])}</option>' for n in range(1, 11)
     )
     hotel_opts = f'<option value="">{esc(t["search_hotel_any"])}</option>' + "".join(
         f'<option value="{h["slug"]}" data-area="{h["area"]}">{esc(h["name"][code])}</option>'
