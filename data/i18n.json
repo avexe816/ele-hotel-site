@@ -1977,6 +1977,24 @@
     "th": "",
     "locked": true
   },
+  "6f0b069faec6481d": {
+    "ja": "ホテル",
+    "zh": "酒店",
+    "zh-Hant": "飯店",
+    "en": "Hotel",
+    "ko": "호텔",
+    "locked": true,
+    "hant_manual": true
+  },
+  "771a7a6482ff8017": {
+    "ja": "ホテルを選択してください",
+    "zh": "请选择酒店",
+    "zh-Hant": "請選擇飯店",
+    "en": "Please select a hotel",
+    "ko": "호텔을 선택해 주세요",
+    "locked": true,
+    "hant_manual": true
+  },
   "3c4848674fbc2784": {
     "ja": "ホテル一覧",
     "zh": "酒店一览",
@@ -4642,23 +4660,5 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
-  },
-  "6f0b069faec6481d": {
-    "ja": "ホテル",
-    "zh": "酒店",
-    "zh-Hant": "飯店",
-    "en": "Hotel",
-    "ko": "호텔",
-    "locked": true,
-    "hant_manual": true
-  },
-  "771a7a6482ff8017": {
-    "ja": "ホテルを選択してください",
-    "zh": "请选择酒店",
-    "zh-Hant": "請選擇飯店",
-    "en": "Please select a hotel",
-    "ko": "호텔을 선택해 주세요",
-    "locked": true,
-    "hant_manual": true
   }
 }
