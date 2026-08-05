@@ -102,7 +102,7 @@
     "ja": "1階カフェ Café la Route 121（11:00〜21:00）",
     "zh": "1楼咖啡厅 Café la Route 121（11:00〜21:00）",
     "zh-Hant": "1樓咖啡廳 Café la Route 121（11:00〜21:00）",
-    "en": "Ground-floor Café la Route 121 (11:00–21:00)",
+    "en": "Ground-floor Café la Route 121  Mon-Thu 11:00–15:00(L/O 14:30), Fri-SunPublic Holiday11:00-18:00(L/O 17:30))",
     "ko": "1층 카페 Café la Route 121（11:00~21:00）",
     "th": "",
     "locked": true
@@ -982,6 +982,16 @@
     "th": "",
     "locked": true
   },
+  "cf70d20d5b949c63": {
+    "ja": "このサイトから直接オンライン予約できるホテル：",
+    "locked": true,
+    "hant_manual": true,
+    "th": "",
+    "zh": "可在本网站直接在线预订的酒店：",
+    "zh-Hant": "可於本網站直接線上預訂的飯店：",
+    "en": "Hotels you can book online directly on this site:",
+    "ko": "이 사이트에서 바로 온라인 예약할 수 있는 호텔:"
+  },
   "67077108bf3225e0": {
     "ja": "ご予約",
     "zh": "预订",
@@ -999,6 +1009,16 @@
     "ko": "예약에 관한 문의는 각 시설로 직접 부탁드립니다. 운영・부동산・채용에 관한 상담은 대표 번호로 연락해 주십시오.",
     "th": "",
     "locked": true
+  },
+  "acbaa0660def4b06": {
+    "ja": "ご予約は各ホテルページの予約サイトリンクからお願いいたします。",
+    "locked": true,
+    "hant_manual": true,
+    "th": "",
+    "zh": "请通过各酒店页面的预订网站链接进行预订。",
+    "zh-Hant": "請透過各飯店頁面的訂房網站連結進行預訂。",
+    "en": "Please book through the reservation site links on each hotel page.",
+    "ko": "예약은 각 호텔 페이지의 예약 사이트 링크를 이용해 주십시오."
   },
   "39e9c9d6515be063": {
     "ja": "ご予約・空室について",
@@ -4595,25 +4615,5 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
-  },
-  "cf70d20d5b949c63": {
-    "ja": "このサイトから直接オンライン予約できるホテル：",
-    "locked": true,
-    "hant_manual": true,
-    "th": "",
-    "zh": "可在本网站直接在线预订的酒店：",
-    "zh-Hant": "可於本網站直接線上預訂的飯店：",
-    "en": "Hotels you can book online directly on this site:",
-    "ko": "이 사이트에서 바로 온라인 예약할 수 있는 호텔:"
-  },
-  "acbaa0660def4b06": {
-    "ja": "ご予約は各ホテルページの予約サイトリンクからお願いいたします。",
-    "locked": true,
-    "hant_manual": true,
-    "th": "",
-    "zh": "请通过各酒店页面的预订网站链接进行预订。",
-    "zh-Hant": "請透過各飯店頁面的訂房網站連結進行預訂。",
-    "en": "Please book through the reservation site links on each hotel page.",
-    "ko": "예약은 각 호텔 페이지의 예약 사이트 링크를 이용해 주십시오."
   }
 }
