@@ -365,18 +365,32 @@ JS = """<script>
   if(!dout.value||dout.value<=din.value)dout.value=plus(din.value,1);
  });
  var all=[].slice.call(hotel.options);
+ var ph=all.filter(function(o){return o.value==='';})[0];
+ var items=all.filter(function(o){return o.value!=='';});
+ function updateGo(){
+  var on=!!hotel.value;
+  go.disabled=!on;go.setAttribute('aria-disabled',String(!on));
+ }
  function syncHotels(){
-  var a=area.value,keep=hotel.value,first=null,shown=0;
-  all.forEach(function(o){
+  var a=area.value,keep=hotel.value,shown=[];
+  items.forEach(function(o){
    var ok=!a||o.getAttribute('data-area')===a;
    o.hidden=!ok;o.disabled=!ok;
-   if(ok){shown++;if(!first)first=o;}
+   if(ok)shown.push(o);
   });
-  var cur=all.filter(function(o){return o.value===keep&&!o.hidden;})[0];
-  hotel.value=cur?keep:(first?first.value:'');
-  hotel.disabled=!shown;
+  if(shown.length===1){
+   if(ph){ph.hidden=true;ph.disabled=true;}
+   hotel.value=shown[0].value;
+  }else{
+   if(ph){ph.hidden=false;ph.disabled=false;}
+   var cur=shown.filter(function(o){return o.value===keep;})[0];
+   hotel.value=cur?keep:'';
+  }
+  hotel.disabled=!shown.length;
+  updateGo();
  }
  area.addEventListener('change',syncHotels);
+ hotel.addEventListener('change',updateGo);
  syncHotels();
  go.addEventListener('click',function(){
   var d=DATA[hotel.value];
@@ -512,7 +526,7 @@ def build_home(lang):
     guests = "".join(
         f'<option value="{n}">{n} {esc(t["search_guest_unit"])}</option>' for n in (1, 2, 3, 4)
     )
-    hotel_opts = "".join(
+    hotel_opts = f'<option value="">{esc(t["search_hotel_any"])}</option>' + "".join(
         f'<option value="{h["slug"]}" data-area="{h["area"]}">{esc(h["name"][code])}</option>'
         for h in searchable
     )
@@ -609,7 +623,7 @@ def build_home(lang):
 <div class="field"><label for="f-in">{esc(t['search_in'])}</label><input id="f-in" type="date"></div>
 <div class="field"><label for="f-out">{esc(t['search_out'])}</label><input id="f-out" type="date"></div>
 <div class="field"><label for="f-g">{esc(t['search_guests'])}</label><select id="f-g">{guests}</select></div>
-<button class="btn btn--primary" id="f-go" type="button">{esc(t['search_submit'])}</button>
+<button class="btn btn--primary" id="f-go" type="button" disabled aria-disabled="true">{esc(t['search_submit'])}</button>
 </div>
 </form>
 <script id="search-data" type="application/json">{search_json}</script>

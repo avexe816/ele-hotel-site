@@ -650,6 +650,14 @@ summary {
 .searchbar__grid > * {
   min-width: 0;
 }
+.searchbar__grid .btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.searchbar__grid .btn[disabled]:hover {
+  transform: none;
+}
 @media (max-width: 1100px) {
   .searchbar__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

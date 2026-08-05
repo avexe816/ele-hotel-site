@@ -142,6 +142,11 @@
       "group": "top",
       "label": "空室検索：ホテル選択の見出し"
     },
+    "search_hotel_any": {
+      "kind": "text",
+      "group": "top",
+      "label": "空室検索：ホテル未選択のときの表示"
+    },
     "search_area_any": {
       "group": "booking",
       "label": "search_area_any",

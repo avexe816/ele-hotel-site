@@ -4651,5 +4651,14 @@
     "ko": "호텔",
     "locked": true,
     "hant_manual": true
+  },
+  "771a7a6482ff8017": {
+    "ja": "ホテルを選択してください",
+    "zh": "请选择酒店",
+    "zh-Hant": "請選擇飯店",
+    "en": "Please select a hotel",
+    "ko": "호텔을 선택해 주세요",
+    "locked": true,
+    "hant_manual": true
   }
 }
