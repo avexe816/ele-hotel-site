@@ -7,8 +7,34 @@
 
   // ============================================================ 定数・状態
 
-  const AREA_LABEL = { tokyo: "東京", osaka: "大阪", nagoya: "名古屋", sendai: "仙台" };
+  // エリアは site.json の ja.areas が正（管理画面「トップページ」の「エリア（絞り込みボタン）」で追加・編集できる）
+  const AREA_LABEL_FALLBACK = { tokyo: "東京", osaka: "大阪", nagoya: "名古屋", sendai: "仙台", onsen: "温泉" };
+
+  function areaDefs() {
+    const ja = (state.draft && state.draft["data/site.json"] ? state.draft["data/site.json"].ja : null) || {};
+    const list = Array.isArray(ja.areas) ? ja.areas : [];
+    const out = [];
+    for (const a of list) {
+      if (!a || typeof a !== "object") continue;
+      const key = String(a.key || "").trim();
+      if (!key) continue;
+      out.push({ key: key, label: String(a.label || "").trim() || key });
+    }
+    if (out.length) return out;
+    return Object.keys(AREA_LABEL_FALLBACK).map((k) => ({ key: k, label: AREA_LABEL_FALLBACK[k] }));
+  }
+
+  function areaLabelMap() {
+    const m = {};
+    for (const a of areaDefs()) m[a.key] = a.label;
+    return m;
+  }
+
+  function areaLabel(key) {
+    return areaLabelMap()[key] || AREA_LABEL_FALLBACK[key] || key;
+  }
   const STATUS_LABEL = { open: "公開中", soon: "開業予定" };
+  const BRAND_LABEL = { hotel: "ELE Hotel（ホテル）", apart: "ELE Apartment（アパートメント）", onsen: "ELE Onsen（温泉）", grand: "GRAND ELE Hotel" };
 
   const state = {
     me: null, // {ok,email,mode,configured,translator,repo}
@@ -288,11 +314,25 @@
   }
   // hotels.json のリーフパス（例: "tagline.ja", "rtypes.2.name.ja", "ota.0.url"）
   // を人間が読めるラベル（例: "キャッチコピー", "客室タイプ（カード） #3: 名称"）に変換する
+  const BOOKING_SUB_LABEL = {
+    engine: "予約フォームの表示",
+    id: "施設ID",
+    host: "サーバー名",
+    max_guests: "人数の上限",
+    max_nights: "泊数の上限",
+    max_rooms: "部屋数の上限",
+    action: "検索用URL（旧設定）",
+    top: "トップURL（旧設定）",
+  };
+
   function hotelFieldLabel(pathKey) {
     const parts = pathKey.split(".");
     const head = parts[0];
     const meta = (state.schema.hotel || {})[head];
     if (!meta) return pathKey;
+    if (head === "booking" && parts[1]) {
+      return "予約プロ設定: " + (BOOKING_SUB_LABEL[parts[1]] || parts[1]);
+    }
     // トップレベルの単純フィールド（例: "tagline.ja" → "キャッチコピー"）
     if (parts.length <= 2) {
       return meta.label || head;
@@ -718,7 +758,7 @@
     const emailInput = h("input", {
       type: "email",
       id: "loginEmail",
-      placeholder: "yamada@ele-hotel.com",
+      placeholder: "staff@example.com",
       autocomplete: "username",
       required: true,
       value: emailVal,
@@ -985,9 +1025,9 @@
       }
     }
 
-    // ブランドページグループには grand.json のフィールドも表示
+    // GRAND ELE ページのグループでは grand.json を表示する
     let grandFields = [];
-    if (group.id === "brand") {
+    if (group.id === "grandpage") {
       grandFields = renderGrandFields();
     }
 
@@ -1015,44 +1055,39 @@
   }
 
   // grand.json は admin-schema.json の対象外のため、ラベルをここで定義する（computeDiffList でも共用）
-  const GRAND_LABEL_MAP = {
-    meta_title: "ページタイトル",
-    meta_desc: "ページ説明文",
-    eyebrow: "小見出し",
-    slogan: "スローガン",
-    title: "大見出し",
-    lead: "リード文",
-    concept_title: "コンセプト見出し",
-    concept_paras: "コンセプト本文（段落）",
-    pillars_title: "三つのお約束の見出し",
-    rooms_title: "客室の見出し",
-    rooms_lead: "客室のリード文",
-    dining_title: "ダイニングの見出し",
-    dining_lead: "ダイニングのリード文",
-    wellness_title: "ウェルネスの見出し",
-    service_title: "サービスの見出し",
-    plan_title: "展開計画の見出し",
-    plan_lead: "展開計画のリード文",
-    contact_title: "お問い合わせ見出し",
-    contact_lead: "お問い合わせリード文",
-    back: "戻るリンク文言",
-  };
+  // ---------------------------------------------------------------- GRAND ELE ページ（grand.json）
+  // 項目の一覧・並び順・見出しは data/admin-schema.json の "grand" が正。
   function grandFieldLabel(pathKey) {
-    const head = pathKey.split(".")[0];
-    return GRAND_LABEL_MAP[head] || pathKey;
+    const parts = pathKey.split(".");
+    const head = parts[0];
+    const meta = (state.schema.grand || {})[head];
+    if (!meta) return pathKey;
+    if (parts.length <= 1) return meta.label || head;
+    const idx = Number(parts[1]);
+    const subKey = parts[2];
+    const numLabel = Number.isInteger(idx) ? " #" + (idx + 1) : "";
+    if (!subKey) return (meta.label || head) + numLabel;
+    const itemLabels = (state.schema.itemLabels && state.schema.itemLabels["grand:" + head]) || {};
+    return (meta.label || head) + numLabel + ": " + (itemLabels[subKey] || subKey);
   }
+
   function renderGrandFields() {
     const grandJa = (state.draft["data/grand.json"] || {}).ja || {};
+    const schemaGrand = state.schema.grand || {};
     const out = [];
-    const simpleKeys = Object.keys(grandJa).filter((k) => typeof grandJa[k] === "string" && GRAND_LABEL_MAP[k]);
-    for (const key of simpleKeys) {
-      const kind = grandJa[key].length > 60 ? "textarea" : "text";
-      out.push(renderGrandField(key, GRAND_LABEL_MAP[key], kind, grandJa));
+    for (const [key, meta] of Object.entries(schemaGrand)) {
+      out.push(renderGrandField(key, meta, grandJa));
+    }
+    // スキーマに載っていない項目の取りこぼし防止
+    for (const key of Object.keys(grandJa)) {
+      if (!schemaGrand[key]) {
+        out.push(renderGrandField(key, { label: "（未分類）" + key, kind: guessKind(grandJa[key]) }, grandJa));
+      }
     }
     return out;
   }
 
-  function renderGrandField(key, label, kind, grandJa) {
+  function renderGrandField(key, meta, grandJa) {
     const before = getPath((state.original["data/grand.json"] || {}).ja || {}, key);
     const after = getPath(grandJa, key);
     const dirty = JSON.stringify(before) !== JSON.stringify(after);
@@ -1064,10 +1099,16 @@
     };
 
     let control;
-    if (readOnly) {
-      // 日本語以外のタブ … 訳文をそのまま直せる
-      control = renderTranslationField(getPath((state.draft["data/grand.json"] || {}).ja || {}, key), kind);
-    } else if (kind === "textarea") {
+    if (meta.kind === "list-text") {
+      control = readOnly ? renderTranslationList(after || []) : renderListText(after || [], onChange, readOnly, "grand:" + key);
+    } else if (meta.kind === "list-obj") {
+      const itemLabels = (state.schema.itemLabels && state.schema.itemLabels["grand:" + key]) || {};
+      control = renderListObj(after || [], onChange, readOnly, itemLabels);
+    } else if (readOnly) {
+      control = renderTranslationField(after, meta.kind === "textarea" ? "textarea" : "text");
+    } else if (/画像ID/.test(meta.label || "")) {
+      control = renderImageField(after, onChange, readOnly);
+    } else if (meta.kind === "textarea") {
       control = h("textarea", {
         "data-autogrow": "1",
         value: after || "",
@@ -1081,7 +1122,7 @@
     }
 
     return h("div", { class: "field" }, [
-      h("div", { class: "field-label-row" }, [h("span", { class: "field-label" }, label), dirty ? h("span", { class: "dirty-dot" }) : null]),
+      h("div", { class: "field-label-row" }, [h("span", { class: "field-label" }, meta.label), dirty ? h("span", { class: "dirty-dot" }) : null]),
       control,
     ]);
   }
@@ -1340,12 +1381,148 @@
       h("div", { class: "main-inner" }, [
         h("div", { class: "group-head" }, [
           h("h1", null, hotel.name && hotel.name.ja ? hotel.name.ja : hotel.slug),
-          h("p", null, `${AREA_LABEL[hotel.area] || hotel.area} ・ ${STATUS_LABEL[hotel.status] || hotel.status}`),
+          h("p", null, `${areaLabel(hotel.area)} ・ ${STATUS_LABEL[hotel.status] || hotel.status}`),
         ]),
         renderLangTabs(),
         ...fields,
       ]),
     ]);
+  }
+
+  // ---------------------------------------------------------------- 予約エンジン（予約プロ）
+  // build.py の booking_config() と同じ計算をブラウザ側でも行い、入力しながら URL を確認できるようにする。
+  const YOYAKUPRO_HOST = "www7.489pro.com";
+
+  function yoyakuproUrls(bk) {
+    if (!bk || !String(bk.engine || "").trim()) return null;
+    const action = String(bk.action || "").trim();
+    const top = String(bk.top || "").trim();
+    if (action && top) return { action: action, top: top };
+    const raw = String(bk.id || "").trim();
+    if (!raw) return null;
+    let host = String(bk.host || "").trim();
+    let fid = raw;
+    if (/^https?:/i.test(raw)) {
+      const m = raw.match(/[?&]id=(\d+)/);
+      if (!m) return null;
+      fid = m[1];
+      const hm = raw.match(/^https?:\/\/([^/]+)/);
+      if (hm && !host) host = hm[1];
+    } else if (!/^\d{4,12}$/.test(raw)) {
+      return null;
+    }
+    const baseUrl = "https://" + (host || YOYAKUPRO_HOST) + "/asp/489/menu.asp?id=" + fid;
+    return { action: baseUrl + "&ty=ser", top: baseUrl };
+  }
+
+  function renderBookingField(hotel, readOnly) {
+    const bk = hotel.booking && typeof hotel.booking === "object" ? hotel.booking : {};
+    const engine = String(bk.engine || "");
+
+    const patch = (kv) => {
+      hotel.booking = { ...(hotel.booking && typeof hotel.booking === "object" ? hotel.booking : {}), ...kv };
+      render();
+    };
+
+    const engineSel = h(
+      "select",
+      {
+        disabled: readOnly,
+        onChange: (e) => {
+          const v = e.target.value;
+          if (!v) {
+            hotel.booking = { ...(hotel.booking || {}), engine: "" };
+          } else {
+            const next = {
+              engine: v,
+              id: String(bk.id || ""),
+              max_guests: Number(bk.max_guests) || 5,
+              max_nights: Number(bk.max_nights) || 5,
+              max_rooms: Number(bk.max_rooms) || 5,
+            };
+            if (String(bk.host || "").trim()) next.host = String(bk.host).trim();
+            hotel.booking = next;
+          }
+          render();
+        },
+      },
+      [
+        h("option", { value: "", selected: engine !== "yoyakupro" }, "使わない（予約サイトリンクのみ表示）"),
+        h("option", { value: "yoyakupro", selected: engine === "yoyakupro" }, "予約プロを使う（ページ内に予約フォームを表示）"),
+      ]
+    );
+
+    const rows = [
+      h("div", { class: "obj-card-field" }, [h("span", { class: "field-label" }, "予約フォームの表示"), engineSel]),
+    ];
+
+    if (engine === "yoyakupro") {
+      const legacy = Boolean(String(bk.action || "").trim() && String(bk.top || "").trim());
+      const idInput = h("input", {
+        type: "text",
+        readOnly: readOnly,
+        disabled: readOnly,
+        placeholder: "27000054　または　https://www7.489pro.com/asp/489/menu.asp?id=27000054",
+        value: String(bk.id || ""),
+        onInput: (e) => patch({ id: e.target.value }),
+      });
+      rows.push(
+        h("div", { class: "obj-card-field" }, [
+          h("span", { class: "field-label" }, "施設ID または 予約プロの URL"),
+          idInput,
+          h(
+            "p",
+            { class: "field-help" },
+            "予約プロと契約すると発行される数字の施設IDを入れてください。管理画面の URL をまるごと貼り付けても構いません（IDを自動で読み取ります）。"
+          ),
+        ])
+      );
+
+      const urls = yoyakuproUrls(hotel.booking);
+      if (legacy) {
+        rows.push(
+          h("p", { class: "field-help" }, "※ 旧設定（URL直接指定）が残っています。施設IDを入れて保存すると自動生成に切り替わります。")
+        );
+      }
+      rows.push(
+        h("div", { class: "obj-card-field" }, [
+          h("span", { class: "field-label" }, "確認：実際に使われる予約先"),
+          urls
+            ? h("div", { class: "hm-url-preview" }, [
+                h("div", null, "検索ボタン → " + urls.action),
+                h("div", null, "「予約サイトを開く」→ " + urls.top),
+              ])
+            : h("div", { class: "hm-url-preview" }, "施設IDがまだ読み取れません。数字のIDか、id=… を含む URL を入れてください。（このままだと予約フォームは表示されません）"),
+        ])
+      );
+
+      const num = (k, label) =>
+        h("div", { class: "obj-card-field" }, [
+          h("span", { class: "field-label" }, label),
+          h("input", {
+            type: "number",
+            min: "1",
+            max: "30",
+            readOnly: readOnly,
+            disabled: readOnly,
+            value: Number(bk[k]) || 5,
+            onInput: (e) => patch({ [k]: e.target.value === "" ? 5 : Math.max(1, Math.min(30, Number(e.target.value))) }),
+          }),
+        ]);
+      rows.push(num("max_guests", "選べる人数の上限（名）"));
+      rows.push(num("max_nights", "選べる泊数の上限（泊）"));
+      rows.push(num("max_rooms", "選べる部屋数の上限（室）"));
+    } else {
+      rows.push(
+        h(
+          "p",
+          { class: "field-help" },
+          "「使わない」のときは、下の「予約サイトリンク」に登録した外部サイト（楽天トラベル・じゃらん等）だけが表示されます。"
+        )
+      );
+    }
+
+    return h("div", { class: "obj-card" }, [h("div", { class: "obj-card-head" }, [h("span", { class: "obj-card-title" }, "予約プロ設定")]), ...rows]);
   }
 
   function renderHotelField(hotel, beforeHotel, key, meta) {
@@ -1369,17 +1546,21 @@
 
     let control;
 
-    if (meta.kind === "readonly") {
+    if (meta.kind === "booking") {
+      control = renderBookingField(hotel, readOnly);
+    } else if (meta.kind === "readonly") {
       control = h("div", { class: "readonly-value" }, String(jaValue == null ? "" : jaValue));
     } else if (meta.kind === "select") {
-      const optLabelMap = key === "area" ? AREA_LABEL : key === "status" ? STATUS_LABEL : {};
+      const optLabelMap = key === "area" ? areaLabelMap() : key === "status" ? STATUS_LABEL : key === "brand" ? BRAND_LABEL : {};
       control = h(
         "select",
         {
           disabled: readOnly,
           onChange: (e) => update(e.target.value),
         },
-        meta.options.map((opt) => h("option", { value: opt, selected: opt === rawValue }, optLabelMap[opt] || opt))
+        (key === "area" ? areaDefs().map((a) => a.key) : meta.options).map((opt) =>
+          h("option", { value: opt, selected: opt === rawValue }, optLabelMap[opt] || opt)
+        )
       );
     } else if (meta.kind === "number") {
       control = h("input", {
@@ -1646,7 +1827,7 @@
         h("span", { class: "hm-no" }, String(idx + 1)),
         h("div", { class: "hm-body" }, [
           h("div", { class: "hm-name" }, (hotel.name && hotel.name.ja) || hotel.slug),
-          h("div", { class: "hm-meta" }, `${AREA_LABEL[hotel.area] || hotel.area} ・ ${STATUS_LABEL[hotel.status] || hotel.status} ・ /hotels/${hotel.slug}`),
+          h("div", { class: "hm-meta" }, `${areaLabel(hotel.area)} ・ ${STATUS_LABEL[hotel.status] || hotel.status} ・ /hotels/${hotel.slug}`),
         ]),
         h("div", { class: "hm-ctrl" }, [
           h("button", { class: "btn btn-icon btn-ghost", title: "上へ", disabled: idx === 0, onClick: () => move(idx, -1) }, "↑"),
@@ -1708,7 +1889,7 @@
             const sel = h(
               "select",
               { onChange: (e) => (nh.area = e.target.value) },
-              Object.keys(AREA_LABEL).map((k) => h("option", { value: k }, AREA_LABEL[k]))
+              areaDefs().map((a) => h("option", { value: a.key }, a.label))
             );
             sel.value = nh.area;
             return sel;

@@ -755,8 +755,8 @@
     ],
     "booking": {
       "engine": "yoyakupro",
-      "action": "https://www7.489pro.com/asp/489/menu.asp?id=27000054&ty=ser",
-      "top": "https://www7.489pro.com/asp/489/menu.asp?id=27000054",
+      "id": "27000054",
+      "host": "www7.489pro.com",
       "max_guests": 5,
       "max_nights": 5,
       "max_rooms": 5

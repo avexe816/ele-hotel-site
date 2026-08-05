@@ -10,6 +10,7 @@ fully-populated per-language trees.
 import hashlib
 import json
 import os
+import re
 import sys
 from html import escape as esc
 
@@ -96,6 +97,61 @@ I_MENU = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidde
 
 CITY_LABEL = {"tokyo": "Tokyo", "nagoya": "Nagoya", "osaka": "Osaka", "sendai": "Sendai", "onsen": "Kusatsu"}
 
+# ---------------------------------------------------------------- 予約エンジン
+# 管理画面では「施設ID」または「予約プロからもらった URL」を入れるだけでよい。
+# 実際に使う 2 本の URL（検索用 / トップ用）はここで組み立てる。
+YOYAKUPRO_HOST = "www7.489pro.com"
+
+
+def booking_config(bk):
+    """hotels.json の booking 設定を {action, top, max_*} に正規化する。
+
+    受け付ける書き方:
+      {"engine": "yoyakupro", "id": "27000054"}
+      {"engine": "yoyakupro", "id": "https://www7.489pro.com/asp/489/menu.asp?id=27000054"}
+      {"engine": "yoyakupro", "action": "...", "top": "..."}   # 旧形式
+    engine が空 / 未設定 / ID が不正なときは None（＝予約フォームを出さない）。
+    """
+    if not isinstance(bk, dict) or not str(bk.get("engine", "")).strip():
+        return None
+
+    def _clamp(key, default=5):
+        try:
+            n = int(bk.get(key) or default)
+        except (TypeError, ValueError):
+            n = default
+        return max(1, min(30, n))
+
+    limits = {
+        "max_guests": _clamp("max_guests"),
+        "max_nights": _clamp("max_nights"),
+        "max_rooms": _clamp("max_rooms"),
+    }
+
+    action, top = str(bk.get("action", "")).strip(), str(bk.get("top", "")).strip()
+    if action and top:  # 旧形式はそのまま尊重する
+        return {"action": action, "top": top, **limits}
+
+    raw = str(bk.get("id", "")).strip()
+    if not raw:
+        return None
+    host = str(bk.get("host", "")).strip()
+    if raw.startswith("http"):
+        m = re.search(r"[?&]id=(\d+)", raw)
+        if not m:
+            return None
+        fid = m.group(1)
+        hm = re.match(r"https?://([^/]+)", raw)
+        if hm and not host:
+            host = hm.group(1)
+    else:
+        if not re.fullmatch(r"\d{4,12}", raw):
+            return None
+        fid = raw
+    base_url = f"https://{host or YOYAKUPRO_HOST}/asp/489/menu.asp?id={fid}"
+    return {"action": base_url + "&ty=ser", "top": base_url, **limits}
+
+# 旧方式のフォールバック（site.json に areas が無い場合だけ使う）
 AREA_KEY = {
     "tokyo": "filter_tokyo",
     "nagoya": "filter_nagoya",
@@ -103,7 +159,38 @@ AREA_KEY = {
     "sendai": "filter_sendai",
     "onsen": "filter_onsen",
 }
-AREA_ORDER = ["tokyo", "nagoya", "osaka", "sendai", "onsen"]
+
+
+def area_defs(t):
+    """エリア一覧を返す。site.json の ja.areas（管理画面で追加・編集できる）が正。"""
+    out = []
+    for a in t.get("areas") or []:
+        if not isinstance(a, dict):
+            continue
+        key = str(a.get("key", "")).strip()
+        if not key:
+            continue
+        out.append({
+            "key": key,
+            "label": str(a.get("label") or "").strip() or key,
+            "city": str(a.get("city") or "").strip() or key.title(),
+        })
+    if out:
+        return out
+    return [
+        {"key": k, "label": t.get(v, k), "city": CITY_LABEL.get(k, k.title())}
+        for k, v in AREA_KEY.items()
+    ]
+
+
+def area_label(t, key):
+    for a in area_defs(t):
+        if a["key"] == key:
+            return a["label"]
+    return t.get(AREA_KEY.get(key, ""), key)
+
+
+AREA_ORDER = [a["key"] for a in area_defs(SITE["ja"])]
 
 
 def base(depth):
@@ -215,7 +302,7 @@ def header(lang, t, depth, page_slug=None, kind="hotel"):
 </header>"""
 
 
-CITIES = " · ".join(CITY_LABEL[a] for a in AREA_ORDER if any(h["area"] == a for h in HOTELS))
+CITIES = " · ".join(a["city"] for a in area_defs(SITE["ja"]) if any(h["area"] == a["key"] for h in HOTELS))
 
 
 def footer(lang, t, depth):
@@ -355,14 +442,14 @@ def build_home(lang):
 
     areas = [a for a in AREA_ORDER if any(h["area"] == a for h in HOTELS)]
     opts = f'<option value="">{esc(t["search_area_any"])}</option>' + "".join(
-        f'<option value="{a}">{esc(t[AREA_KEY[a]])}</option>' for a in areas
+        f'<option value="{a}">{esc(area_label(t, a))}</option>' for a in areas
     )
     guests = "".join(f'<option>{n} {esc(t["search_guest_unit"])}</option>' for n in (1, 2, 3, 4))
 
     cards = ""
     for h in HOTELS:
         cards += f"""<a class="hcard reveal" data-area="{h['area']}" data-brand="{h['brand']}" href="{hotel_url(lang, h['slug'], depth)}">
-<div class="hcard__media"><span class="badge">{esc(t[AREA_KEY[h['area']]])}</span>{'<span class="badge badge--soon">' + esc(t["hotel_soon"]) + '</span>' if h.get("status") == "soon" else ''}
+<div class="hcard__media"><span class="badge">{esc(area_label(t, h['area']))}</span>{'<span class="badge badge--soon">' + esc(t["hotel_soon"]) + '</span>' if h.get("status") == "soon" else ''}
 {pic(h['img'], h['name'][code], '(max-width: 700px) 100vw, 380px', depth=depth)}</div>
 <div class="hcard__body">
 <h3>{esc(h['name'][code])}</h3>
@@ -417,8 +504,18 @@ def build_home(lang):
         for i, q in enumerate(t["faq"])
     )
 
+    bookable = [x for x in HOTELS if booking_config(x.get("booking"))]
+    if bookable:
+        links = "・".join(
+            f'<a href="{hotel_url(lang, x["slug"], depth)}">{esc(x["name"][code])}</a>'
+            for x in bookable
+        )
+        search_note_html = f"{esc(t['search_note'])} {links}"
+    else:
+        search_note_html = esc(t.get("search_note_none") or "")
+
     body = f"""<section class="hero">
-<div class="hero__media">{pic('hero-lobby', t['hero_title'].replace(chr(10), ' '), '100vw', loading='eager', depth=depth)}</div>
+<div class="hero__media">{pic(t.get('img_hero') or 'hero-lobby', t['hero_title'].replace(chr(10), ' '), '100vw', loading='eager', depth=depth)}</div>
 <div class="wrap hero__inner">
 <p class="eyebrow">{esc(t['hero_eyebrow'])}</p>
 <h1>{esc(t['hero_title'])}</h1>
@@ -440,7 +537,7 @@ def build_home(lang):
 <div class="field"><label for="f-g">{esc(t['search_guests'])}</label><select id="f-g">{guests}</select></div>
 <button class="btn btn--primary" type="button" disabled aria-disabled="true">{esc(t['search_submit'])}</button>
 </div>
-<p class="searchbar__note">{I_INFO}<span>{esc(t['search_note'])} <a href="{hotel_url(lang, 'kuzuha', depth)}">{esc(t['search_note_link'])}</a></span></p>
+<p class="searchbar__note">{I_INFO}<span>{search_note_html}</span></p>
 </form>
 </div>
 
@@ -449,7 +546,7 @@ def build_home(lang):
 <div class="section-head"><p class="eyebrow">{esc(t['hotels_eyebrow'])}</p><h2>{esc(t['hotels_title'])}</h2><p>{esc(t['hotels_lead'])}</p></div>
 <div class="chips">
 <button class="chip" type="button" data-filter="all" aria-pressed="true">{esc(t['filter_all'])}</button>
-{"".join(f'<button class="chip" type="button" data-filter="{a}" aria-pressed="false">{esc(t[AREA_KEY[a]])}</button>' for a in areas)}
+{"".join(f'<button class="chip" type="button" data-filter="{a}" aria-pressed="false">{esc(area_label(t, a))}</button>' for a in areas)}
 </div>
 <div class="hotel-grid">{cards}</div>
 </div>
@@ -500,7 +597,7 @@ def build_home(lang):
 <div><h4>{esc(t['contact_career'])}</h4><p>{esc(t['contact_career_d'])}</p></div>
 </div>
 </div>
-<figure class="about__figure reveal">{pic('brand-street', t['brand_title'], '(max-width: 900px) 100vw, 460px', depth=depth)}</figure>
+<figure class="about__figure reveal">{pic(t.get('img_brand') or 'brand-street', t['brand_title'], '(max-width: 900px) 100vw, 460px', depth=depth)}</figure>
 </div>
 </div>
 </section>"""
@@ -621,7 +718,7 @@ def build_detail(lang, h):
         tel_row = f'<div><dt>{esc(t["f_tel"])}</dt><dd>{esc(tbd)}</dd></div>'
     if h.get("fax"):
         tel_row += f'<div><dt>{esc(t["f_fax"])}</dt><dd>{esc(h["fax"])}</dd></div>'
-    bk = h.get("booking")
+    bk = booking_config(h.get("booking"))
     if bk:
         def opts(n, unit):
             return "".join(
@@ -632,11 +729,11 @@ def build_detail(lang, h):
 <p class="bkform__row"><label for="bk-date-{h['slug']}">{esc(t['bk_date'])}</label>
 <input class="bk-date" id="bk-date-{h['slug']}" type="date" required></p>
 <p class="bkform__row"><label for="bk-per-{h['slug']}">{esc(t['bk_guests'])}</label>
-<select id="bk-per-{h['slug']}" name="obj_per_num">{opts(bk.get('max_guests', 5), t['bk_unit_guest'])}</select></p>
+<select id="bk-per-{h['slug']}" name="obj_per_num">{opts(bk['max_guests'], t['bk_unit_guest'])}</select></p>
 <p class="bkform__row"><label for="bk-stay-{h['slug']}">{esc(t['bk_nights'])}</label>
-<select id="bk-stay-{h['slug']}" name="obj_stay_num">{opts(bk.get('max_nights', 5), t['bk_unit_night'])}</select></p>
+<select id="bk-stay-{h['slug']}" name="obj_stay_num">{opts(bk['max_nights'], t['bk_unit_night'])}</select></p>
 <p class="bkform__row"><label for="bk-room-{h['slug']}">{esc(t['bk_rooms'])}</label>
-<select id="bk-room-{h['slug']}" name="obj_room_num">{opts(bk.get('max_rooms', 5), t['bk_unit_room'])}</select></p>
+<select id="bk-room-{h['slug']}" name="obj_room_num">{opts(bk['max_rooms'], t['bk_unit_room'])}</select></p>
 <button class="btn btn--primary btn--full" type="submit">{esc(t['bk_search'])}</button>
 </form>
 <p class="searchbar__note">{I_INFO}<span>{esc(t['bk_note'])}</span></p>
@@ -671,7 +768,7 @@ def build_detail(lang, h):
 <section class="dhero"><div class="wrap">
 <div class="dhero__head">
 <div>
-<span class="badge">{esc(t[AREA_KEY[h['area']]])}</span>
+<span class="badge">{esc(area_label(t, h['area']))}</span>
 <span class="badge badge--brand" data-brand="{h['brand']}">{esc(bname)}</span>{soon_badge}
 <h1>{esc(name)}</h1>
 <p class="dhero__tag">{esc(h['tagline'][code])}</p>
@@ -717,8 +814,12 @@ def build_detail(lang, h):
 <p class="detail-back"><a class="btn btn--ghost" href="{home_url(lang, depth)}#hotels">{esc(t['back_home'])}</a></p>
 </div></section>"""
 
-    title = f"{name} | ELE HOTEL" if code in ("en", "ko") else f"{name}｜ELE HOTEL"
-    return page(lang, t, depth, title, h["tagline"][code], body, page_slug=h["slug"])
+    # SEO：管理画面で個別に入れてあればそれを使い、空なら従来通り自動生成する。
+    title = str((h.get("meta_title") or {}).get(code) or "").strip()
+    if not title:
+        title = f"{name} | ELE HOTEL" if code in ("en", "ko") else f"{name}｜ELE HOTEL"
+    desc = str((h.get("meta_desc") or {}).get(code) or "").strip() or h["tagline"][code]
+    return page(lang, t, depth, title, desc, body, page_slug=h["slug"])
 
 
 
@@ -730,7 +831,8 @@ def build_grand(lang):
     depth = 0 if not lang["dir"] else 1
 
     def gpic(name, altkey, sizes, loading="lazy"):
-        return pic("grand-" + name, g[altkey], sizes, depth=depth, loading=loading)
+        img_id = str(g.get("imgid_" + name) or "").strip() or ("grand-" + name)
+        return pic(img_id, g[altkey], sizes, depth=depth, loading=loading)
 
     paras = "".join(f"<p>{esc(x)}</p>" for x in g["concept_paras"])
     pillars = "".join(

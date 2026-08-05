@@ -2269,7 +2269,7 @@
     "ja": "仙台エリア",
     "zh": "仙台地区",
     "zh-Hant": "仙台地區",
-    "en": "Sendai",
+    "en": "Sendai Area",
     "ko": "센다이 지역",
     "th": "",
     "locked": true
@@ -2750,7 +2750,7 @@
     "ja": "名古屋エリア",
     "zh": "名古屋地区",
     "zh-Hant": "名古屋地區",
-    "en": "Nagoya",
+    "en": "Nagoya Area",
     "ko": "나고야 지역",
     "th": "",
     "locked": true
@@ -2912,7 +2912,7 @@
     "ja": "大阪エリア",
     "zh": "大阪地区",
     "zh-Hant": "大阪地區",
-    "en": "Osaka area",
+    "en": "Osaka Area",
     "ko": "오사카 지역",
     "th": "",
     "locked": true
@@ -3551,7 +3551,7 @@
     "ja": "東京エリア",
     "zh": "东京地区",
     "zh-Hant": "東京地區",
-    "en": "Tokyo area",
+    "en": "Tokyo Area",
     "ko": "도쿄 지역",
     "th": "",
     "locked": true
@@ -3834,6 +3834,16 @@
     "ko": "시부야 스크램블 교차로",
     "th": "",
     "locked": true
+  },
+  "b54255455a69d2fd": {
+    "ja": "温泉エリア",
+    "locked": true,
+    "hant_manual": true,
+    "zh": "温泉地区",
+    "en": "Onsen Area",
+    "zh-Hant": "溫泉地區",
+    "ko": "온천 지역",
+    "th": ""
   },
   "bf5e5de18ea5df32": {
     "ja": "温泉・リゾート",
@@ -4585,5 +4595,25 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "cf70d20d5b949c63": {
+    "ja": "このサイトから直接オンライン予約できるホテル：",
+    "locked": true,
+    "hant_manual": true,
+    "th": "",
+    "zh": "可在本网站直接在线预订的酒店：",
+    "zh-Hant": "可於本網站直接線上預訂的飯店：",
+    "en": "Hotels you can book online directly on this site:",
+    "ko": "이 사이트에서 바로 온라인 예약할 수 있는 호텔:"
+  },
+  "acbaa0660def4b06": {
+    "ja": "ご予約は各ホテルページの予約サイトリンクからお願いいたします。",
+    "locked": true,
+    "hant_manual": true,
+    "th": "",
+    "zh": "请通过各酒店页面的预订网站链接进行预订。",
+    "zh-Hant": "請透過各飯店頁面的訂房網站連結進行預訂。",
+    "en": "Please book through the reservation site links on each hotel page.",
+    "ko": "예약은 각 호텔 페이지의 예약 사이트 링크를 이용해 주십시오."
   }
 }

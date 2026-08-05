@@ -154,6 +154,13 @@
     "img_lounge": "ラウンジ（イメージ）",
     "img_facade": "外観（イメージ）",
     "img_detail": "客室のしつらえ（イメージ）",
-    "img_note": "掲載写真はすべてブランドイメージであり、実際の施設とは異なります。"
+    "img_note": "掲載写真はすべてブランドイメージであり、実際の施設とは異なります。",
+    "imgid_hero": "grand-hero",
+    "imgid_facade": "grand-facade",
+    "imgid_suite": "grand-suite",
+    "imgid_dining": "grand-dining",
+    "imgid_bath": "grand-bath",
+    "imgid_lounge": "grand-lounge",
+    "imgid_detail": "grand-detail"
   }
 }

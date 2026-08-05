@@ -76,13 +76,11 @@
     "search_guests": "人数",
     "search_guest_unit": "名",
     "search_submit": "検索する",
-    "search_note": "公式予約エンジンは ELE Hotel 樟葉（大阪・樟葉）で稼働中です。その他のホテルは各ホテルページの予約サイトリンクをご利用ください。",
+    "search_note": "このサイトから直接オンライン予約できるホテル：",
     "hotels_eyebrow": "HOTEL LIST",
     "hotels_title": "ホテル一覧",
     "hotels_lead": "エリアで絞り込んでご覧ください。各施設の写真・客室・アクセス・ご予約は詳細ページから。",
     "filter_all": "すべて",
-    "filter_tokyo": "東京エリア",
-    "filter_osaka": "大阪エリア",
     "rooms_eyebrow": "ROOMS & FACILITIES",
     "rooms_title": "客室と設備",
     "rooms_lead": "施設ごとに構成は異なりますが、共通して「必要なものが、必要なだけある」客室を用意しています。",
@@ -217,7 +215,6 @@
     "f_price_unit": "〜／1室1泊",
     "unit_rooms": "室",
     "back_home": "トップへ戻る",
-    "filter_sendai": "仙台エリア",
     "brand_eyebrow": "ELE HOTEL BRANDS",
     "brand_title": "ELE Hotel ブランドシリーズ",
     "brand_kicker": "Eco · Lively · Easy",
@@ -277,7 +274,6 @@
     "rt_size": "広さ・仕様",
     "rt_cap": "定員",
     "rt_cap_unit": "名",
-    "filter_nagoya": "名古屋エリア",
     "tbd": "準備中",
     "hotel_soon": "開業準備中",
     "hotel_soon_note": "開業日は決まり次第お知らせいたします。",
@@ -420,7 +416,6 @@
     },
     "rooms_note_partial": "一部の客室タイプは写真を準備中です。広さ・定員は変更になる場合があります。",
     "rooms_note_spec": "写真は一例です。広さ・定員は客室により異なる場合があります。",
-    "search_note_link": "樟葉の予約ページへ",
     "contact_cta": "お問い合わせフォームへ",
     "contact_page": {
       "meta_title": "お問い合わせ｜ELE HOTEL",
@@ -480,6 +475,36 @@
     },
     "nav_contact_page": "お問い合わせ",
     "detail_equipment": "客室設備・館内設備",
-    "detail_amenities": "備品・アメニティ"
+    "detail_amenities": "備品・アメニティ",
+    "img_hero": "hero-lobby",
+    "img_brand": "brand-street",
+    "areas": [
+      {
+        "key": "tokyo",
+        "label": "東京エリア",
+        "city": "Tokyo"
+      },
+      {
+        "key": "nagoya",
+        "label": "名古屋エリア",
+        "city": "Nagoya"
+      },
+      {
+        "key": "osaka",
+        "label": "大阪エリア",
+        "city": "Osaka"
+      },
+      {
+        "key": "sendai",
+        "label": "仙台エリア",
+        "city": "Sendai"
+      },
+      {
+        "key": "onsen",
+        "label": "温泉エリア",
+        "city": "Kusatsu"
+      }
+    ],
+    "search_note_none": "ご予約は各ホテルページの予約サイトリンクからお願いいたします。"
   }
 }

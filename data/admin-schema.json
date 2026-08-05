@@ -26,6 +26,11 @@
       "desc": "ELE HOTEL ブランドシリーズの紹介ページ。"
     },
     {
+      "id": "grandpage",
+      "name": "GRAND ELE ページ",
+      "desc": "GRAND ELE HOTEL 専用ページ（/grand）の内容をすべてここで編集できます。"
+    },
+    {
       "id": "contactp",
       "name": "お問い合わせページ",
       "desc": "フォームの項目名・エラー文言・完了メッセージ。"
@@ -102,6 +107,11 @@
       "label": "「詳しく見る」ボタン",
       "kind": "text"
     },
+    "img_hero": {
+      "group": "top",
+      "label": "トップ大画像の画像ID",
+      "kind": "text"
+    },
     "hero_eyebrow": {
       "group": "top",
       "label": "ヒーロー上の小見出し",
@@ -159,8 +169,13 @@
     },
     "search_note": {
       "group": "booking",
-      "label": "空室検索の注記",
+      "label": "予約できるホテルの案内文（このあとに対象ホテル名が自動で並びます）",
       "kind": "textarea"
+    },
+    "search_note_none": {
+      "kind": "text",
+      "group": "top",
+      "label": "予約できるホテルが無いときの案内文"
     },
     "hotels_eyebrow": {
       "group": "top",
@@ -182,15 +197,10 @@
       "label": "filter_all",
       "kind": "text"
     },
-    "filter_tokyo": {
+    "areas": {
       "group": "top",
-      "label": "filter_tokyo",
-      "kind": "text"
-    },
-    "filter_osaka": {
-      "group": "top",
-      "label": "filter_osaka",
-      "kind": "text"
+      "label": "エリア（絞り込みボタン）",
+      "kind": "list-obj"
     },
     "rooms_eyebrow": {
       "group": "rooms",
@@ -387,9 +397,9 @@
       "label": "back_home",
       "kind": "text"
     },
-    "filter_sendai": {
-      "group": "top",
-      "label": "filter_sendai",
+    "img_brand": {
+      "group": "brand",
+      "label": "ブランド紹介の写真の画像ID",
       "kind": "text"
     },
     "brand_eyebrow": {
@@ -475,11 +485,6 @@
     "rt_cap_unit": {
       "group": "rooms",
       "label": "rt_cap_unit",
-      "kind": "text"
-    },
-    "filter_nagoya": {
-      "group": "top",
-      "label": "filter_nagoya",
       "kind": "text"
     },
     "tbd": {
@@ -695,11 +700,6 @@
     "rooms_note_spec": {
       "group": "rooms",
       "label": "rooms_note_spec",
-      "kind": "text"
-    },
-    "search_note_link": {
-      "group": "booking",
-      "label": "search_note_link",
       "kind": "text"
     },
     "contact_cta": {
@@ -974,7 +974,35 @@
       "v": "内容"
     },
     "contact_page.kinds": {},
-    "contact_page.reply_opts": {}
+    "contact_page.reply_opts": {},
+    "areas": {
+      "key": "英数字キー（例: fukuoka／保存後は変更しないでください）",
+      "label": "表示名（例: 福岡エリア）",
+      "city": "英語表記（例: Fukuoka）"
+    },
+    "grand:pillars": {
+      "k": "タイトル",
+      "en": "英字表記",
+      "d": "説明文"
+    },
+    "grand:rooms": {
+      "name": "客室タイプ名",
+      "size": "広さ",
+      "cap": "定員",
+      "d": "説明文"
+    },
+    "grand:dining_hours": {
+      "k": "区分（例: 朝食）",
+      "v": "時間"
+    },
+    "grand:services": {
+      "k": "サービス名",
+      "d": "説明文"
+    },
+    "grand:plan_items": {
+      "k": "エリア・時期",
+      "v": "内容"
+    }
   },
   "hotel": {
     "name": {
@@ -1023,6 +1051,10 @@
       "label": "電話番号",
       "kind": "text"
     },
+    "fax": {
+      "label": "FAX番号",
+      "kind": "text"
+    },
     "checkin": {
       "label": "チェックイン",
       "kind": "text"
@@ -1038,6 +1070,16 @@
     "map_q": {
       "label": "地図の検索語（英語住所）",
       "kind": "text"
+    },
+    "meta_title": {
+      "label": "検索結果に出るページタイトル（SEO・空欄なら自動）",
+      "kind": "text",
+      "i18n": true
+    },
+    "meta_desc": {
+      "label": "検索結果に出るページ説明文（SEO・空欄なら自動）",
+      "kind": "textarea",
+      "i18n": true
     },
     "access": {
       "label": "アクセス",
@@ -1082,6 +1124,10 @@
         "label": "キャプション"
       }
     },
+    "booking": {
+      "label": "オンライン予約フォーム（予約プロ）",
+      "kind": "booking"
+    },
     "ota": {
       "label": "予約サイトリンク",
       "kind": "list-obj",
@@ -1096,7 +1142,13 @@
     },
     "brand": {
       "label": "ブランド区分",
-      "kind": "text"
+      "kind": "select",
+      "options": [
+        "hotel",
+        "apart",
+        "onsen",
+        "grand"
+      ]
     },
     "slug": {
       "label": "URL（変更不可）",
@@ -1125,5 +1177,231 @@
       "code": "ko",
       "name": "한국어"
     }
-  ]
+  ],
+  "grand": {
+    "meta_title": {
+      "label": "検索結果に出るページタイトル",
+      "kind": "text"
+    },
+    "meta_desc": {
+      "label": "検索結果に出るページ説明文",
+      "kind": "textarea"
+    },
+    "nav_label": {
+      "label": "メニューの表示名",
+      "kind": "text"
+    },
+    "crumb": {
+      "label": "パンくずの表示名",
+      "kind": "text"
+    },
+    "eyebrow": {
+      "label": "冒頭の小見出し（英字）",
+      "kind": "text"
+    },
+    "slogan": {
+      "label": "スローガン（英字）",
+      "kind": "text"
+    },
+    "title": {
+      "label": "大見出し",
+      "kind": "textarea"
+    },
+    "lead": {
+      "label": "リード文",
+      "kind": "textarea"
+    },
+    "concept_eyebrow": {
+      "label": "コンセプト：小見出し（英字）",
+      "kind": "text"
+    },
+    "concept_title": {
+      "label": "コンセプト：見出し",
+      "kind": "text"
+    },
+    "concept_paras": {
+      "label": "コンセプト：本文（段落ごと）",
+      "kind": "list-text"
+    },
+    "pillars_eyebrow": {
+      "label": "三つのお約束：小見出し（英字）",
+      "kind": "text"
+    },
+    "pillars_title": {
+      "label": "三つのお約束：見出し",
+      "kind": "text"
+    },
+    "pillars": {
+      "label": "三つのお約束：内容",
+      "kind": "list-obj"
+    },
+    "rooms_eyebrow": {
+      "label": "客室：小見出し（英字）",
+      "kind": "text"
+    },
+    "rooms_title": {
+      "label": "客室：見出し",
+      "kind": "text"
+    },
+    "rooms_lead": {
+      "label": "客室：リード文",
+      "kind": "text"
+    },
+    "rooms": {
+      "label": "客室：タイプ一覧",
+      "kind": "list-obj"
+    },
+    "rooms_note": {
+      "label": "客室：注意書き",
+      "kind": "text"
+    },
+    "dining_eyebrow": {
+      "label": "ダイニング：小見出し（英字）",
+      "kind": "text"
+    },
+    "dining_title": {
+      "label": "ダイニング：見出し",
+      "kind": "text"
+    },
+    "dining_lead": {
+      "label": "ダイニング：リード文",
+      "kind": "text"
+    },
+    "dining_paras": {
+      "label": "ダイニング：本文（段落ごと）",
+      "kind": "list-text"
+    },
+    "dining_hours": {
+      "label": "ダイニング：営業時間",
+      "kind": "list-obj"
+    },
+    "dining_note": {
+      "label": "ダイニング：注意書き",
+      "kind": "text"
+    },
+    "wellness_eyebrow": {
+      "label": "ウェルネス：小見出し（英字）",
+      "kind": "text"
+    },
+    "wellness_title": {
+      "label": "ウェルネス：見出し",
+      "kind": "text"
+    },
+    "wellness_paras": {
+      "label": "ウェルネス：本文（段落ごと）",
+      "kind": "list-text"
+    },
+    "service_eyebrow": {
+      "label": "サービス：小見出し（英字）",
+      "kind": "text"
+    },
+    "service_title": {
+      "label": "サービス：見出し",
+      "kind": "text"
+    },
+    "services": {
+      "label": "サービス：内容",
+      "kind": "list-obj"
+    },
+    "service_note": {
+      "label": "サービス：注意書き",
+      "kind": "text"
+    },
+    "plan_eyebrow": {
+      "label": "展開計画：小見出し（英字）",
+      "kind": "text"
+    },
+    "plan_title": {
+      "label": "展開計画：見出し",
+      "kind": "text"
+    },
+    "plan_lead": {
+      "label": "展開計画：リード文",
+      "kind": "textarea"
+    },
+    "plan_items": {
+      "label": "展開計画：項目",
+      "kind": "list-obj"
+    },
+    "contact_eyebrow": {
+      "label": "お問い合わせ：小見出し（英字）",
+      "kind": "text"
+    },
+    "contact_title": {
+      "label": "お問い合わせ：見出し",
+      "kind": "text"
+    },
+    "contact_lead": {
+      "label": "お問い合わせ：リード文",
+      "kind": "text"
+    },
+    "contact_note": {
+      "label": "お問い合わせ：注意書き",
+      "kind": "text"
+    },
+    "back": {
+      "label": "戻るリンクの文言",
+      "kind": "text"
+    },
+    "imgid_hero": {
+      "label": "冒頭の大画像の画像ID",
+      "kind": "text"
+    },
+    "img_hero": {
+      "label": "冒頭の大画像の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_facade": {
+      "label": "外観写真の画像ID",
+      "kind": "text"
+    },
+    "img_facade": {
+      "label": "外観写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_suite": {
+      "label": "客室写真の画像ID",
+      "kind": "text"
+    },
+    "img_suite": {
+      "label": "客室写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_dining": {
+      "label": "ダイニング写真の画像ID",
+      "kind": "text"
+    },
+    "img_dining": {
+      "label": "ダイニング写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_bath": {
+      "label": "バスルーム写真の画像ID",
+      "kind": "text"
+    },
+    "img_bath": {
+      "label": "バスルーム写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_lounge": {
+      "label": "ラウンジ写真の画像ID",
+      "kind": "text"
+    },
+    "img_lounge": {
+      "label": "ラウンジ写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "imgid_detail": {
+      "label": "しつらえ写真の画像ID",
+      "kind": "text"
+    },
+    "img_detail": {
+      "label": "しつらえ写真の説明文（代替テキスト）",
+      "kind": "text"
+    },
+    "img_note": {
+      "label": "写真についての注意書き",
+      "kind": "text"
+    }
+  }
 }
