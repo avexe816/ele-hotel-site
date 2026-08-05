@@ -137,6 +137,11 @@
       "label": "search_area",
       "kind": "text"
     },
+    "search_hotel": {
+      "kind": "text",
+      "group": "top",
+      "label": "空室検索：ホテル選択の見出し"
+    },
     "search_area_any": {
       "group": "booking",
       "label": "search_area_any",
@@ -166,16 +171,6 @@
       "group": "booking",
       "label": "search_submit",
       "kind": "text"
-    },
-    "search_note": {
-      "group": "booking",
-      "label": "予約できるホテルの案内文（このあとに対象ホテル名が自動で並びます）",
-      "kind": "textarea"
-    },
-    "search_note_none": {
-      "kind": "text",
-      "group": "top",
-      "label": "予約できるホテルが無いときの案内文"
     },
     "hotels_eyebrow": {
       "group": "top",

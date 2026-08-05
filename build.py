@@ -334,6 +334,70 @@ def footer(lang, t, depth):
 
 JS = """<script>
 (function(){
+ var el=document.getElementById('search-data');
+ if(!el)return;
+ var DATA={},list=[];
+ try{list=JSON.parse(el.textContent||'[]');}catch(e){return;}
+ list.forEach(function(x){DATA[x.s]=x;});
+ var area=document.getElementById('f-area'),hotel=document.getElementById('f-hotel'),
+     din=document.getElementById('f-in'),dout=document.getElementById('f-out'),
+     guests=document.getElementById('f-g'),go=document.getElementById('f-go');
+ if(!area||!hotel||!din||!dout||!go)return;
+ function ymd(d){var z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());
+  return z.toISOString().slice(0,10);}
+ function plus(str,n){var p=str.split('-');
+  var d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));d.setUTCDate(d.getUTCDate()+n);
+  return d.toISOString().slice(0,10);}
+ function diff(a,b){var x=a.split('-'),y=b.split('-');
+  return Math.round((Date.UTC(+y[0],+y[1]-1,+y[2])-Date.UTC(+x[0],+x[1]-1,+x[2]))/86400000);}
+ var today=ymd(new Date());
+ din.min=today;
+ if(!din.value)din.value=today;
+ dout.min=plus(din.value,1);
+ if(!dout.value)dout.value=plus(din.value,1);
+ din.addEventListener('change',function(){
+  if(!din.value)din.value=today;
+  if(din.value<today)din.value=today;
+  dout.min=plus(din.value,1);
+  if(!dout.value||dout.value<=din.value)dout.value=plus(din.value,1);
+ });
+ dout.addEventListener('change',function(){
+  if(!dout.value||dout.value<=din.value)dout.value=plus(din.value,1);
+ });
+ var all=[].slice.call(hotel.options);
+ function syncHotels(){
+  var a=area.value,keep=hotel.value,first=null,shown=0;
+  all.forEach(function(o){
+   var ok=!a||o.getAttribute('data-area')===a;
+   o.hidden=!ok;o.disabled=!ok;
+   if(ok){shown++;if(!first)first=o;}
+  });
+  var cur=all.filter(function(o){return o.value===keep&&!o.hidden;})[0];
+  hotel.value=cur?keep:(first?first.value:'');
+  hotel.disabled=!shown;
+ }
+ area.addEventListener('change',syncHotels);
+ syncHotels();
+ go.addEventListener('click',function(){
+  var d=DATA[hotel.value];
+  if(!d)return;
+  if(!d.a){location.href=d.u+'#book';return;}
+  var inv=din.value||today,outv=dout.value||plus(inv,1);
+  var nights=Math.max(1,Math.min(d.mn||5,diff(inv,outv)||1));
+  var per=Math.max(1,Math.min(d.mg||5,parseInt(guests&&guests.value,10)||1));
+  var ymdp=inv.split('-');
+  var f=document.createElement('form');
+  f.method='post';f.action=d.a;f.target='_blank';f.style.display='none';
+  var vals={obj_year:ymdp[0],obj_month:ymdp[1],obj_day:ymdp[2],
+   obj_per_num:String(per),obj_stay_num:String(nights),obj_room_num:'1'};
+  Object.keys(vals).forEach(function(k){
+   var i=document.createElement('input');i.type='hidden';i.name=k;i.value=vals[k];f.appendChild(i);
+  });
+  document.body.appendChild(f);f.submit();
+  setTimeout(function(){f.parentNode&&f.parentNode.removeChild(f);},1000);
+ });
+})();
+(function(){
  var f=document.querySelector('form.bkform');
  if(f){var d=f.querySelector('.bk-date');
   var z=new Date();z.setMinutes(z.getMinutes()-z.getTimezoneOffset());
@@ -440,11 +504,30 @@ def build_home(lang):
     depth = 0 if not lang["dir"] else 1
     b = base(depth)
 
-    areas = [a for a in AREA_ORDER if any(h["area"] == a for h in HOTELS)]
+    searchable = [h for h in HOTELS if h.get("status") != "soon"]
+    areas = [a for a in AREA_ORDER if any(h["area"] == a for h in searchable)]
     opts = f'<option value="">{esc(t["search_area_any"])}</option>' + "".join(
         f'<option value="{a}">{esc(area_label(t, a))}</option>' for a in areas
     )
-    guests = "".join(f'<option>{n} {esc(t["search_guest_unit"])}</option>' for n in (1, 2, 3, 4))
+    guests = "".join(
+        f'<option value="{n}">{n} {esc(t["search_guest_unit"])}</option>' for n in (1, 2, 3, 4)
+    )
+    hotel_opts = "".join(
+        f'<option value="{h["slug"]}" data-area="{h["area"]}">{esc(h["name"][code])}</option>'
+        for h in searchable
+    )
+    search_data = []
+    for h in searchable:
+        hbk = booking_config(h.get("booking"))
+        entry = {"s": h["slug"], "u": hotel_url(lang, h["slug"], depth)}
+        if hbk:
+            entry.update({
+                "a": hbk["action"],
+                "mg": hbk["max_guests"],
+                "mn": hbk["max_nights"],
+            })
+        search_data.append(entry)
+    search_json = json.dumps(search_data, ensure_ascii=False).replace("<", "\\u003c")
 
     cards = ""
     for h in HOTELS:
@@ -504,16 +587,6 @@ def build_home(lang):
         for i, q in enumerate(t["faq"])
     )
 
-    bookable = [x for x in HOTELS if booking_config(x.get("booking"))]
-    if bookable:
-        links = "・".join(
-            f'<a href="{hotel_url(lang, x["slug"], depth)}">{esc(x["name"][code])}</a>'
-            for x in bookable
-        )
-        search_note_html = f"{esc(t['search_note'])} {links}"
-    else:
-        search_note_html = esc(t.get("search_note_none") or "")
-
     body = f"""<section class="hero">
 <div class="hero__media">{pic(t.get('img_hero') or 'hero-lobby', t['hero_title'].replace(chr(10), ' '), '100vw', loading='eager', depth=depth)}</div>
 <div class="wrap hero__inner">
@@ -532,13 +605,14 @@ def build_home(lang):
 <p class="searchbar__title">{esc(t['search_title'])}</p>
 <div class="searchbar__grid">
 <div class="field"><label for="f-area">{esc(t['search_area'])}</label><select id="f-area">{opts}</select></div>
+<div class="field"><label for="f-hotel">{esc(t['search_hotel'])}</label><select id="f-hotel">{hotel_opts}</select></div>
 <div class="field"><label for="f-in">{esc(t['search_in'])}</label><input id="f-in" type="date"></div>
 <div class="field"><label for="f-out">{esc(t['search_out'])}</label><input id="f-out" type="date"></div>
 <div class="field"><label for="f-g">{esc(t['search_guests'])}</label><select id="f-g">{guests}</select></div>
-<button class="btn btn--primary" type="button" disabled aria-disabled="true">{esc(t['search_submit'])}</button>
+<button class="btn btn--primary" id="f-go" type="button">{esc(t['search_submit'])}</button>
 </div>
-<p class="searchbar__note">{I_INFO}<span>{search_note_html}</span></p>
 </form>
+<script id="search-data" type="application/json">{search_json}</script>
 </div>
 
 <section class="section" id="hotels">
@@ -801,7 +875,7 @@ def build_detail(lang, h):
 </div>
 <div class="block"><h2>{esc(t['detail_nearby'])}</h2><div class="tag-row">{nearby}</div></div>
 </div>
-<aside class="aside-card">
+<aside class="aside-card" id="book">
 <h2>{esc(book_title)}</h2>
 {soon_note}{book_block}
 <dl class="aside-facts">

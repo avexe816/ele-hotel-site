@@ -4642,5 +4642,14 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "6f0b069faec6481d": {
+    "ja": "ホテル",
+    "zh": "酒店",
+    "zh-Hant": "飯店",
+    "en": "Hotel",
+    "ko": "호텔",
+    "locked": true,
+    "hant_manual": true
   }
 }
