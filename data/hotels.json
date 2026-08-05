@@ -757,7 +757,7 @@
       "engine": "yoyakupro",
       "id": "27000054",
       "host": "www7.489pro.com",
-      "max_guests": 5,
+      "max_guests": 10,
       "max_nights": 5,
       "max_rooms": 5
     },
