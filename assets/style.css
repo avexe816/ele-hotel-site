@@ -1809,8 +1809,10 @@ summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
   gap: var(--space-4);
+  min-width: 0;
 }
 .amitem {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1824,9 +1826,14 @@ summary {
   line-height: 1.55;
   color: var(--color-text-muted);
   word-break: keep-all;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
   line-break: strict;
   hyphens: none;
+}
+.amitem > span,
+.amitem > p {
+  min-width: 0;
+  max-width: 100%;
 }
 .amic {
   width: 40px;
@@ -1836,7 +1843,7 @@ summary {
 }
 @media (max-width: 520px) {
   .amgrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .amitem {
     padding: var(--space-4) var(--space-2);
