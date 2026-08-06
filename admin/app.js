@@ -346,6 +346,16 @@
     const numLabel = Number.isInteger(n) ? " #" + (n + 1) : "";
     return (meta.label || head) + numLabel + ": " + subLabel;
   }
+  function pageFieldLabel(pathKey) {
+    const parts = pathKey.split(".");
+    const meta = (state.schema.page || {})[parts[0]];
+    if (!meta) return pathKey;
+    if (parts.length <= 2) return meta.label || parts[0];
+    const n = Number(parts[1]);
+    const sub = (meta.item || {})[parts[2]] || parts[2];
+    return (meta.label || parts[0]) + (Number.isInteger(n) ? " #" + (n + 1) : "") + ": " + sub;
+  }
+
   function groupNameById(id) {
     const g = state.schema.groups.find((g) => g.id === id);
     return g ? g.name : id;
@@ -415,6 +425,37 @@
       const label = (slugs) => slugs.map((sl) => nameOf(hAfter.find((x) => x.slug === sl) || hBefore.find((x) => x.slug === sl))).join(" → ");
       out.push({ label: "ホテルの並び順", before: label(commonBefore), after: label(commonAfter) });
     }
+    // pages.json
+    const pBefore = state.original["data/pages.json"] || [];
+    const pAfter = state.draft["data/pages.json"] || [];
+    const pbSlugs = pBefore.map((x) => x.slug);
+    const paSlugs = pAfter.map((x) => x.slug);
+    for (const pg of pAfter) {
+      if (!pbSlugs.includes(pg.slug)) out.push({ label: "ページを追加", before: "（なし）", after: `${pageTitleOf(pg)}（/pages/${pg.slug}）` });
+    }
+    for (const old of pBefore) {
+      if (!paSlugs.includes(old.slug)) out.push({ label: "ページを削除", before: `${pageTitleOf(old)}（/pages/${old.slug}）`, after: "（なし）" });
+    }
+    const pcB = pbSlugs.filter((x) => paSlugs.includes(x));
+    const pcA = paSlugs.filter((x) => pbSlugs.includes(x));
+    if (JSON.stringify(pcB) !== JSON.stringify(pcA)) {
+      const lab = (sl) => sl.map((x) => pageTitleOf(pAfter.find((y) => y.slug === x) || pBefore.find((y) => y.slug === x))).join(" → ");
+      out.push({ label: "ページの並び順", before: lab(pcB), after: lab(pcA) });
+    }
+    pAfter.forEach((pg) => {
+      const before = pBefore.find((x) => x.slug === pg.slug);
+      if (!before || JSON.stringify(before) === JSON.stringify(pg)) return;
+      const keys = new Set();
+      collectLeafPaths(before, "", keys);
+      collectLeafPaths(pg, "", keys);
+      for (const key of keys) {
+        const b = getPath(before, key);
+        const a = getPath(pg, key);
+        if (JSON.stringify(b) !== JSON.stringify(a)) {
+          out.push({ label: pageTitleOf(pg) + ": " + pageFieldLabel(key), before: stringify(b), after: stringify(a) });
+        }
+      }
+    });
     hAfter.forEach((hotel) => {
       const before = hBefore.find((x) => x.slug === hotel.slug);
       if (!before) return;
@@ -498,7 +539,7 @@
       state.images = bRes.data.images || [];
       state.schema = bRes.data.files["data/admin-schema.json"];
       const files = {};
-      for (const k of ["data/site.json", "data/hotels.json", "data/grand.json", "data/i18n.json"]) {
+      for (const k of ["data/site.json", "data/hotels.json", "data/grand.json", "data/pages.json", "data/i18n.json"]) {
         files[k] = bRes.data.files[k];
       }
       state.original = deepClone(files);
@@ -762,6 +803,7 @@
     if (state.modal === "conflict") root.appendChild(renderConflictModal());
     if (state.picker) root.appendChild(renderImagePicker());
     if (state.deleteHotel) root.appendChild(renderDeleteHotelModal());
+    if (state.deletePage) root.appendChild(renderDeletePageModal());
 
     // textarea 自動高さ調整
     root.querySelectorAll("textarea[data-autogrow]").forEach((t) => autoGrow(t));
@@ -980,6 +1022,36 @@
         )
       );
     }
+    items.push(h("div", { class: "side-sep" }));
+    items.push(h("div", { class: "side-group-title" }, "ページ"));
+    items.push(
+      h(
+        "button",
+        {
+          class: "side-item side-item--sub" + (state.currentPage && state.currentPage.kind === "pagesManage" ? " active" : ""),
+          onClick: () => {
+            state.currentPage = { kind: "pagesManage" };
+            render();
+          },
+        },
+        ["追加・並び替え・削除"]
+      )
+    );
+    for (const pg of state.draft["data/pages.json"] || []) {
+      items.push(
+        h(
+          "button",
+          {
+            class: "side-item" + (state.currentPage && state.currentPage.kind === "page" && state.currentPage.slug === pg.slug ? " active" : ""),
+            onClick: () => {
+              state.currentPage = { kind: "page", slug: pg.slug };
+              render();
+            },
+          },
+          [pageTitleOf(pg), pageHasChanges(pg.slug) ? h("span", { class: "side-dot" }) : null]
+        )
+      );
+    }
     return h("nav", { class: "side" }, items);
   }
 
@@ -1003,6 +1075,19 @@
     return false;
   }
 
+  function pageTitleOf(pg) {
+    if (!pg) return "";
+    const t = pg.title;
+    if (t && typeof t === "object") return t.ja || pg.slug;
+    return t || pg.slug;
+  }
+
+  function pageHasChanges(slug) {
+    const before = (state.original["data/pages.json"] || []).find((x) => x.slug === slug);
+    const after = (state.draft["data/pages.json"] || []).find((x) => x.slug === slug);
+    return JSON.stringify(before) !== JSON.stringify(after);
+  }
+
   function hotelHasChanges(slug) {
     const before = (state.original["data/hotels.json"] || []).find((x) => x.slug === slug);
     const after = (state.draft["data/hotels.json"] || []).find((x) => x.slug === slug);
@@ -1023,6 +1108,12 @@
     }
     if (state.currentPage.kind === "hotel") {
       return renderHotelPage();
+    }
+    if (state.currentPage.kind === "pagesManage") {
+      return renderPagesManagePage();
+    }
+    if (state.currentPage.kind === "page") {
+      return renderCustomPage();
     }
     return renderGroupPage();
   }
@@ -1829,6 +1920,221 @@
     return h("div", null, [
       h("div", { class: "obj-cards" }, cards),
       readOnly ? h("div", { class: "trans-note" }, "項目の追加・削除・並べ替えは日本語タブで行ってください。") : addBtn,
+    ]);
+  }
+
+  // ============================================================ 追加ページ（自由に作れるページ）
+
+  const PAGE_SECTION_TEMPLATE = () => ({ h: { ja: "" }, body: { ja: "" } });
+
+  function blankPage(slug, title) {
+    return {
+      slug: slug,
+      title: { ja: title || "" },
+      eyebrow: "",
+      lead: { ja: "" },
+      sections: [PAGE_SECTION_TEMPLATE()],
+      meta_title: { ja: "" },
+      meta_desc: { ja: "" },
+    };
+  }
+
+  function newPageSlugError(slug) {
+    const pages = state.draft["data/pages.json"] || [];
+    const hotels = state.draft["data/hotels.json"] || [];
+    if (!slug) return "URL用の名前を入れてください。";
+    if (!SLUG_OK.test(slug)) return "半角小文字・数字・ハイフンのみ、3文字以上で入れてください（例: recruit）。";
+    if (pages.some((x) => x.slug === slug)) return "同じURL用の名前のページがすでにあります。";
+    if (hotels.some((x) => x.slug === slug)) return "同じ名前のホテルがあります。別の名前にしてください。";
+    return "";
+  }
+
+  function renderCustomPage() {
+    const pages = state.draft["data/pages.json"] || [];
+    const pg = pages.find((x) => x.slug === state.currentPage.slug);
+    if (!pg) {
+      return h("main", { class: "main" }, [h("div", { class: "main-inner" }, [h("div", { class: "error-state" }, "ページが見つかりません。")])]);
+    }
+    const before = (state.original["data/pages.json"] || []).find((x) => x.slug === pg.slug) || {};
+    const fields = Object.entries(state.schema.page || {}).map(([key, meta]) => renderHotelField(pg, before, key, meta));
+    return h("main", { class: "main" }, [
+      h("div", { class: "main-inner" }, [
+        h("div", { class: "group-head" }, [
+          h("h1", null, pageTitleOf(pg)),
+          h("p", null, `公開URL: /pages/${pg.slug}.html（5言語ぶん自動で作られます）`),
+        ]),
+        h(
+          "p",
+          { class: "hm-lead" },
+          "メニューに出したいときは、左メニューの「メニュー（ヘッダー・フッター）」で リンク先に /pages/" + pg.slug + " と入れてください。"
+        ),
+        renderLangTabs(),
+        ...fields,
+      ]),
+    ]);
+  }
+
+  function renderPagesManagePage() {
+    const pages = state.draft["data/pages.json"] || [];
+    const before = state.original["data/pages.json"] || [];
+    const orderChanged = JSON.stringify(before.map((x) => x.slug)) !== JSON.stringify(pages.map((x) => x.slug));
+    const np = state.newPage || { slug: "", title: "" };
+    state.newPage = np;
+    const slugErr = np.slug || np.title ? newPageSlugError(np.slug) : "";
+
+    const move = (idx, delta) => {
+      const copy = pages.slice();
+      [copy[idx + delta], copy[idx]] = [copy[idx], copy[idx + delta]];
+      state.draft["data/pages.json"] = copy;
+      render();
+    };
+
+    const rows = pages.map((pg, idx) =>
+      h("div", { class: "hm-row" }, [
+        h("span", { class: "hm-no" }, String(idx + 1)),
+        h("div", { class: "hm-body" }, [
+          h("div", { class: "hm-name" }, pageTitleOf(pg)),
+          h("div", { class: "hm-meta" }, `/pages/${pg.slug}.html`),
+        ]),
+        h("div", { class: "hm-ctrl" }, [
+          h("button", { class: "btn btn-sm btn-ghost", onClick: () => ((state.currentPage = { kind: "page", slug: pg.slug }), (state.currentLang = "ja"), render()) }, "編集"),
+          h("button", { class: "btn btn-icon btn-ghost", title: "上へ", disabled: idx === 0, onClick: () => move(idx, -1) }, "↑"),
+          h("button", { class: "btn btn-icon btn-ghost", title: "下へ", disabled: idx === pages.length - 1, onClick: () => move(idx, 1) }, "↓"),
+          h(
+            "button",
+            {
+              class: "btn btn-sm btn-danger-ghost",
+              title: "削除",
+              onClick: () => {
+                state.deletePage = { slug: pg.slug, name: pageTitleOf(pg), confirm: "" };
+                render();
+              },
+            },
+            "削除"
+          ),
+        ]),
+      ])
+    );
+
+    const addForm = h("div", { class: "hm-add" }, [
+      h("h2", null, "ページを追加"),
+      h("p", { class: "hm-add-note" }, "追加したあと、内容を入力して保存して公開すると、5言語ぶんのページが自動で作られます。メニューに出すかどうかは別に設定できます。"),
+      h("div", { class: "hm-add-grid" }, [
+        h("label", null, [
+          h("span", { class: "field-label" }, "ページタイトル（日本語）"),
+          h("input", {
+            type: "text",
+            value: np.title,
+            placeholder: "採用情報",
+            onInput: (e) => {
+              np.title = e.target.value;
+            },
+          }),
+        ]),
+        h("label", null, [
+          h("span", { class: "field-label" }, "URL用の名前（半角英数字）"),
+          h("input", {
+            type: "text",
+            value: np.slug,
+            placeholder: "recruit",
+            onInput: (e) => {
+              np.slug = e.target.value.trim().toLowerCase();
+              const box = document.getElementById("pmSlugMsg");
+              const btn = document.getElementById("pmAddBtn");
+              const msg = newPageSlugError(np.slug);
+              if (box) {
+                box.textContent = msg;
+                box.hidden = !msg;
+              }
+              if (btn) btn.disabled = Boolean(msg);
+            },
+          }),
+          h("span", { class: "hm-url-preview" }, `公開URL: /pages/${np.slug || "○○○"}.html`),
+        ]),
+      ]),
+      h("div", { class: "up-err", id: "pmSlugMsg", hidden: !slugErr }, slugErr),
+      h(
+        "button",
+        {
+          class: "btn btn-primary",
+          id: "pmAddBtn",
+          disabled: Boolean(newPageSlugError(np.slug)),
+          onClick: () => {
+            if (newPageSlugError(np.slug)) return;
+            const fresh = blankPage(np.slug, np.title);
+            state.draft["data/pages.json"] = pages.concat([fresh]);
+            state.newPage = { slug: "", title: "" };
+            state.currentPage = { kind: "page", slug: fresh.slug };
+            state.currentLang = "ja";
+            pushToast(`「${np.title || np.slug}」を追加しました。内容を入力して保存してください。`, "ok");
+            render();
+          },
+        },
+        "このページを追加"
+      ),
+    ]);
+
+    return h("main", { class: "main" }, [
+      h("div", { class: "main-inner" }, [
+        h("div", { class: "group-head" }, [
+          h("h1", null, "ページの追加・並び替え・削除"),
+          h("p", null, `全 ${pages.length} 件${orderChanged ? "（並び順が未保存です）" : ""}`),
+        ]),
+        h("p", { class: "hm-lead" }, "会社案内・採用情報・利用規約など、自由なページを作れます。作ったページは自動で5言語に翻訳されます。"),
+        pages.length ? h("div", { class: "hm-list" }, rows) : h("div", { class: "empty-state" }, "まだページがありません。下から追加してください。"),
+        addForm,
+      ]),
+    ]);
+  }
+
+  function renderDeletePageModal() {
+    const d = state.deletePage;
+    if (!d) return null;
+    const pages = state.draft["data/pages.json"] || [];
+    const ok = d.confirm.trim() === d.slug;
+    return h("div", { class: "modal-overlay", onClick: (e) => e.target.classList.contains("modal-overlay") && ((state.deletePage = null), render()) }, [
+      h("div", { class: "modal" }, [
+        h("div", { class: "modal-head" }, [
+          h("h2", null, "ページを削除"),
+          h("button", { class: "btn btn-icon btn-ghost", onClick: () => ((state.deletePage = null), render()) }, "×"),
+        ]),
+        h("div", { class: "modal-body" }, [
+          h("p", null, `「${d.name}」を削除します。保存して公開すると、5言語のページ（/pages/${d.slug}.html など）が消えます。`),
+          h("p", { class: "up-warn" }, "メニューにこのページへのリンクを入れている場合は、メニュー側も消してください。あとで元に戻すことはできません。"),
+          h("p", null, ["確認のため ", h("code", null, d.slug), " と入力してください。"]),
+          h("input", {
+            type: "text",
+            value: d.confirm,
+            placeholder: d.slug,
+            onInput: (e) => {
+              d.confirm = e.target.value;
+              const btn = document.getElementById("pmDelBtn");
+              if (btn) btn.disabled = e.target.value.trim() !== d.slug;
+            },
+          }),
+        ]),
+        h("div", { class: "modal-foot" }, [
+          h("button", { class: "btn btn-ghost", onClick: () => ((state.deletePage = null), render()) }, "やめる"),
+          h(
+            "button",
+            {
+              class: "btn btn-danger",
+              id: "pmDelBtn",
+              disabled: !ok,
+              onClick: () => {
+                state.draft["data/pages.json"] = pages.filter((x) => x.slug !== d.slug);
+                if (state.currentPage && state.currentPage.kind === "page" && state.currentPage.slug === d.slug) {
+                  state.currentPage = { kind: "pagesManage" };
+                }
+                state.deletePage = null;
+                pushToast(`「${d.name}」を削除しました。保存して公開すると反映されます。`, "ok");
+                render();
+              },
+            },
+            "削除する"
+          ),
+        ]),
+      ]),
     ]);
   }
 

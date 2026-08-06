@@ -63,6 +63,62 @@
       "faq": "よくあるご質問",
       "contact": "お問い合わせ"
     },
+    "menu_main": [
+      {
+        "label": "ホテル一覧",
+        "href": "#hotels"
+      },
+      {
+        "label": "ブランド",
+        "href": "#brand"
+      },
+      {
+        "label": "客室・設備",
+        "href": "#rooms"
+      },
+      {
+        "label": "お知らせ",
+        "href": "#news"
+      },
+      {
+        "label": "よくあるご質問",
+        "href": "#faq"
+      },
+      {
+        "label": "お問い合わせ",
+        "href": "/contact"
+      }
+    ],
+    "menu_footer": [
+      {
+        "label": "ブランド",
+        "href": "#brand"
+      },
+      {
+        "label": "客室・設備",
+        "href": "#rooms"
+      },
+      {
+        "label": "お知らせ",
+        "href": "#news"
+      },
+      {
+        "label": "よくあるご質問",
+        "href": "#faq"
+      },
+      {
+        "label": "お問い合わせ",
+        "href": "/contact"
+      },
+      {
+        "label": "プライバシーポリシー",
+        "href": "/privacy"
+      },
+      {
+        "label": "採用情報",
+        "href": "https://en-gage.net/tej_saiyo/"
+      }
+    ],
     "cta_book": "宿泊を予約する",
     "cta_detail": "詳しく見る",
     "hero_eyebrow": "TOKYO / NAGOYA / OSAKA / SENDAI",

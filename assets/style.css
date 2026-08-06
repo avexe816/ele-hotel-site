@@ -1409,6 +1409,12 @@ summary {
 .footer a:hover {
   color: var(--color-primary);
 }
+.footer ul a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
 .footer__note a {
   display: inline-flex;
   align-items: center;

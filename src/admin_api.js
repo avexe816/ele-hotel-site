@@ -23,7 +23,7 @@ const J = (obj, status = 200) =>
 
 const COOKIE = "__Host-elesid";
 const SESSION_HOURS = 12;
-const DATA_FILES = ["data/site.json", "data/hotels.json", "data/grand.json", "data/i18n.json", "data/admin-schema.json"];
+const DATA_FILES = ["data/site.json", "data/hotels.json", "data/grand.json", "data/pages.json", "data/i18n.json", "data/admin-schema.json"];
 const TRANSLATABLE = ["zh", "zh-Hant", "en", "ko"];
 
 // ---------------------------------------------------------------- utilities
@@ -453,7 +453,7 @@ async function handleAdmin(request, env, url) {
 
       // 自動翻訳（zh / en / ko。zh-Hant は公開時に簡体字から変換される）
       if (body.autoTranslate !== false && env.AI) {
-        const trees = ["data/site.json", "data/hotels.json", "data/grand.json"].map(
+        const trees = ["data/site.json", "data/hotels.json", "data/grand.json", "data/pages.json"].map(
           (p) => (p in edited ? edited[p] : current.files[p])
         );
         try {

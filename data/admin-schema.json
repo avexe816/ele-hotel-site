@@ -51,6 +51,11 @@
       "desc": "空室検索フォームまわりの文言。"
     },
     {
+      "id": "menu",
+      "name": "メニュー（ヘッダー・フッター）",
+      "desc": "画面上部のメニューと、フッターのリンクを別々に編集できます。項目の追加・並び替え・削除ができます。"
+    },
+    {
       "id": "common",
       "name": "共通・ナビ・フッター",
       "desc": "ヘッダーメニュー、ボタン、フッター。"
@@ -96,6 +101,16 @@
       "group": "common",
       "label": "contact",
       "kind": "text"
+    },
+    "menu_main": {
+      "group": "menu",
+      "label": "ヘッダーメニュー（画面上部）",
+      "kind": "list-obj"
+    },
+    "menu_footer": {
+      "group": "menu",
+      "label": "フッターのリンク（インフォメーション欄）",
+      "kind": "list-obj"
     },
     "cta_book": {
       "group": "common",
@@ -1002,6 +1017,14 @@
     "grand:plan_items": {
       "k": "エリア・時期",
       "v": "内容"
+    },
+    "menu_main": {
+      "label": "表示名（例: 採用情報）",
+      "href": "リンク先。#hotels / #brand / #rooms / #news / #faq ／ /contact ／ /privacy ／ /grand ／ /hotels/kuzuha ／ /pages/xxxx ／ https://… （外部URLは自動で新しいタブ）"
+    },
+    "menu_footer": {
+      "label": "表示名（例: 採用情報）",
+      "href": "リンク先。#hotels / #brand / #rooms / #news / #faq ／ /contact ／ /privacy ／ /grand ／ /hotels/kuzuha ／ /pages/xxxx ／ https://… （外部URLは自動で新しいタブ）"
     }
   },
   "hotel": {
@@ -1402,6 +1425,44 @@
     "img_note": {
       "label": "写真についての注意書き",
       "kind": "text"
+    }
+  },
+  "page": {
+    "slug": {
+      "label": "URL用の名前（半角英数字）",
+      "kind": "readonly"
+    },
+    "title": {
+      "label": "ページタイトル",
+      "kind": "text",
+      "i18n": true
+    },
+    "eyebrow": {
+      "label": "小見出し（英字・任意 例: RECRUIT）",
+      "kind": "text"
+    },
+    "lead": {
+      "label": "リード文（任意）",
+      "kind": "textarea",
+      "i18n": true
+    },
+    "sections": {
+      "label": "本文ブロック",
+      "kind": "list-obj",
+      "item": {
+        "h": "見出し",
+        "body": "本文（空行で段落／行頭に「・」を付けると箇条書き）"
+      }
+    },
+    "meta_title": {
+      "label": "検索結果に出るタイトル（空欄なら自動）",
+      "kind": "text",
+      "i18n": true
+    },
+    "meta_desc": {
+      "label": "検索結果に出る説明文（空欄なら自動）",
+      "kind": "textarea",
+      "i18n": true
     }
   }
 }

@@ -4660,5 +4660,14 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "2a253590ed37cccf": {
+    "ja": "採用情報",
+    "zh": "招聘信息",
+    "zh-Hant": "徵才資訊",
+    "en": "Careers",
+    "ko": "채용 정보",
+    "locked": true,
+    "hant_manual": true
   }
 }

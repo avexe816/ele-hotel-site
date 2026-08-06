@@ -30,6 +30,7 @@ def _load(name):
 SITE = _load("site.json")
 HOTELS_JA = _load("hotels.json")
 GRAND = _load("grand.json")
+PAGES_JA = _load("pages.json")
 
 LANGS = [l for l in SITE["langs"] if l.get("enabled", True)]
 LANG_CODES = [l["code"] for l in LANGS]
@@ -57,6 +58,11 @@ def _expand(node, path):
 
 
 HOTELS = [_expand(h, f"hotels[{i}]") for i, h in enumerate(HOTELS_JA)]
+
+# 管理画面から自由に追加できる汎用ページ
+PAGES = [_expand(pg, f"pages[{i}]") for i, pg in enumerate(PAGES_JA)]
+PAGES = [pg for pg in PAGES if (pg.get("slug") or "").strip()]
+PAGE_SLUGS = {pg["slug"] for pg in PAGES}
 
 # ----------------------------------------------------------------- icons
 MARK_COLOR = SITE.get("mark_color", "#e2674c")
@@ -223,6 +229,59 @@ def contact_url(lang, depth):
     return base(depth) + ((d + "/") if d else "") + "contact.html"
 
 
+def page_url(lang, slug, depth):
+    d = lang["dir"]
+    return base(depth) + ((d + "/") if d else "") + "pages/" + slug + ".html"
+
+
+def resolve_href(href, lang, depth):
+    """管理画面のメニュー欄に入れた文字列を実際のURLに変換する。
+
+    使える書き方:
+      #hotels          … トップページの該当ブロックへ
+      /                … トップページ
+      /contact /privacy /grand
+      /hotels/<slug>   … ホテル詳細
+      /pages/<slug>    … 管理画面で追加したページ
+      https://…        … 外部サイト（自動で新しいタブ）
+    戻り値: (url, is_external)
+    """
+    href = (href or "").strip()
+    if not href:
+        return "", False
+    low = href.lower()
+    if low.startswith(("http://", "https://", "mailto:", "tel:")):
+        return href, True
+    if href.startswith("#"):
+        return home_url(lang, depth) + href, False
+    if href in ("/", "/index.html"):
+        return home_url(lang, depth), False
+    if href in ("/contact", "/contact.html"):
+        return contact_url(lang, depth), False
+    if href in ("/privacy", "/privacy.html"):
+        return privacy_url(lang, depth), False
+    if href in ("/grand", "/grand.html"):
+        return grand_url(lang, depth), False
+    if href.startswith("/hotels/"):
+        return hotel_url(lang, href[len("/hotels/"):].removesuffix(".html"), depth), False
+    if href.startswith("/pages/"):
+        return page_url(lang, href[len("/pages/"):].removesuffix(".html"), depth), False
+    return href, False
+
+
+def menu_links(items, lang, depth, cls=""):
+    out = ""
+    for it in items or []:
+        label = (it.get("label") or "").strip()
+        url, ext = resolve_href(it.get("href"), lang, depth)
+        if not label or not url:
+            continue
+        attrs = ' target="_blank" rel="noopener"' if ext else ""
+        c = f' class="{cls}"' if cls else ""
+        out += f'<a{c} href="{url}"{attrs}>{esc(label)}{I_EXT if ext else ""}</a>'
+    return out
+
+
 CSS_V = hashlib.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "style.css"), "rb").read()).hexdigest()[:10]
 
 
@@ -255,23 +314,16 @@ def pic(name, alt, sizes, cls="", loading="lazy", depth=0):
 
 
 def header(lang, t, depth, page_slug=None, kind="hotel"):
-    nav = t["nav"]
     hu = home_url(lang, depth)
-    items = [
-        (hu + "#hotels", nav["hotels"]),
-        (hu + "#brand", nav["brand"]),
-        (hu + "#rooms", nav["rooms"]),
-        (hu + "#news", nav["news"]),
-        (hu + "#faq", nav["faq"]),
-        (contact_url(lang, depth), nav["contact"]),
-    ]
-    links = "".join(f'<a href="{u}">{esc(x)}</a>' for u, x in items)
+    links = menu_links(t.get("menu_main"), lang, depth)
 
     # ---- globe + dropdown language picker
     opts = ""
     for l in LANGS:
         if kind == "grand":
             url = grand_url(l, depth)
+        elif kind == "page":
+            url = page_url(l, page_slug, depth)
         else:
             url = hotel_url(l, page_slug, depth) if page_slug else home_url(l, depth)
         cur = l["code"] == lang["code"]
@@ -310,12 +362,14 @@ def footer(lang, t, depth):
     hotels = "".join(
         f'<li><a href="{hotel_url(lang, h["slug"], depth)}">{esc(h["name"][lang["code"]])}</a></li>' for h in HOTELS
     )
-    info = "".join(
-        f'<li><a href="{hu}#{a}">{esc(t["nav"][k])}</a></li>'
-        for a, k in [("brand", "brand"), ("rooms", "rooms"), ("news", "news"), ("faq", "faq")]
-    )
-    info += f'<li><a href="{contact_url(lang, depth)}">{esc(t["nav"]["contact"])}</a></li>'
-    info += f'<li><a href="{privacy_url(lang, depth)}">{esc(t["privacy"]["nav"])}</a></li>'
+    info = ""
+    for it in t.get("menu_footer") or []:
+        label = (it.get("label") or "").strip()
+        url, ext = resolve_href(it.get("href"), lang, depth)
+        if not label or not url:
+            continue
+        attrs = ' target="_blank" rel="noopener"' if ext else ""
+        info += f'<li><a href="{url}"{attrs}>{esc(label)}{I_EXT if ext else ""}</a></li>'
     return f"""<footer class="footer">
 <div class="wrap">
 <div class="footer__grid">
@@ -1126,6 +1180,71 @@ def build_privacy(lang):
 
 
 
+# ----------------------------------------------------------------- 汎用ページ
+def _para_html(text):
+    """空行で段落、行頭「・」を箇条書きにする。HTMLタグは書けない（安全のためエスケープ）。"""
+    out = ""
+    for block in re.split(r"\n\s*\n", (text or "").strip()):
+        block = block.strip()
+        if not block:
+            continue
+        lines = [x.strip() for x in block.split("\n") if x.strip()]
+        if all(x.startswith(("・", "-", "*")) for x in lines):
+            lis = "".join(f"<li>{esc(x.lstrip('・-* ').strip())}</li>" for x in lines)
+            out += f'<ul class="legal__list">{lis}</ul>'
+        else:
+            out += "<p>" + "<br>".join(esc(x) for x in lines) + "</p>"
+    return out
+
+
+def _tx(v, code):
+    if isinstance(v, dict):
+        return str(v.get(code) or v.get("ja") or "")
+    return str(v or "")
+
+
+def build_page(lang, pg):
+    code = lang["code"]
+    t = SITE[code]
+    depth = 1 if not lang["dir"] else 2
+
+    title = _tx(pg.get("title"), code) or pg["slug"]
+    blocks = ""
+    for sec in pg.get("sections") or []:
+        head = _tx(sec.get("h"), code).strip()
+        body = _para_html(_tx(sec.get("body"), code))
+        if not head and not body:
+            continue
+        hh = f"<h2>{esc(head)}</h2>" if head else ""
+        blocks += f'<section class="legal__sec">{hh}{body}</section>'
+
+    lead = _tx(pg.get("lead"), code).strip()
+    eyebrow = (pg.get("eyebrow") or "").strip()
+
+    body_html = f"""<div class="wrap">
+<nav class="crumbs" aria-label="breadcrumb">
+<a href="{home_url(lang, depth)}">ELE HOTEL</a><span>/</span>
+<span>{esc(title)}</span>
+</nav>
+</div>
+
+<section class="section section--tight"><div class="wrap">
+<div class="legal">
+<div class="legal__head">
+{f'<p class="eyebrow">{esc(eyebrow)}</p>' if eyebrow else ""}
+<h1>{esc(title)}</h1>
+{f'<p class="legal__intro">{esc(lead)}</p>' if lead else ""}
+</div>
+{blocks}
+<p class="detail-back"><a class="btn btn--ghost" href="{home_url(lang, depth)}">{esc(t["privacy"]["back"])}</a></p>
+</div>
+</div></section>"""
+
+    mt = _tx(pg.get("meta_title"), code).strip() or f"{title}｜ELE HOTEL"
+    md = _tx(pg.get("meta_desc"), code).strip() or lead or title
+    return page(lang, t, depth, mt, md, body_html, page_slug=pg["slug"], kind="page")
+
+
 # ----------------------------------------------------------------- contact
 def build_contact(lang):
     code = lang["code"]
@@ -1327,6 +1446,9 @@ def main():
         n += 1
         for h in HOTELS:
             write(prefix + "hotels/" + h["slug"] + ".html", build_detail(lang, h))
+            n += 1
+        for pg in PAGES:
+            write(prefix + "pages/" + pg["slug"] + ".html", build_page(lang, pg))
             n += 1
     print(f"built {n} pages  ({', '.join(LANG_CODES)})")
 
