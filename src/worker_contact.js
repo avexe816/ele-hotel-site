@@ -25,7 +25,21 @@
 const DEFAULT_TO = "info@ele-hotel.com";
 const DEFAULT_FROM_ADDR = "noreply@ele-hotel.com";
 const FROM_NAME = "ELE HOTEL";
-const LIMIT = { name: 120, company: 160, email: 200, tel: 60, kind: 120, reply: 40, lang: 16, page: 120, message: 6000 };
+/** 種別とホテルから送信先メールアドレスを決める（テーブルは _contact_routes.js を自動生成） */
+function resolveTo(env, d) {
+  const fallback = env.CONTACT_TO || DEFAULT_TO;
+  try {
+    const R = typeof CONTACT_ROUTES === "object" ? CONTACT_ROUTES : null;
+    if (!R) return fallback;
+    const i = Number(d.kind_i);
+    const rule = Number.isInteger(i) && i >= 0 && i < R.kinds.length ? R.kinds[i] : "";
+    if (rule === "hotel") return (R.hotels || {})[d.hotel] || fallback;
+    if (rule && rule.includes("@")) return rule;
+  } catch (_) {}
+  return fallback;
+}
+
+const LIMIT = { name: 120, company: 160, email: 200, tel: 60, kind: 120, kind_i: 4, hotel: 60, area: 40, reply: 40, lang: 16, page: 120, message: 6000 };
 
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), {
@@ -51,6 +65,7 @@ const b64 = (s) => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
 function buildMail(d) {
   const rows = [
     ["お問い合わせ種別", d.kind],
+    ["対象ホテル", d.hotel],
     ["お名前", d.name],
     ["会社名・団体名", d.company],
     ["メールアドレス", d.email],
@@ -122,7 +137,7 @@ async function sendSmtp(env, d) {
   const port = Number(env.SMTP_PORT || 465);
   const user = env.SMTP_USER;
   const pass = env.SMTP_PASS;
-  const to = env.CONTACT_TO || DEFAULT_TO;
+  const to = resolveTo(env, d);
   const fromAddr = addrOf(env.CONTACT_FROM) || user || DEFAULT_FROM_ADDR;
   const { subject, text, html } = buildMail(d);
 
@@ -207,7 +222,7 @@ async function sendSmtp(env, d) {
 /* ------------------------------------------------------------ B/C) HTTP APIs */
 
 async function sendResend(env, d) {
-  const to = env.CONTACT_TO || DEFAULT_TO;
+  const to = resolveTo(env, d);
   const from = env.CONTACT_FROM || `${FROM_NAME} <${DEFAULT_FROM_ADDR}>`;
   const { subject, text, html } = buildMail(d);
   const r = await fetch("https://api.resend.com/emails", {
@@ -220,7 +235,7 @@ async function sendResend(env, d) {
 }
 
 async function sendBrevo(env, d) {
-  const to = env.CONTACT_TO || DEFAULT_TO;
+  const to = resolveTo(env, d);
   const from = addrOf(env.CONTACT_FROM) || DEFAULT_FROM_ADDR;
   const { subject, text, html } = buildMail(d);
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {

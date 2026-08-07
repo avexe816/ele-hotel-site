@@ -988,7 +988,10 @@
       "k": "項目名",
       "v": "内容"
     },
-    "contact_page.kinds": {},
+    "contact_page.kinds": {
+      "label": "表示名（お問い合わせ種別）",
+      "to": "送信先メールアドレス。hotel と書くと、お客様が選んだホテルの窓口メールに送ります"
+    },
     "contact_page.reply_opts": {},
     "areas": {
       "key": "英数字キー（例: fukuoka／保存後は変更しないでください）",
@@ -1176,6 +1179,11 @@
     "slug": {
       "label": "URL（変更不可）",
       "kind": "readonly"
+    },
+    "contact_email": {
+      "group": "detail",
+      "label": "お問い合わせの受信メールアドレス（このホテル宛）",
+      "kind": "text"
     }
   },
   "langs": [

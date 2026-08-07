@@ -1,6 +1,7 @@
 [
   {
     "slug": "ginza-east",
+    "contact_email": "rsv1001@ele-hotel.com",
     "area": "tokyo",
     "img": "p-ginza-east-ext",
     "status": "open",
@@ -131,6 +132,7 @@
   },
   {
     "slug": "higashi-ueno",
+    "contact_email": "rsv1004@ele-hotel.com",
     "area": "tokyo",
     "img": "p-higashi-ueno-hero",
     "status": "open",
@@ -262,6 +264,7 @@
   },
   {
     "slug": "higashi-nihonbashi",
+    "contact_email": "rsv1005@ele-hotel.com",
     "area": "tokyo",
     "img": "p-higashi-nihonbashi-hero",
     "status": "open",
@@ -391,6 +394,7 @@
   },
   {
     "slug": "shinjuku-cabin",
+    "contact_email": "rsv1002@ele-hotel.com",
     "area": "tokyo",
     "img": "p-shinjuku-cabin-hero",
     "status": "open",
@@ -512,6 +516,7 @@
   },
   {
     "slug": "nagoya-sakae",
+    "contact_email": "rsv1007@ele-hotel.com",
     "area": "nagoya",
     "img": "h-nagoya-sakae",
     "status": "soon",
@@ -645,6 +650,7 @@
   },
   {
     "slug": "kuzuha",
+    "contact_email": "rsv1003@ele-hotel.com",
     "area": "osaka",
     "img": "kuzuha001",
     "status": "open",
@@ -823,6 +829,7 @@
   },
   {
     "slug": "sendai-higashiguchi",
+    "contact_email": "rsv1006@ele-hotel.com",
     "area": "sendai",
     "brand": "hotel",
     "img": "p-sendai-higashiguchi-hero",

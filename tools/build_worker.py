@@ -9,7 +9,7 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "src")
-PARTS = ["admin_translate.js", "admin_api.js", "worker_contact.js", "worker_main.js"]
+PARTS = ["_contact_routes.js", "admin_translate.js", "admin_api.js", "worker_contact.js", "worker_main.js"]
 
 HEADER = """/* ============================================================================
  * ELE HOTEL — Cloudflare Pages worker（自動生成ファイル）

@@ -1254,7 +1254,18 @@ def build_contact(lang):
     req = f'<span class="lb__req">{esc(c["req"])}</span>'
     opt = f'<span class="lb__opt">{esc(c["opt"])}</span>'
 
-    kinds = "".join(f'<option value="{esc(x)}">{esc(x)}</option>' for x in c["kinds"])
+    kind_list = [k if isinstance(k, dict) else {"label": k, "to": ""} for k in c["kinds"]]
+    kinds = "".join(
+        f'<option value="{esc(k["label"])}" data-i="{i}" data-hotel="{"1" if (k.get("to") or "").strip() == "hotel" else ""}">{esc(k["label"])}</option>'
+        for i, k in enumerate(kind_list)
+    )
+    c_area_opts = f'<option value="">{esc(t["search_area_any"])}</option>' + "".join(
+        f'<option value="{esc(a["key"])}">{esc(a["label"])}</option>' for a in t["areas"]
+    )
+    c_hotel_opts = f'<option value="">{esc(t["search_hotel_any"])}</option>' + "".join(
+        f'<option value="{esc(x["slug"])}" data-area="{esc(x.get("area", ""))}">{esc(x["name"][code])}</option>'
+        for x in HOTELS
+    )
     replies = "".join(
         f'<label class="radio"><input type="radio" name="reply" value="{esc(x)}"'
         f'{" checked" if i == 0 else ""}><span>{esc(x)}</span></label>'
@@ -1266,6 +1277,16 @@ def build_contact(lang):
 <label class="lb" for="c-kind">{esc(c['f_kind'])}{req}</label>
 <select class="inp" id="c-kind" name="kind" required>
 <option value="">{esc(c['f_kind_ph'])}</option>{kinds}</select>
+</div>
+<div class="cgrid" id="c-hotelrow" hidden>
+<div class="cfield">
+<label class="lb" for="c-area">{esc(t['search_area'])}{opt}</label>
+<select class="inp" id="c-area" name="area">{c_area_opts}</select>
+</div>
+<div class="cfield">
+<label class="lb" for="c-hotel">{esc(t['search_hotel'])}{req}</label>
+<select class="inp" id="c-hotel" name="hotel">{c_hotel_opts}</select>
+</div>
 </div>
 <div class="cgrid">
 <div class="cfield">
@@ -1303,6 +1324,7 @@ def build_contact(lang):
 <p class="cform__note">{esc(c['note'])}</p>
 </div>
 <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="gotcha">
+<input type="hidden" name="kind_i" value="">
 <input type="hidden" name="lang" value="{lang['html']}">
 <input type="hidden" name="page" value="{esc(c['title'])}">
 </form>
@@ -1361,11 +1383,30 @@ def build_contact(lang):
           send:{json.dumps(c['err_send'], ensure_ascii=False)}}},
       L={json.dumps(c['submit'], ensure_ascii=False)},S={json.dumps(c['sending'], ensure_ascii=False)};
   function bad(m){{e.textContent=m;e.hidden=false;e.scrollIntoView({{block:'center',behavior:'smooth'}});}}
-  a.addEventListener('click',function(){{d.hidden=true;f.hidden=false;f.reset();}});
+  var kEl=document.getElementById('c-kind'),hr=document.getElementById('c-hotelrow'),
+      aEl=document.getElementById('c-area'),hEl=document.getElementById('c-hotel');
+  function syncH(){{
+    var o=kEl.options[kEl.selectedIndex],need=!!(o&&o.getAttribute('data-hotel'));
+    hr.hidden=!need;
+    if(!need){{aEl.value='';hEl.value='';}}
+    f.elements['kind_i'].value=o?(o.getAttribute('data-i')||''):'';
+  }}
+  function syncA(){{
+    var k=aEl.value,cand=[],i,o,ok;
+    for(i=1;i<hEl.options.length;i++){{o=hEl.options[i];
+      ok=!k||o.getAttribute('data-area')===k;o.hidden=!ok;if(ok)cand.push(o);}}
+    if(cand.length===1){{hEl.value=cand[0].value;hEl.options[0].hidden=true;}}
+    else{{hEl.options[0].hidden=false;
+      if(hEl.value&&hEl.options[hEl.selectedIndex].hidden)hEl.value='';}}
+  }}
+  kEl.addEventListener('change',syncH);aEl.addEventListener('change',syncA);
+  syncH();syncA();
+  a.addEventListener('click',function(){{d.hidden=true;f.hidden=false;f.reset();syncH();syncA();}});
   f.addEventListener('submit',function(ev){{
     ev.preventDefault();e.hidden=true;
     var g=function(n){{var x=f.elements[n];return x?(x.value||'').trim():'';}};
     if(!g('kind')||!g('name')||!g('email')||!g('message'))return bad(M.req);
+    if(!hr.hidden&&!g('hotel'))return bad(M.req);
     if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(g('email')))return bad(M.mail);
     if(!f.elements['agree'].checked)return bad(M.agree);
     var r=f.querySelector('input[name=reply]:checked');
@@ -1430,6 +1471,20 @@ def stamp_admin_assets():
         print("stamped admin/index.html (cache busting)")
 
 
+def write_contact_routes():
+    kinds = [k if isinstance(k, dict) else {"label": k, "to": ""} for k in SITE["ja"]["contact_page"]["kinds"]]
+    tbl = {
+        "kinds": [(k.get("to") or "").strip() for k in kinds],
+        "hotels": {h["slug"]: (h.get("contact_email") or "").strip() for h in HOTELS},
+    }
+    body = (
+        "/* 自動生成: build.py が data/site.json と data/hotels.json から作ります。編集しないでください。 */\n"
+        "const CONTACT_ROUTES = " + json.dumps(tbl, ensure_ascii=False, indent=2) + ";\n"
+    )
+    with open(os.path.join(ROOT, "src", "_contact_routes.js"), "w", encoding="utf-8") as fp:
+        fp.write(body)
+
+
 def main():
     write("assets/favicon.svg", FAVICON)
     n = 0
@@ -1452,7 +1507,8 @@ def main():
             n += 1
     print(f"built {n} pages  ({', '.join(LANG_CODES)})")
 
-    # src/ のワーカーモジュールを _worker.js にまとめ直す
+    # お問い合わせの宛先テーブルを生成してから _worker.js をまとめ直す
+    write_contact_routes()
     from tools import build_worker
 
     print(f"built _worker.js ({build_worker.build()} bytes)")
