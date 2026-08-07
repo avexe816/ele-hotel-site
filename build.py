@@ -875,6 +875,10 @@ def build_detail(lang, h):
             rows += (
                 f'<div><dt>{esc(t["rt_cap"])}</dt><dd>{r["cap"]} {esc(t["rt_cap_unit"])}</dd></div>'
             )
+        for fld, lb in (("bed", "rt_bed"), ("floor", "rt_floor")):
+            val = (r.get(fld) or "").strip() if isinstance(r.get(fld), str) else ""
+            if val:
+                rows += f'<div><dt>{esc(t[lb])}</dt><dd>{esc(val)}</dd></div>' 
         shot = (
             pic(r["img"], f'{name} — {r["name"][code]}', "(max-width: 900px) 100vw, 30vw",
                 cls="shot shot--room", depth=depth)

@@ -331,6 +331,8 @@
     "rt_size": "広さ・仕様",
     "rt_cap": "定員",
     "rt_cap_unit": "名",
+    "rt_bed": "ベッドサイズ",
+    "rt_floor": "階数",
     "tbd": "準備中",
     "hotel_soon": "開業準備中",
     "hotel_soon_note": "開業日は決まり次第お知らせいたします。",

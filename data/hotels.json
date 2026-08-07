@@ -77,7 +77,9 @@
           "ja": "18室・11㎡"
         },
         "cap": "1名~2",
-        "img": "p-ginza-east-double"
+        "img": "p-ginza-east-double",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -87,7 +89,9 @@
           "ja": "9室・11㎡"
         },
         "cap": "1名~2",
-        "img": "p-ginza-east-twin"
+        "img": "p-ginza-east-twin",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -97,7 +101,9 @@
           "ja": "9室・10㎡"
         },
         "cap": "1",
-        "img": "p-ginza-east-single"
+        "img": "p-ginza-east-single",
+        "bed": "",
+        "floor": ""
       }
     ],
     "gallery": [
@@ -209,7 +215,9 @@
           "ja": "9室・11㎡"
         },
         "cap": 1,
-        "img": "p-higashi-ueno-single"
+        "img": "p-higashi-ueno-single",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -219,7 +227,9 @@
           "ja": "9室・12㎡"
         },
         "cap": "1名~2",
-        "img": "p-higashi-ueno-semi"
+        "img": "p-higashi-ueno-semi",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -229,7 +239,9 @@
           "ja": "18室・14㎡"
         },
         "cap": "1名~2",
-        "img": "p-higashi-ueno-double"
+        "img": "p-higashi-ueno-double",
+        "bed": "",
+        "floor": ""
       }
     ],
     "gallery": [
@@ -339,7 +351,9 @@
           "ja": "10室・13㎡"
         },
         "cap": "1名~2",
-        "img": "p-higashi-nihonbashi-econ"
+        "img": "p-higashi-nihonbashi-econ",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -349,7 +363,9 @@
           "ja": "17室・15㎡"
         },
         "cap": "1名~2",
-        "img": "p-higashi-nihonbashi-double"
+        "img": "p-higashi-nihonbashi-double",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -359,7 +375,9 @@
           "ja": "3室・15㎡"
         },
         "cap": "1名~2",
-        "img": "p-higashi-nihonbashi-twin"
+        "img": "p-higashi-nihonbashi-twin",
+        "bed": "",
+        "floor": ""
       }
     ],
     "gallery": [
@@ -467,7 +485,9 @@
           "ja": "男性フロア／女性フロア"
         },
         "cap": 1,
-        "img": "p-shinjuku-cabin-cabin"
+        "img": "p-shinjuku-cabin-cabin",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -477,7 +497,9 @@
           "ja": ""
         },
         "cap": 1,
-        "img": "cabin-room-2"
+        "img": "cabin-room-2",
+        "bed": "",
+        "floor": ""
       }
     ],
     "gallery": [
@@ -587,7 +609,9 @@
         "detail": {
           "ja": "77室・11㎡"
         },
-        "cap": 1
+        "cap": 1,
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -596,7 +620,9 @@
         "detail": {
           "ja": "38室・約12㎡~14㎡"
         },
-        "cap": "1名~2"
+        "cap": "1名~2",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -605,7 +631,9 @@
         "detail": {
           "ja": "16室・約15㎡~18㎡"
         },
-        "cap": "1名~2"
+        "cap": "1名~2",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -614,7 +642,9 @@
         "detail": {
           "ja": "6室・約17㎡~19㎡"
         },
-        "cap": "1名~2"
+        "cap": "1名~2",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -623,7 +653,9 @@
         "detail": {
           "ja": "3室・37㎡"
         },
-        "cap": 0
+        "cap": 0,
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -632,7 +664,9 @@
         "detail": {
           "ja": "2室・48㎡"
         },
-        "cap": 0
+        "cap": 0,
+        "bed": "",
+        "floor": ""
       }
     ],
     "fax": "052-265-6217",
@@ -736,7 +770,9 @@
           "ja": "45室・16㎡"
         },
         "cap": 1,
-        "img": "p-kuzuha-single"
+        "img": "p-kuzuha-single",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -746,7 +782,9 @@
           "ja": "8室・16㎡"
         },
         "cap": "1名~2",
-        "img": "kusuha-semidouble"
+        "img": "kusuha-semidouble",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -756,7 +794,9 @@
           "ja": "9室・19㎡"
         },
         "cap": "1名~2",
-        "img": "p-kuzuha-double"
+        "img": "p-kuzuha-double",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -766,7 +806,9 @@
           "ja": "4室・25㎡"
         },
         "cap": "1名~2",
-        "img": "p-kuzuha-twin"
+        "img": "p-kuzuha-twin",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -776,7 +818,9 @@
           "ja": "4室・25㎡"
         },
         "cap": "1名~3",
-        "img": "kuzuha-03"
+        "img": "kuzuha-03",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -786,7 +830,9 @@
           "ja": "1室・19㎡  /  5階・浴槽つき"
         },
         "cap": 2,
-        "img": "kuzha-05"
+        "img": "kuzha-05",
+        "bed": "",
+        "floor": ""
       }
     ],
     "booking": {
@@ -908,7 +954,9 @@
           "ja": "30室・11㎡ "
         },
         "cap": 1,
-        "img": "p-sendai-higashiguchi-single"
+        "img": "p-sendai-higashiguchi-single",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -918,7 +966,9 @@
           "ja": "10室・11㎡"
         },
         "cap": "1名~2",
-        "img": "p-sendai-higashiguchi-semidouble"
+        "img": "p-sendai-higashiguchi-semidouble",
+        "bed": "",
+        "floor": ""
       },
       {
         "name": {
@@ -928,7 +978,9 @@
           "ja": "25室・約14㎡~15㎡ "
         },
         "cap": "1名~2",
-        "img": "p-sendai-higashiguchi-twin"
+        "img": "p-sendai-higashiguchi-twin",
+        "bed": "",
+        "floor": ""
       }
     ],
     "gallery": [

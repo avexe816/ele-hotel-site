@@ -5173,5 +5173,23 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "96f745740422bc94": {
+    "ja": "ベッドサイズ",
+    "en": "Bed size",
+    "zh": "床尺寸",
+    "zh-Hant": "床尺寸",
+    "ko": "침대 크기",
+    "locked": true,
+    "hant_manual": true
+  },
+  "c139fc5b002600cc": {
+    "ja": "階数",
+    "en": "Floor",
+    "zh": "楼层",
+    "zh-Hant": "樓層",
+    "ko": "층",
+    "locked": true,
+    "hant_manual": true
   }
 }

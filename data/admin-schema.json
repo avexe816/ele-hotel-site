@@ -941,6 +941,16 @@
       "group": "detail",
       "label": "アメニティの小見出し",
       "kind": "text"
+    },
+    "rt_bed": {
+      "group": "detail",
+      "label": "客室カードの「ベッドサイズ」行の見出し",
+      "kind": "text"
+    },
+    "rt_floor": {
+      "group": "detail",
+      "label": "客室カードの「階数」行の見出し",
+      "kind": "text"
     }
   },
   "itemLabels": {
@@ -1129,6 +1139,8 @@
         "name": "名称",
         "detail": "仕様",
         "cap": "定員",
+        "bed": "ベッドサイズ（例: W1000×L1950）",
+        "floor": "階数（例: 8F～13F）",
         "img": "画像ID"
       }
     },
