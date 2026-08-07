@@ -5146,5 +5146,14 @@
     "ko": "숙박 예약",
     "locked": true,
     "hant_manual": true
+  },
+  "b1ebca0147f52a60": {
+    "ja": "部屋数",
+    "en": "Rooms",
+    "zh": "房间数",
+    "zh-Hant": "房間數",
+    "ko": "객실 수",
+    "locked": true,
+    "hant_manual": true
   }
 }

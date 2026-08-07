@@ -604,12 +604,12 @@
     },
     "bk_guests": {
       "group": "booking",
-      "label": "1室の人数欄の見出し",
+      "label": "人数欄の見出し（ホテル詳細の予約）",
       "kind": "text"
     },
     "bk_rooms": {
       "group": "booking",
-      "label": "室数欄の見出し（トップページの検索でも使います）",
+      "label": "部屋数欄の見出し（トップページの検索でも使います）",
       "kind": "text"
     },
     "bk_search": {
