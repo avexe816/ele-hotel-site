@@ -107,6 +107,11 @@
       "label": "ヘッダーメニュー（画面上部）",
       "kind": "list-obj"
     },
+    "nav_book": {
+      "group": "menu",
+      "label": "宿泊予約ボタンの文字（ヘッダー右上・カレンダーアイコン）",
+      "kind": "text"
+    },
     "menu_footer": {
       "group": "menu",
       "label": "フッターのリンク（インフォメーション欄）",
@@ -149,47 +154,47 @@
     },
     "search_area": {
       "group": "booking",
-      "label": "search_area",
+      "label": "エリア欄の見出し",
       "kind": "text"
     },
     "search_hotel": {
       "kind": "text",
       "group": "top",
-      "label": "空室検索：ホテル選択の見出し"
+      "label": "ホテル欄の見出し"
     },
     "search_hotel_any": {
       "kind": "text",
       "group": "top",
-      "label": "空室検索：ホテル未選択のときの表示"
+      "label": "ホテル未選択時の表示"
     },
     "search_area_any": {
       "group": "booking",
-      "label": "search_area_any",
+      "label": "エリア「すべて」の表示",
       "kind": "text"
     },
     "search_in": {
       "group": "booking",
-      "label": "search_in",
+      "label": "チェックイン欄の見出し",
       "kind": "text"
     },
     "search_out": {
       "group": "booking",
-      "label": "search_out",
+      "label": "チェックアウト欄の見出し",
       "kind": "text"
     },
     "search_guests": {
       "group": "booking",
-      "label": "search_guests",
+      "label": "人数欄の見出し",
       "kind": "text"
     },
     "search_guest_unit": {
       "group": "booking",
-      "label": "search_guest_unit",
+      "label": "人数の単位（名 など）",
       "kind": "text"
     },
     "search_submit": {
       "group": "booking",
-      "label": "search_submit",
+      "label": "検索ボタンの文字",
       "kind": "text"
     },
     "hotels_eyebrow": {
@@ -589,67 +594,52 @@
     },
     "bk_title": {
       "group": "booking",
-      "label": "bk_title",
+      "label": "予約ブロックの見出し",
       "kind": "text"
     },
     "bk_note": {
       "group": "booking",
-      "label": "bk_note",
-      "kind": "text"
-    },
-    "bk_date": {
-      "group": "booking",
-      "label": "bk_date",
+      "label": "予約ブロックの注意書き",
       "kind": "text"
     },
     "bk_guests": {
       "group": "booking",
-      "label": "bk_guests",
-      "kind": "text"
-    },
-    "bk_nights": {
-      "group": "booking",
-      "label": "bk_nights",
+      "label": "1室の人数欄の見出し",
       "kind": "text"
     },
     "bk_rooms": {
       "group": "booking",
-      "label": "bk_rooms",
+      "label": "室数欄の見出し（トップページの検索でも使います）",
       "kind": "text"
     },
     "bk_search": {
       "group": "booking",
-      "label": "bk_search",
+      "label": "空室検索ボタンの文字",
       "kind": "text"
     },
     "bk_direct": {
       "group": "booking",
-      "label": "bk_direct",
+      "label": "公式サイトへのボタンの文字",
       "kind": "text"
     },
     "bk_unit_guest": {
       "group": "booking",
-      "label": "bk_unit_guest",
-      "kind": "text"
-    },
-    "bk_unit_night": {
-      "group": "booking",
-      "label": "bk_unit_night",
+      "label": "人数の単位（名 など）",
       "kind": "text"
     },
     "bk_unit_room": {
       "group": "booking",
-      "label": "bk_unit_room",
+      "label": "室数の単位（室 など）",
       "kind": "text"
     },
     "bk_ota_head": {
       "group": "booking",
-      "label": "bk_ota_head",
+      "label": "予約サイト一覧の見出し",
       "kind": "text"
     },
     "bk_tel_head": {
       "group": "booking",
-      "label": "bk_tel_head",
+      "label": "電話予約の見出し",
       "kind": "text"
     },
     "privacy.nav": {
