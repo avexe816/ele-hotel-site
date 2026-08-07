@@ -5155,5 +5155,14 @@
     "ko": "객실 수",
     "locked": true,
     "hant_manual": true
+  },
+  "9d5363f136a047f2": {
+    "ja": "部屋",
+    "en": "room(s)",
+    "zh": "间",
+    "zh-Hant": "間",
+    "ko": "실",
+    "locked": true,
+    "hant_manual": true
   }
 }

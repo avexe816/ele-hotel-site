@@ -629,7 +629,7 @@
     },
     "bk_unit_room": {
       "group": "booking",
-      "label": "室数の単位（室 など）",
+      "label": "部屋数の単位（部屋 など）",
       "kind": "text"
     },
     "bk_ota_head": {
