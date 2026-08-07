@@ -204,7 +204,7 @@
           "ja": "シングル"
         },
         "detail": {
-          "ja": "約11㎡〜"
+          "ja": "9室・約11㎡"
         },
         "cap": 1,
         "img": "p-higashi-ueno-single"
@@ -214,7 +214,7 @@
           "ja": "セミダブル"
         },
         "detail": {
-          "ja": "約11㎡〜"
+          "ja": "9室・約12㎡"
         },
         "cap": 2,
         "img": "p-higashi-ueno-semi"
@@ -224,7 +224,7 @@
           "ja": "ダブル"
         },
         "detail": {
-          "ja": "約12㎡〜"
+          "ja": "18室・約14㎡"
         },
         "cap": 2,
         "img": "p-higashi-ueno-double"
@@ -333,7 +333,7 @@
           "ja": "エコノミーダブル"
         },
         "detail": {
-          "ja": ""
+          "ja": "10室・約13㎡"
         },
         "cap": 2,
         "img": "p-higashi-nihonbashi-econ"
@@ -343,7 +343,7 @@
           "ja": "ダブル"
         },
         "detail": {
-          "ja": ""
+          "ja": "17室・約15㎡"
         },
         "cap": 2,
         "img": "p-higashi-nihonbashi-double"
@@ -353,7 +353,7 @@
           "ja": "ツイン"
         },
         "detail": {
-          "ja": ""
+          "ja": "3室・約15㎡"
         },
         "cap": 2,
         "img": "p-higashi-nihonbashi-twin"
@@ -697,7 +697,7 @@
           "ja": "シングル"
         },
         "detail": {
-          "ja": "16.0〜19.2㎡"
+          "ja": "45室・約16㎡"
         },
         "cap": 1,
         "img": "p-kuzuha-single"
@@ -707,7 +707,7 @@
           "ja": "セミダブル"
         },
         "detail": {
-          "ja": "16㎡"
+          "ja": "8室・約16㎡"
         },
         "cap": 2,
         "img": "kusuha-semidouble"
@@ -717,7 +717,7 @@
           "ja": "ダブル"
         },
         "detail": {
-          "ja": "16〜23.36㎡"
+          "ja": "9室・約19㎡"
         },
         "cap": 2,
         "img": "p-kuzuha-double"
@@ -727,7 +727,7 @@
           "ja": "ツイン"
         },
         "detail": {
-          "ja": "24.95〜26.56㎡"
+          "ja": "4室・約25㎡"
         },
         "cap": 2,
         "img": "p-kuzuha-twin"
@@ -737,7 +737,7 @@
           "ja": "トリプル"
         },
         "detail": {
-          "ja": "24.95〜33.53㎡"
+          "ja": "4室・約25㎡"
         },
         "cap": 3,
         "img": "kuzuha-03"
@@ -747,7 +747,7 @@
           "ja": "ユニバーサルルーム"
         },
         "detail": {
-          "ja": "5階・浴槽つき"
+          "ja": "1室・約19㎡  /  5階・浴槽つき"
         },
         "cap": 2,
         "img": "kuzha-05"
@@ -868,7 +868,7 @@
           "ja": "シングル"
         },
         "detail": {
-          "ja": "140cm幅ベッド・2026年改装"
+          "ja": "30室・約11㎡ / 140cm幅ベッド・2026年改装"
         },
         "cap": 1,
         "img": "p-sendai-higashiguchi-single"
@@ -878,7 +878,7 @@
           "ja": "セミダブル"
         },
         "detail": {
-          "ja": "約11㎡・140cm幅ベッド1台"
+          "ja": "10室・約11㎡ / 140cm幅ベッド1台"
         },
         "cap": 2,
         "img": "p-sendai-higashiguchi-semidouble"
@@ -888,7 +888,7 @@
           "ja": "ツイン"
         },
         "detail": {
-          "ja": "97cm幅ベッド2台・2026年改装"
+          "ja": "25室・約14㎡~15㎡ / 97cm幅ベッド2台・2026年改装"
         },
         "cap": 2,
         "img": "p-sendai-higashiguchi-twin"
