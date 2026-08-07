@@ -26,6 +26,15 @@
     "th": "",
     "locked": true
   },
+  "66db881ef545124e": {
+    "ja": "10室・約11㎡",
+    "locked": false,
+    "zh": "10间・约11㎡",
+    "zh-Hant": "",
+    "en": "10 Rooms · About 11㎡",
+    "ko": "10실·약 11㎡",
+    "th": ""
+  },
   "7331a739d89649fa": {
     "ja": "10室・約11㎡ / 140cm幅ベッド1台",
     "locked": false,
@@ -79,6 +88,15 @@
     "ko": "16㎡",
     "th": "",
     "locked": true
+  },
+  "6fc30f883e774545": {
+    "ja": "16室・約15㎡~18㎡",
+    "locked": false,
+    "zh": "16间・约15㎡~18㎡",
+    "zh-Hant": "",
+    "en": "16 Rooms · About 15㎡ ~ 18㎡",
+    "ko": "16실·약 15㎡~18㎡",
+    "th": ""
   },
   "9724c001fc2826b1": {
     "ja": "17:30 – 22:00（L.O. 21:00）",
@@ -305,6 +323,15 @@
     "th": "",
     "locked": true
   },
+  "a40a5d61b424b18e": {
+    "ja": "25室・約14㎡~15㎡ ",
+    "locked": false,
+    "zh": "25间・约14㎡~15㎡",
+    "zh-Hant": "",
+    "en": "25 Rooms · About 14㎡ ~ 15㎡",
+    "ko": "25실·약 14㎡~15㎡",
+    "th": ""
+  },
   "1188e74362177791": {
     "ja": "25室・約14㎡~15㎡ / 97cm幅ベッド2台・2026年改装",
     "locked": false,
@@ -332,6 +359,15 @@
     "th": "",
     "locked": true
   },
+  "ff8f798e4cffb720": {
+    "ja": "2室・約48㎡",
+    "locked": false,
+    "zh": "2间・约48㎡",
+    "zh-Hant": "",
+    "en": "2 Rooms · About 48㎡",
+    "ko": "2실·약 48㎡",
+    "th": ""
+  },
   "312d9682fa715523": {
     "ja": "3. 第三者への開示・提供",
     "locked": false,
@@ -339,6 +375,15 @@
     "en": "3. Disclosure and provision to third parties",
     "zh-Hant": "3. 向第三方披露及提供",
     "ko": "3. 제3자 제공·공개",
+    "th": ""
+  },
+  "34b20e2c34163767": {
+    "ja": "30室・約11㎡ ",
+    "locked": false,
+    "zh": "30间・约11㎡",
+    "zh-Hant": "",
+    "en": "30 Rooms · About 11㎡",
+    "ko": "30실·약 11㎡",
     "th": ""
   },
   "1439ccec460666d5": {
@@ -359,6 +404,15 @@
     "th": "",
     "locked": true
   },
+  "96ccef06f72db0ad": {
+    "ja": "38室・約12㎡~14㎡",
+    "locked": false,
+    "zh": "38间・约12㎡~14㎡",
+    "zh-Hant": "",
+    "en": "38 Rooms · About 12㎡ ~ 14㎡",
+    "ko": "38실·약 12㎡~14㎡",
+    "th": ""
+  },
   "34a829ab4b1f710e": {
     "ja": "3名",
     "zh": "3 人",
@@ -375,6 +429,15 @@
     "zh-Hant": "3間・約15㎡",
     "en": "3 rooms · About 15㎡",
     "ko": "3실·약 15㎡",
+    "th": ""
+  },
+  "cfbe8d6641e2db9f": {
+    "ja": "3室・約37㎡",
+    "locked": false,
+    "zh": "3间・约37㎡",
+    "zh-Hant": "",
+    "en": "3 Rooms · About 37㎡",
+    "ko": "3실·약 37㎡",
     "th": ""
   },
   "d1d867a029174f2d": {
@@ -476,6 +539,15 @@
     "th": "",
     "locked": true
   },
+  "5ddd9db16161afdf": {
+    "ja": "6室・約17㎡~19㎡",
+    "locked": false,
+    "zh": "6间・约17㎡~19㎡",
+    "zh-Hant": "",
+    "en": "6 Rooms · About 17㎡ ~ 19㎡",
+    "ko": "6실·약 17㎡~19㎡",
+    "th": ""
+  },
   "19a68b5ae59b7936": {
     "ja": "7. Cookie・アクセスログ・アクセス解析",
     "locked": false,
@@ -483,6 +555,15 @@
     "en": "7. Cookies, access logs and access analysis",
     "zh-Hant": "7. Cookie、造訪日誌、造訪分析",
     "ko": "7. 쿠키·접속 로그·접속 분석",
+    "th": ""
+  },
+  "f894dc26d0cc7636": {
+    "ja": "77室・約11㎡",
+    "locked": false,
+    "zh": "77间・约11㎡",
+    "zh-Hant": "",
+    "en": "77 Rooms · About 11㎡",
+    "ko": "77실·약 11㎡",
     "th": ""
   },
   "49d04829d1575e48": {
@@ -2049,6 +2130,15 @@
     "th": "",
     "locked": true
   },
+  "277b156733537d68": {
+    "ja": "フォース",
+    "locked": false,
+    "zh": "力",
+    "zh-Hant": "",
+    "en": "Force",
+    "ko": "포스",
+    "th": ""
+  },
   "7e315d8cc08b5814": {
     "ja": "フォームに戻る",
     "locked": false,
@@ -3026,6 +3116,15 @@
     "ko": "주변 명소",
     "th": "",
     "locked": true
+  },
+  "0e6797903b119f20": {
+    "ja": "和室",
+    "locked": false,
+    "zh": "和式房间",
+    "zh-Hant": "",
+    "en": "Japanese Room",
+    "ko": "한실",
+    "th": ""
   },
   "dfa7695dcff6ab12": {
     "ja": "和食・パン・コーヒーの無料朝食を 7:00〜9:30 にご用意しています。",
