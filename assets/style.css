@@ -2208,9 +2208,15 @@ summary {
   letter-spacing: 0.04em;
   color: var(--color-text-muted);
 }
+.bkform__row {
+  min-width: 0;
+}
 .bkform input[type='date'],
 .bkform select {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 0.6rem 0.75rem;
   font-family: inherit;
   font-size: var(--text-sm);
@@ -2218,6 +2224,19 @@ summary {
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+}
+.bkform input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-height: 2.85rem;
+}
+.bkform input[type='date']::-webkit-date-and-time-value {
+  text-align: left;
+  min-width: 0;
+}
+.bkform input[type='date']::-webkit-calendar-picker-indicator {
+  margin-inline-start: auto;
 }
 .bkform input[type='date']:focus-visible,
 .bkform select:focus-visible {
