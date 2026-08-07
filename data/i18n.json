@@ -5137,5 +5137,14 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "ffcd6260687c8f42": {
+    "ja": "宿泊予約",
+    "en": "Book Now",
+    "zh": "在线预订",
+    "zh-Hant": "線上預訂",
+    "ko": "숙박 예약",
+    "locked": true,
+    "hant_manual": true
   }
 }

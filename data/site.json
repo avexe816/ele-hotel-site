@@ -77,10 +77,6 @@
         "href": "#rooms"
       },
       {
-        "label": "お知らせ",
-        "href": "#news"
-      },
-      {
         "label": "よくあるご質問",
         "href": "#faq"
       },
@@ -586,6 +582,7 @@
         "label": "温泉エリア",
         "city": "Kusatsu"
       }
-    ]
+    ],
+    "nav_book": "宿泊予約"
   }
 }

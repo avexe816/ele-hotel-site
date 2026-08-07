@@ -99,6 +99,7 @@ I_CAM = '<svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden
 I_GLOBE = '<svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6.9" stroke="currentColor" stroke-width="1.5"/><path d="M2.1 9h13.8M9 2.1c1.9 2 2.9 4.4 2.9 6.9S10.9 15.9 9 15.9 6.1 11.5 6.1 9 7.1 4.1 9 2.1z" stroke="currentColor" stroke-width="1.4"/></svg>'
 I_CHEV = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="chev"><path d="M3 4.8L6 7.8l3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 I_TICK = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="tick"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+I_CAL = '<svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="2.4" y="3.6" width="13.2" height="11.6" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.4 7.3h13.2M6 2.2v2.6M12 2.2v2.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
 I_MENU = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
 
 CITY_LABEL = {"tokyo": "Tokyo", "nagoya": "Nagoya", "osaka": "Osaka", "sendai": "Sendai", "onsen": "Kusatsu"}
@@ -315,6 +316,12 @@ def pic(name, alt, sizes, cls="", loading="lazy", depth=0):
 
 def header(lang, t, depth, page_slug=None, kind="hotel"):
     hu = home_url(lang, depth)
+    book_href = "#book" if kind == "hotel" and page_slug else hu + "#search"
+    book_btn = (
+        f'<a class="icon-btn icon-btn--book" href="{book_href}"'
+        f' aria-label="{esc(t["nav_book"])}" title="{esc(t["nav_book"])}">'
+        f'{I_CAL}<span>{esc(t["nav_book"])}</span></a>'
+    )
     links = menu_links(t.get("menu_main"), lang, depth)
 
     # ---- globe + dropdown language picker
@@ -348,6 +355,7 @@ def header(lang, t, depth, page_slug=None, kind="hotel"):
 <div class="header__tools">
 {langs}
 <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme">{I_SUN}</button>
+{book_btn}
 <button class="icon-btn burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">{I_MENU}</button>
 </div>
 </div>
@@ -395,7 +403,8 @@ JS = """<script>
  list.forEach(function(x){DATA[x.s]=x;});
  var area=document.getElementById('f-area'),hotel=document.getElementById('f-hotel'),
      din=document.getElementById('f-in'),dout=document.getElementById('f-out'),
-     guests=document.getElementById('f-g'),go=document.getElementById('f-go');
+     guests=document.getElementById('f-g'),rooms=document.getElementById('f-r'),
+     go=document.getElementById('f-go');
  if(!area||!hotel||!din||!dout||!go)return;
  function ymd(d){var z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());
   return z.toISOString().slice(0,10);}
@@ -422,6 +431,7 @@ JS = """<script>
  var ph=all.filter(function(o){return o.value==='';})[0];
  var items=all.filter(function(o){return o.value!=='';});
  var gopts=guests?[].slice.call(guests.options):[];
+ var ropts=rooms?[].slice.call(rooms.options):[];
  function syncGuests(){
   if(!guests)return;
   var d=DATA[hotel.value],mx=(d&&d.a&&d.mg)?d.mg:gopts.length;
@@ -431,6 +441,13 @@ JS = """<script>
    o.hidden=!ok;o.disabled=!ok;if(ok)last=o;
   });
   if(keep>mx&&last)guests.value=last.value;
+  if(!rooms)return;
+  var mr=(d&&d.a&&d.mr)?d.mr:ropts.length,rk=parseInt(rooms.value,10)||1,rl=null;
+  ropts.forEach(function(o){
+   var ok=(parseInt(o.value,10)||1)<=mr;
+   o.hidden=!ok;o.disabled=!ok;if(ok)rl=o;
+  });
+  if(rk>mr&&rl)rooms.value=rl.value;
  }
  function updateGo(){
   var on=!!hotel.value;
@@ -469,7 +486,8 @@ JS = """<script>
   var f=document.createElement('form');
   f.method='post';f.action=d.a;f.target='_blank';f.style.display='none';
   var vals={obj_year:ymdp[0],obj_month:ymdp[1],obj_day:ymdp[2],
-   obj_per_num:String(per),obj_stay_num:String(nights),obj_room_num:'1'};
+   obj_per_num:String(per),obj_stay_num:String(nights),
+   obj_room_num:String(Math.max(1,Math.min(d.mr||1,parseInt(rooms&&rooms.value,10)||1)))};
   Object.keys(vals).forEach(function(k){
    var i=document.createElement('input');i.type='hidden';i.name=k;i.value=vals[k];f.appendChild(i);
   });
@@ -479,11 +497,32 @@ JS = """<script>
 })();
 (function(){
  var f=document.querySelector('form.bkform');
- if(f){var d=f.querySelector('.bk-date');
-  var z=new Date();z.setMinutes(z.getMinutes()-z.getTimezoneOffset());
-  var s=z.toISOString().slice(0,10);d.min=s;if(!d.value){d.value=s;}
-  f.addEventListener('submit',function(){var v=(d.value||s).split('-');
-   f.obj_year.value=v[0];f.obj_month.value=v[1];f.obj_day.value=v[2];});}
+ if(!f)return;
+ var d=f.querySelector('.bk-date'),o=f.querySelector('.bk-out');
+ function ymd(x){var z=new Date(x);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());
+  return z.toISOString().slice(0,10);}
+ function plus(str,n){var p=str.split('-');
+  var t=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));t.setUTCDate(t.getUTCDate()+n);
+  return t.toISOString().slice(0,10);}
+ function diff(a,b){var x=a.split('-'),y=b.split('-');
+  return Math.round((Date.UTC(+y[0],+y[1]-1,+y[2])-Date.UTC(+x[0],+x[1]-1,+x[2]))/86400000);}
+ var s=ymd(new Date()),mx=parseInt(o&&o.getAttribute('data-max'),10)||5;
+ d.min=s;if(!d.value)d.value=s;
+ if(o){o.min=plus(d.value,1);if(!o.value)o.value=plus(d.value,1);}
+ d.addEventListener('change',function(){
+  if(!d.value||d.value<s)d.value=s;
+  if(!o)return;o.min=plus(d.value,1);
+  if(!o.value||o.value<=d.value)o.value=plus(d.value,1);
+ });
+ if(o)o.addEventListener('change',function(){
+  if(!o.value||o.value<=d.value)o.value=plus(d.value,1);
+ });
+ f.addEventListener('submit',function(){
+  var v=(d.value||s).split('-');
+  f.obj_year.value=v[0];f.obj_month.value=v[1];f.obj_day.value=v[2];
+  var n=o?Math.max(1,Math.min(mx,diff(d.value,o.value)||1)):1;
+  f.obj_stay_num.value=String(n);
+ });
 })();
 (function(){
  var K='eletheme';
@@ -592,6 +631,9 @@ def build_home(lang):
     guests = "".join(
         f'<option value="{n}">{n} {esc(t["search_guest_unit"])}</option>' for n in range(1, 11)
     )
+    rooms_opts = "".join(
+        f'<option value="{i}">{i} {esc(t["bk_unit_room"])}</option>' for i in range(1, 11)
+    )
     hotel_opts = f'<option value="">{esc(t["search_hotel_any"])}</option>' + "".join(
         f'<option value="{h["slug"]}" data-area="{h["area"]}">{esc(h["name"][code])}</option>'
         for h in searchable
@@ -605,6 +647,7 @@ def build_home(lang):
                 "a": hbk["action"],
                 "mg": hbk["max_guests"],
                 "mn": hbk["max_nights"],
+                "mr": hbk.get("max_rooms") or 1,
             })
         search_data.append(entry)
     search_json = json.dumps(search_data, ensure_ascii=False).replace("<", "\\u003c")
@@ -680,7 +723,7 @@ def build_home(lang):
 </div>
 </section>
 
-<div class="wrap searchbar">
+<div class="wrap searchbar" id="search">
 <form class="searchbar__card" onsubmit="return false;">
 <p class="searchbar__title">{esc(t['search_title'])}</p>
 <div class="searchbar__grid">
@@ -689,6 +732,7 @@ def build_home(lang):
 <div class="field"><label for="f-in">{esc(t['search_in'])}</label><input id="f-in" type="date"></div>
 <div class="field"><label for="f-out">{esc(t['search_out'])}</label><input id="f-out" type="date"></div>
 <div class="field"><label for="f-g">{esc(t['search_guests'])}</label><select id="f-g">{guests}</select></div>
+<div class="field"><label for="f-r">{esc(t['bk_rooms'])}</label><select id="f-r">{rooms_opts}</select></div>
 <button class="btn btn--primary" id="f-go" type="button" disabled aria-disabled="true">{esc(t['search_submit'])}</button>
 </div>
 </form>
@@ -880,12 +924,13 @@ def build_detail(lang, h):
             )
         book_block = f"""<form class="bkform" action="{bk['action']}" method="post" target="_blank">
 <input type="hidden" name="obj_year" value=""><input type="hidden" name="obj_month" value=""><input type="hidden" name="obj_day" value="">
-<p class="bkform__row"><label for="bk-date-{h['slug']}">{esc(t['bk_date'])}</label>
+<input type="hidden" name="obj_stay_num" value="1">
+<p class="bkform__row"><label for="bk-date-{h['slug']}">{esc(t['search_in'])}</label>
 <input class="bk-date" id="bk-date-{h['slug']}" type="date" required></p>
+<p class="bkform__row"><label for="bk-out-{h['slug']}">{esc(t['search_out'])}</label>
+<input class="bk-out" id="bk-out-{h['slug']}" type="date" data-max="{bk['max_nights']}" required></p>
 <p class="bkform__row"><label for="bk-per-{h['slug']}">{esc(t['bk_guests'])}</label>
 <select id="bk-per-{h['slug']}" name="obj_per_num">{opts(bk['max_guests'], t['bk_unit_guest'])}</select></p>
-<p class="bkform__row"><label for="bk-stay-{h['slug']}">{esc(t['bk_nights'])}</label>
-<select id="bk-stay-{h['slug']}" name="obj_stay_num">{opts(bk['max_nights'], t['bk_unit_night'])}</select></p>
 <p class="bkform__row"><label for="bk-room-{h['slug']}">{esc(t['bk_rooms'])}</label>
 <select id="bk-room-{h['slug']}" name="obj_room_num">{opts(bk['max_rooms'], t['bk_unit_room'])}</select></p>
 <button class="btn btn--primary btn--full" type="submit">{esc(t['bk_search'])}</button>
