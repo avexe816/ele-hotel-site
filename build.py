@@ -7,6 +7,7 @@ data/i18n.json, then the rest of this generator works exactly as before on the
 fully-populated per-language trees.
 """
 
+import datetime
 import hashlib
 import json
 import os
@@ -101,6 +102,11 @@ I_CHEV = '<svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidde
 I_TICK = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="tick"><path d="M2.5 8.5l3.5 3.5 7.5-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 I_CAL = '<svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="2.4" y="3.6" width="13.2" height="11.6" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.4 7.3h13.2M6 2.2v2.6M12 2.2v2.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
 I_MENU = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M2.5 5h13M2.5 9h13M2.5 13h13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+
+# 著作権表示の年（開始年は固定、終了年はビルド時の年を自動で入れる／日本時間）
+COPY_START = 2019
+_NOW_JST = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
+COPY_YEARS = f"{COPY_START}\u2013{_NOW_JST.year}" if _NOW_JST.year > COPY_START else str(COPY_START)
 
 CITY_LABEL = {"tokyo": "Tokyo", "nagoya": "Nagoya", "osaka": "Osaka", "sendai": "Sendai", "onsen": "Kusatsu"}
 
@@ -389,7 +395,7 @@ def footer(lang, t, depth):
 <div><h4>{esc(t['footer_info'])}</h4><ul role="list">{info}</ul>
 <p class="footer__note"><a href="https://tej.jp" target="_blank" rel="noopener">{esc(t['operator_link'])}{I_EXT}</a></p></div>
 </div>
-<div class="footer__bottom"><span>© {esc(t.get('copyright_years') or '')} {esc(t['rights'])}</span><span>{esc((t.get('footer_cities') or '').strip()) or CITIES}</span></div>
+<div class="footer__bottom"><span>© {COPY_YEARS} {esc(t['rights'])}</span><span>{esc((t.get('footer_cities') or '').strip()) or CITIES}</span></div>
 </div>
 </footer>"""
 

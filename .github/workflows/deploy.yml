@@ -8,6 +8,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 年が変わったら著作権表示の年を自動更新するため、毎年1月1日に再ビルドします（UTC 0:10 = JST 9:10）
+  schedule:
+    - cron: "10 0 1 1 *"
 
 concurrency:
   group: deploy-production

@@ -952,11 +952,6 @@
       "label": "客室カードの「階数」行の見出し",
       "kind": "text"
     },
-    "copyright_years": {
-      "group": "common",
-      "label": "著作権表示の年（例: 2019–2026）",
-      "kind": "text"
-    },
     "footer_cities": {
       "group": "common",
       "label": "フッター右下の都市名（空欄なら、ホテルがあるエリアから自動で作ります）",
