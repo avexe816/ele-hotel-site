@@ -389,7 +389,7 @@ def footer(lang, t, depth):
 <div><h4>{esc(t['footer_info'])}</h4><ul role="list">{info}</ul>
 <p class="footer__note"><a href="https://tej.jp" target="_blank" rel="noopener">{esc(t['operator_link'])}{I_EXT}</a></p></div>
 </div>
-<div class="footer__bottom"><span>© 2019–2026 {esc(t['rights'])}</span><span>{CITIES}</span></div>
+<div class="footer__bottom"><span>© {esc(t.get('copyright_years') or '')} {esc(t['rights'])}</span><span>{esc((t.get('footer_cities') or '').strip()) or CITIES}</span></div>
 </div>
 </footer>"""
 
