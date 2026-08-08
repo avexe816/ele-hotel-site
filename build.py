@@ -623,11 +623,21 @@ def page(lang, t, depth, title, desc, body, page_slug=None, kind="hotel"):
 
 
 # ----------------------------------------------------------------- homepage
+def career_desc(t):
+    """採用の一文。careers_url があればリンクにする（新しいタブで開く）。"""
+    txt = esc(t["contact_career_d"])
+    url = str(SITE["ja"].get("careers_url") or "").strip()
+    if not url:
+        return txt
+    return f'<a class="ilink" href="{esc(url)}" target="_blank" rel="noopener">{txt}{I_EXT}</a>'
+
+
 def build_home(lang):
     code = lang["code"]
     t = SITE[code]
     depth = 0 if not lang["dir"] else 1
     b = base(depth)
+    career_d = career_desc(t)
 
     searchable = [h for h in HOTELS if h.get("status") != "soon"]
     areas = [a for a in AREA_ORDER if any(h["area"] == a for h in searchable)]
@@ -798,7 +808,7 @@ def build_home(lang):
 <a class="contact-cta" href="{contact_url(lang, depth)}">{esc(t['contact_cta'])}{I_ARROW}</a>
 <div class="contact-split">
 <div><h4>{esc(t['contact_owner'])}</h4><p>{esc(t['contact_owner_d'])}</p></div>
-<div><h4>{esc(t['contact_career'])}</h4><p>{esc(t['contact_career_d'])}</p></div>
+<div><h4>{esc(t['contact_career'])}</h4><p>{career_d}</p></div>
 </div>
 </div>
 <figure class="about__figure reveal">{pic(t.get('img_brand') or 'brand-street', t['brand_title'], '(max-width: 900px) 100vw, 460px', depth=depth)}</figure>
@@ -817,13 +827,40 @@ def build_detail(lang, h):
     name = h["name"][code]
     bname = next((x["name"] for x in t["brands"] if x["key"] == h["brand"]), "ELE Hotel")
 
-    facts = [
-        (t["f_rooms"], f"{h['rooms']} {t['unit_rooms']}" if h.get("rooms") else t["tbd"]),
-        (t["f_open"], h["opened"][code]),
-        (t["f_in"], h["checkin"]),
-        (t["f_out"], h["checkout"]),
-        (t["f_addr"], h["address"][code]),
-    ]
+    tokens = {
+        "rooms": f"{h['rooms']} {t['unit_rooms']}" if h.get("rooms") else "",
+        "opened": h["opened"][code],
+        "checkin": h["checkin"],
+        "checkout": h["checkout"],
+        "address": h["address"][code],
+        "tel": h.get("tel") or "",
+    }
+
+    def fact_val(v):
+        out = str(v or "")
+        for k2, v2 in tokens.items():
+            out = out.replace("{" + k2 + "}", str(v2 or ""))
+        return out.strip()
+
+    rows_src = h.get("facts") or []
+    if rows_src:
+        facts = []
+        for r in rows_src:
+            lb = r.get("label")
+            lb = (lb or {}).get(code) if isinstance(lb, dict) else lb
+            vv = r.get("value")
+            vv = (vv or {}).get(code) if isinstance(vv, dict) else vv
+            lb = str(lb or "").strip()
+            if lb:
+                facts.append((lb, fact_val(vv)))
+    else:
+        facts = [
+            (t["f_rooms"], tokens["rooms"]),
+            (t["f_open"], tokens["opened"]),
+            (t["f_in"], tokens["checkin"]),
+            (t["f_out"], tokens["checkout"]),
+            (t["f_addr"], tokens["address"]),
+        ]
     fact_rows = "".join(
         f'<div class="dl__row"><dt>{esc(k)}</dt><dd>{esc(v if str(v).strip() else t["tbd"])}</dd></div>' for k, v in facts
     )

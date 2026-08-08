@@ -134,7 +134,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "higashi-ueno",
@@ -272,7 +304,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "higashi-nihonbashi",
@@ -408,7 +472,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "shinjuku-cabin",
@@ -534,7 +630,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "nagoya-sakae",
@@ -680,7 +808,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "kuzuha",
@@ -867,7 +1027,39 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   },
   {
     "slug": "sendai-higashiguchi",
@@ -1015,6 +1207,38 @@
         "ボディシャンプー",
         "館内着"
       ]
-    }
+    },
+    "facts": [
+      {
+        "label": {
+          "ja": "客室数"
+        },
+        "value": "{rooms}"
+      },
+      {
+        "label": {
+          "ja": "開業"
+        },
+        "value": "{opened}"
+      },
+      {
+        "label": {
+          "ja": "チェックイン"
+        },
+        "value": "{checkin}"
+      },
+      {
+        "label": {
+          "ja": "チェックアウト"
+        },
+        "value": "{checkout}"
+      },
+      {
+        "label": {
+          "ja": "住所"
+        },
+        "value": "{address}"
+      }
+    ]
   }
 ]

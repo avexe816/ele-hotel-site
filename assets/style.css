@@ -2473,3 +2473,19 @@ select.inp { appearance: none; padding-right: 2.2rem;
 .amgrid + .amgrid__title {
   margin-top: var(--space-10);
 }
+
+.ilink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+.ilink svg {
+  margin-inline-start: 0.25rem;
+  vertical-align: -1px;
+  opacity: 0.65;
+}
+.ilink:hover {
+  color: var(--color-primary);
+  text-decoration-color: currentColor;
+}

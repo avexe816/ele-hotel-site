@@ -956,6 +956,11 @@
       "group": "common",
       "label": "フッター右下の都市名（空欄なら、ホテルがあるエリアから自動で作ります）",
       "kind": "text"
+    },
+    "careers_url": {
+      "group": "menu",
+      "label": "採用情報のリンク先URL（トップページの「採用について」の一文にも使います）",
+      "kind": "text"
     }
   },
   "itemLabels": {
@@ -1033,6 +1038,10 @@
     "menu_footer": {
       "label": "表示名（例: 採用情報）",
       "href": "リンク先。#hotels / #brand / #rooms / #news / #faq ／ /contact ／ /privacy ／ /grand ／ /hotels/kuzuha ／ /pages/xxxx ／ https://… （外部URLは自動で新しいタブ）"
+    },
+    "facts": {
+      "label": "項目名（例: 電話、FAX）",
+      "value": "内容。{rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
     }
   },
   "hotel": {
@@ -1191,6 +1200,15 @@
       "group": "detail",
       "label": "お問い合わせの受信メールアドレス（このホテル宛）",
       "kind": "text"
+    },
+    "facts": {
+      "group": "detail",
+      "label": "施設情報の表（行の追加・並べ替え・削除ができます）",
+      "kind": "list-obj",
+      "item": {
+        "label": "項目名（例: 電話、FAX）",
+        "value": "内容。{rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
+      }
     }
   },
   "langs": [
