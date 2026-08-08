@@ -1196,6 +1196,15 @@
     "th": "",
     "locked": true
   },
+  "abbf4bf4a37b9ad5": {
+    "ja": "{tel}　　　　{fax}",
+    "locked": false,
+    "zh": "电话：　　　　传真：",
+    "zh-Hant": "",
+    "en": "{tel} {fax}",
+    "ko": "팩스",
+    "th": ""
+  },
   "a52caf17d660e238": {
     "ja": "※ お問い合わせの内容により、ご返信までにお時間をいただく場合があります。また、ご入力いただいたメールアドレスへの自動返信は行っておりません。",
     "locked": true,
@@ -5092,6 +5101,15 @@
     "ko": "전화",
     "th": "",
     "locked": true
+  },
+  "15c8a0792e12ff67": {
+    "ja": "電話/FAX",
+    "locked": false,
+    "zh": "电话/FAX",
+    "zh-Hant": "",
+    "en": "Phone/FAX",
+    "ko": "전화/FAX",
+    "th": ""
   },
   "8835fa85e12bd0c7": {
     "ja": "電話番号",

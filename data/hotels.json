@@ -165,6 +165,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話"
+        },
+        "value": "{tel}"
       }
     ]
   },
@@ -335,6 +341,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話"
+        },
+        "value": "{tel}"
       }
     ]
   },
@@ -503,6 +515,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話"
+        },
+        "value": "{tel}"
       }
     ]
   },
@@ -661,6 +679,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話"
+        },
+        "value": "{tel}"
       }
     ]
   },
@@ -839,6 +863,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話/FAX"
+        },
+        "value": "{tel}　　　　{fax}"
       }
     ]
   },
@@ -1244,6 +1274,12 @@
           "ja": "住所"
         },
         "value": "{address}"
+      },
+      {
+        "label": {
+          "ja": "電話"
+        },
+        "value": "{tel}"
       }
     ]
   }
