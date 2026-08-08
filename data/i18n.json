@@ -1200,7 +1200,7 @@
     "ja": "{tel}　　　　{fax}",
     "locked": false,
     "zh": "电话：　　　　传真：",
-    "zh-Hant": "",
+    "zh-Hant": "電話：　　　　傳真：",
     "en": "{tel} {fax}",
     "ko": "팩스",
     "th": ""
@@ -5106,7 +5106,7 @@
     "ja": "電話/FAX",
     "locked": false,
     "zh": "电话/FAX",
-    "zh-Hant": "",
+    "zh-Hant": "電話/FAX",
     "en": "Phone/FAX",
     "ko": "전화/FAX",
     "th": ""
