@@ -828,6 +828,7 @@ def build_detail(lang, h):
     bname = next((x["name"] for x in t["brands"] if x["key"] == h["brand"]), "ELE Hotel")
 
     tokens = {
+        "hotelname": h["name"][code],
         "rooms": f"{h['rooms']} {t['unit_rooms']}" if h.get("rooms") else "",
         "opened": h["opened"][code],
         "checkin": h["checkin"],

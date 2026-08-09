@@ -5236,5 +5236,14 @@
     "en": "(corporate enquiries only)",
     "ko": "(법인만 기재)",
     "th": ""
+  },
+  "6ce7aae0c1c7396c": {
+    "ja": "ホテル名",
+    "en": "Hotel",
+    "zh": "酒店名称",
+    "zh-Hant": "飯店名稱",
+    "ko": "호텔명",
+    "locked": true,
+    "hant_manual": true
   }
 }

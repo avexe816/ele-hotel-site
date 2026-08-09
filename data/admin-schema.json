@@ -1041,7 +1041,7 @@
     },
     "facts": {
       "label": "項目名（例: 電話、FAX）",
-      "value": "内容。{rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
+      "value": "内容。{hotelname} {rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
     }
   },
   "hotel": {
@@ -1207,7 +1207,7 @@
       "kind": "list-obj",
       "item": {
         "label": "項目名（例: 電話、FAX）",
-        "value": "内容。{rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
+        "value": "内容。{hotelname} {rooms} {opened} {checkin} {checkout} {address} {tel} と書くと、上で設定した値が自動で入ります"
       }
     }
   },
