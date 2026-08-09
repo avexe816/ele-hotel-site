@@ -322,7 +322,7 @@
         "label": {
           "ja": "ホテル名"
         },
-        "value": "ELE Hotel 東上野"
+        "value": "{hotelname}"
       },
       {
         "label": {
@@ -500,6 +500,12 @@
     "facts": [
       {
         "label": {
+          "ja": "ホテル名"
+        },
+        "value": "{hotelname}"
+      },
+      {
+        "label": {
           "ja": "客室数"
         },
         "value": "{rooms}"
@@ -662,6 +668,12 @@
       ]
     },
     "facts": [
+      {
+        "label": {
+          "ja": "ホテル名"
+        },
+        "value": "{hotelname}"
+      },
       {
         "label": {
           "ja": "客室数"
