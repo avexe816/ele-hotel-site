@@ -860,6 +860,12 @@
     "facts": [
       {
         "label": {
+          "ja": "ホテル名"
+        },
+        "value": "{hotelname}"
+      },
+      {
+        "label": {
           "ja": "客室数"
         },
         "value": "{rooms}"
@@ -1085,6 +1091,12 @@
     "facts": [
       {
         "label": {
+          "ja": "ホテル名"
+        },
+        "value": "{hotelname}"
+      },
+      {
+        "label": {
           "ja": "客室数"
         },
         "value": "{rooms}"
@@ -1269,6 +1281,12 @@
       ]
     },
     "facts": [
+      {
+        "label": {
+          "ja": "ホテル名"
+        },
+        "value": "{hotelname} "
+      },
       {
         "label": {
           "ja": "客室数"
