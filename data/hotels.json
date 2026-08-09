@@ -314,6 +314,12 @@
     "facts": [
       {
         "label": {
+          "ja": "ホテル名"
+        },
+        "value": "ELE Hotel 東上野"
+      },
+      {
+        "label": {
           "ja": "客室数"
         },
         "value": "{rooms}"
