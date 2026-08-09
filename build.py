@@ -1502,7 +1502,8 @@ def build_contact(lang):
     if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(g('email')))return bad(M.mail);
     if(!f.elements['agree'].checked)return bad(M.agree);
     var r=f.querySelector('input[name=reply]:checked');
-    var p={{kind:g('kind'),name:g('name'),company:g('company'),email:g('email'),
+    var p={{kind:g('kind'),kind_i:g('kind_i'),area:g('area'),hotel:g('hotel'),
+            name:g('name'),company:g('company'),email:g('email'),
             tel:g('tel'),reply:r?r.value:'',message:g('message'),
             lang:g('lang'),page:g('page'),_gotcha:g('_gotcha')}};
     b.disabled=true;b.textContent=S;
