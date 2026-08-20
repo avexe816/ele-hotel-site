@@ -151,16 +151,21 @@ def booking_config(bk):
     host = str(bk.get("host", "")).strip()
     if raw.startswith("http"):
         m = re.search(r"[?&]id=(\d+)", raw)
-        if not m:
-            return None
-        fid = m.group(1)
-        hm = re.match(r"https?://([^/]+)", raw)
-        if hm and not host:
-            host = hm.group(1)
-    else:
-        if not re.fullmatch(r"\d{4,12}", raw):
-            return None
-        fid = raw
+        if m:
+            # 旧版 489pro: ?id=27000054 形式
+            fid = m.group(1)
+            hm = re.match(r"https?://([^/]+)", raw)
+            if hm and not host:
+                host = hm.group(1)
+            base_url = f"https://{host or YOYAKUPRO_HOST}/asp/489/menu.asp?id={fid}"
+            return {"action": base_url + "&ty=ser", "top": base_url, **limits}
+        # 新版 489pro-x: パス形式の検索URL（例: .../elehotelkuzuha/search/）
+        action = raw if raw.endswith("/") else raw + "/"
+        top = re.sub(r"search/?$", "", action, flags=re.IGNORECASE)
+        return {"action": action, "top": top, **limits}
+    if not re.fullmatch(r"\d{4,12}", raw):
+        return None
+    fid = raw
     base_url = f"https://{host or YOYAKUPRO_HOST}/asp/489/menu.asp?id={fid}"
     return {"action": base_url + "&ty=ser", "top": base_url, **limits}
 

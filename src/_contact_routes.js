@@ -3,7 +3,6 @@ const CONTACT_ROUTES = {
   "kinds": [
     "hotel",
     "hotel",
-    "hotel",
     "sales@ele-hotel.com",
     "sales@ele-hotel.com",
     "hr@tej.jp",
