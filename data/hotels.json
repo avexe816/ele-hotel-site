@@ -1053,7 +1053,7 @@
     ],
     "booking": {
       "engine": "yoyakupro",
-      "id": "https://www.489pro-x.com/ja/s/elehotelkuzuha/search/",
+      "id": "https://www.489pro-x.com/ja/s/elehotelkuzuha/search/?nights=1&num=1&r_num=1",
       "host": "www7.489pro.com",
       "max_guests": 10,
       "max_nights": 5,
