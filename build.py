@@ -158,16 +158,18 @@ def booking_config(bk):
             if hm and not host:
                 host = hm.group(1)
             base_url = f"https://{host or YOYAKUPRO_HOST}/asp/489/menu.asp?id={fid}"
-            return {"action": base_url + "&ty=ser", "top": base_url, **limits}
+            return {"mode": "legacy", "action": base_url + "&ty=ser", "top": base_url, **limits}
         # 新版 489pro-x: パス形式の検索URL（例: .../elehotelkuzuha/search/）
-        action = raw if raw.endswith("/") else raw + "/"
-        top = re.sub(r"search/?$", "", action, flags=re.IGNORECASE)
-        return {"action": action, "top": top, **limits}
+        # クエリ文字列が付いていても search/ までをベースURLとする
+        base = re.sub(r"\?.*$", "", raw)
+        base = base if base.endswith("/") else base + "/"
+        top = re.sub(r"search/?$", "", base, flags=re.IGNORECASE)
+        return {"mode": "x", "action": base, "top": top, **limits}
     if not re.fullmatch(r"\d{4,12}", raw):
         return None
     fid = raw
     base_url = f"https://{host or YOYAKUPRO_HOST}/asp/489/menu.asp?id={fid}"
-    return {"action": base_url + "&ty=ser", "top": base_url, **limits}
+    return {"mode": "legacy", "action": base_url + "&ty=ser", "top": base_url, **limits}
 
 # 旧方式のフォールバック（site.json に areas が無い場合だけ使う）
 AREA_KEY = {
@@ -530,9 +532,13 @@ JS = """<script>
  });
  f.addEventListener('submit',function(){
   var v=(d.value||s).split('-');
-  f.obj_year.value=v[0];f.obj_month.value=v[1];f.obj_day.value=v[2];
   var n=o?Math.max(1,Math.min(mx,diff(d.value,o.value)||1)):1;
-  f.obj_stay_num.value=String(n);
+  if(f.getAttribute('data-mode')==='x'){
+   var nh=f.querySelector('input[name=nights]');if(nh)nh.value=String(n);
+  }else{
+   f.obj_year.value=v[0];f.obj_month.value=v[1];f.obj_day.value=v[2];
+   f.obj_stay_num.value=String(n);
+  }
  });
 })();
 (function(){
@@ -971,21 +977,35 @@ def build_detail(lang, h):
         tel_row += f'<div><dt>{esc(t["f_fax"])}</dt><dd>{esc(h["fax"])}</dd></div>'
     bk = booking_config(h.get("booking"))
     if bk:
+        mode = bk.get("mode", "legacy")
         def opts(n, unit):
             return "".join(
                 f'<option value="{i}">{i} {esc(unit)}</option>' for i in range(1, n + 1)
             )
-        book_block = f"""<form class="bkform" action="{bk['action']}" method="post" target="_blank">
-<input type="hidden" name="obj_year" value=""><input type="hidden" name="obj_month" value=""><input type="hidden" name="obj_day" value="">
-<input type="hidden" name="obj_stay_num" value="1">
+        if mode == "x":
+            # 新版 489pro-x: GET で checkin / nights / num / r_num を渡す
+            form_method = "get"
+            hidden = '<input type="hidden" name="nights" value="1">'
+            cin_name = ' name="checkin"'
+            per_name = 'name="num"'
+            room_name = 'name="r_num"'
+        else:
+            # 旧版 489pro: POST で obj_* を渡す
+            form_method = "post"
+            hidden = '<input type="hidden" name="obj_year" value=""><input type="hidden" name="obj_month" value=""><input type="hidden" name="obj_day" value=""><input type="hidden" name="obj_stay_num" value="1">'
+            cin_name = ''
+            per_name = 'name="obj_per_num"'
+            room_name = 'name="obj_room_num"'
+        book_block = f"""<form class="bkform" data-mode="{mode}" action="{bk['action']}" method="{form_method}" target="_blank">
+{hidden}
 <p class="bkform__row"><label for="bk-date-{h['slug']}">{esc(t['search_in'])}</label>
-<input class="bk-date" id="bk-date-{h['slug']}" type="date" required></p>
+<input class="bk-date" id="bk-date-{h['slug']}" type="date"{cin_name} required></p>
 <p class="bkform__row"><label for="bk-out-{h['slug']}">{esc(t['search_out'])}</label>
 <input class="bk-out" id="bk-out-{h['slug']}" type="date" data-max="{bk['max_nights']}" required></p>
 <p class="bkform__row"><label for="bk-per-{h['slug']}">{esc(t['bk_guests'])}</label>
-<select id="bk-per-{h['slug']}" name="obj_per_num">{opts(bk['max_guests'], t['bk_unit_guest'])}</select></p>
+<select id="bk-per-{h['slug']}" {per_name}>{opts(bk['max_guests'], t['bk_unit_guest'])}</select></p>
 <p class="bkform__row"><label for="bk-room-{h['slug']}">{esc(t['bk_rooms'])}</label>
-<select id="bk-room-{h['slug']}" name="obj_room_num">{opts(bk['max_rooms'], t['bk_unit_room'])}</select></p>
+<select id="bk-room-{h['slug']}" {room_name}>{opts(bk['max_rooms'], t['bk_unit_room'])}</select></p>
 <button class="btn btn--primary btn--full" type="submit">{esc(t['bk_search'])}</button>
 </form>
 <p class="searchbar__note">{I_INFO}<span>{esc(t['bk_note'])}</span></p>
